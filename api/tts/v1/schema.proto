@@ -1,0 +1,163 @@
+syntax = "proto3";
+
+package schema;
+option go_package = "speech-tts/api/tts/v1;v1";
+
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+// 接口文档注释v2.2.3：
+// 本服务分为4个接口
+// 1.call()接口
+// 	接口简介：
+// 		语音合成接口、提供文本转语音功能
+// 	请求参数为：
+// 		TtsReq：每个字段的意义已经在结构体上
+// 	返回体：
+// 		TtsRes：
+// 	需要注意目前tts已经屏蔽了所有空帧情况，而所有的口型、调试信息、表情、正则前后文本，都携带在ttsres里面，即pcm不为空、其他信息可能存在或不存在
+// 2.GetVersion()接口
+// 	接口简介：
+// 		获取本服务的版本号接口
+// 	请求参数为:
+//			VerReq：空结构体
+// 	返回体:
+// 		VerRsp：版本号的字符串
+// 3.MixCall()接口
+// 	接口简介：
+// 		提供混合发音接口，目前提供27个混合发音(*****后续有可能直接放到tts--call接口，也有可能会增加27个混合发音********)，目前混合发音
+// 	请求参数为:
+//			MixTtsReq：前面请求和发音接口一样，但是新增的参数为每个混合发音人的float32数组标明发音人权重，目前只有27个，超过27个截断，没有27个则补0()
+// 	返回体:
+// 		同call接口TtsRes
+// 4.GetSpeaker
+// 	接口简介：
+// 		为方便统一配置，暂时新增获取发音人列表接口
+// 	接口请求参数：
+// 		VerReq：空结构体
+// 	返回体:
+// 		SpeakerList发音人列表
+// 		每个发音人的具体参数为：int32 speakerId = 1;
+// 		发音人中文名字：string speakerName = 2;
+// 		发音人英文名字(这个是端侧传来的参数)：string parameterSpeakerName = 3;
+
+service CloudMindsTTS {
+		rpc Call (TtsReq) returns (stream TtsRes) {}
+   	rpc GetVersion (VerReq) returns (VerRsp) {
+			option (google.api.http) = {
+				get: "/speech/tts/getVersion",
+			};
+		}
+   	rpc MixCall (MixTtsReq) returns (stream TtsRes) {} 	// 混合发音人目前只有27个，后续增加
+   	rpc GetSpeaker (VerReq) returns (SpeakerList) {} 	// 获取发音人列表信息
+}
+
+enum speakerInfo {
+	DaXiaoFang_Chinese_Mandarin_Female_Adult = 0;		// 达小芳（温柔女声）
+	DaXiaoQi_Chinese_Mandarin_Female_Adult = 1;			// 达小琪（甜美女声）
+	DaDaQiang_Chinese_Mandarin_Male_Adult = 2;			// 达大强（磁性男声）
+	DaDaGang_Chinese_Mandarin_Male_Adult = 3;			// 达大刚（标准男声）
+	DaTongTong_Chinese_Mandarin_Female_Child= 4;		// 达彤彤（儿童女声）
+	DaMingMing_Chinese_Mandarin_Male_Child = 5;			// 达明明（儿童男声）
+	DaXiaoChuan_Chinese_Sichuan_Female_Adult = 6;		// 达小川（四川女声）
+	DaXiaoYue_Chinese_Yueyu_Female_Adult = 7;			// 达小粤（粤语女声）
+	DaXiaoBei_Chinese_Dongbei_Female_Adult = 8;			// 达小北（东北女声）
+	DaXiaoTai_Chinese_Taiwan_Female_Adult = 9;			// 达小台（台湾女声）
+	DaDaXiang_Chinese_Hunan_Male_Adult = 10;			// 达大湘（湖南男声）
+	DaXiaoHu_Chinese_ShangHai_Female_Adult = 11;		// 达小沪（上海女声）
+	DaXiaoguan_English_Female_Adult = 12;				// 达小罐（英文女声）
+	DaXiaoBo_Emotions_Female_Adult = 13;				// 达小波（情感发音人）
+	DaXiaoWu_Chinese_Mandarin_Female_Adult = 14;		// 达小舞（电音女声)
+}
+
+enum ttsErr {
+	TTS_ERR_INIT = 0;									// keep
+	TTS_ERR_OK = 10000;									// tts服务正常返回
+	TTS_ERR_INVALID_RATE = 10001;						// rate值错误
+	TTS_ERR_TEXT_LENGTH_OVERFLOW = 10002;				// 请求文本过长
+	TTS_ERR_INVALID_SPEED = 10003;						// 无效的speed[1,5],默认3
+	TTS_ERR_INVALID_VOLUME = 10004;						// 无效的volume[1,5],默认3
+	TTS_ERR_INVALID_PITCH = 10005;						// 无效的pitch[low,medium,high],默认medium
+	TTS_ERR_INVALID_SPEAKER = 10006;					// 无效的speed[0,10]
+	TTS_ERR_INVALID_TYPE = 10007;						// 无效的type,只支持CloudMinds
+	TTS_ERR_SYN_CANCELLED = 10008;						// 音频合成cancelled
+	TTS_ERR_SYN_FAILURE = 10009;						// 音频合成异常：cuda oom
+	TTS_ERR_NO_FREE_MOUDLE = 10010;						// 没有可用的decoder
+	TTS_ERR_MODULE_INPUT_TEXT = 10011;					// 模型输入文本出错
+	TTS_ERR_TEXT_NORMALIZE = 10012;						// 文本序列化出错
+	TTS_ERR_INVALID_VOICE_TUNING = 10013; 				// 无效的后置开关值[on,off]
+}
+
+enum pcmStatus {
+	STATUS_DEF = 0;								// keep
+	STATUS_START = 1;							// 开始
+	STATUS_MID = 2;								// 中间状态
+	STATUS_END = 3;								// 结束
+}
+
+message TtsReq {
+	string location = 1;						// Cloud 传固定值
+   	string type = 2;							// CloudMinds  传固定值
+	speakerInfo speaker = 3;					// 具体发音人的id 发音人具体参考
+	string speed = 4;							// 1 2 3 4 5 发音速度 默认3
+	string volume = 5;							// 1 2 3 4 5 发音音量 默认3
+	string pitch = 6;							// low medium high  音调 默认 medium
+	bool streamEnable = 7;						// 是否流式合成  默认 false
+	string text = 8;							// 具体需要合成的文本
+	bool textPreHandle = 9;						// 是否需要文本预处理
+	string voiceTuning = 10; 					// voiceTuning开关,传 "on"或者"off"
+	// 情感发音，取值范围["Chat","Angry","Gentle","Cheerful","Serious","General","Affectionate","Lyrical","Newscast","CustomerService"]
+	string Emotions = 11;
+	// parameterSpeakerName 传字符串类型的发音人，兼容speakerInfo，优先选择这个,如果为空，就选择id
+	string ParameterSpeakerName = 12;
+	string traceId = 13;
+	string rootTraceId = 14;
+}
+
+message TtsRes {
+   	bytes pcm = 1;     							// 具体的音频流(不会有空帧出现)
+   	pcmStatus status = 2;      					// pcm状态(2中间状态，目前只有2)
+	ttsErr error = 3;          					// 错误码
+	repeated TimedMouthShape mouths = 4; 		// 嘴型，status=2时输出，
+	string DebugInfo = 5;     					// 调试信息,当有debufinfo时需要输出
+	string Version = 6;     					// 每次调用都要返回version信息
+	string NormalizedText = 7;					// 当前正在合成的正则后的文本片段
+	string originalText = 8;					// 当前正在合成的正则前的文本片段(端侧需要的)
+	Expression expression = 9;					// 表情的具体数据
+}
+
+message Expression {
+	repeated float data = 1;  					// 具体的表情数据, frame_size*frame_dim
+	int32 frame_size = 2;   					// 表情帧数
+	int32 frame_dim = 3;    					// 一帧的维度，即多少个float
+	float frame_time = 4;   					// 一帧的持续时间
+}
+
+message VerReq {
+}
+
+message VerRsp {
+   	string version = 1;
+}
+
+message TimedMouthShape {
+	uint64 durationUs = 1; 						// 时间
+	int32 mouth = 2;  							  // 嘴型 enum MouthShape
+}
+
+message MixTtsReq {
+	TtsReq ttsreq = 1;
+	repeated float weight = 2;					// 发音人权重，目前只有27个，超过27个截断，没有补0
+}
+
+message SpeakerList {
+	repeated SpeakerParameter list = 1; 		// 发音人列表
+}
+
+message SpeakerParameter {
+	int32 speakerId = 1; 						// 发音人id
+   	string speakerName = 2; 					// 发音人名字
+   	string parameterSpeakerName = 3; 			// 发音人英文名字
+}

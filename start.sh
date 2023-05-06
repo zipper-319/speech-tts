@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-PROJECT_NAME="speech-vcs"
+PROJECT_NAME="speech-tts"
 COMMIT=$(git describe --tags --always)
 FILE=$(date +%F).log
 
@@ -12,7 +12,7 @@ fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/internal/cgo/libs
 export GODEBUG=cgocheck=0
-export CUDA_VISIBLE_DEVICES=-1
+
 
 go mod tidy -compat=1.17
 go mod download

@@ -1,4 +1,4 @@
-package v2
+package service
 
 /*
    #include <stdio.h>
@@ -152,7 +152,7 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 					Len:   int32(coordinate.len_utf8),
 					Order: int32(coordinate.order),
 				},
-				IsPunctuation: int32(coordinate.flags),
+				IsPunctuation: int32(audioData.flags),
 			},
 		},
 	}
@@ -160,20 +160,21 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 }
 
 //export goOnFacialExpression
-func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData unsafe.Pointer) {
+func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.FacialExpressionSegment) {
 	object := (*data.HandlerObjectV2)(pUserData)
-	expression := (*C.FacialExpressionSegment)(facialExpressionData)
+
 	var framedDim uint64
 	if fefd, ok := (object.ParamMap["FacialExpressionFrameDim"]).(int32); ok {
 		framedDim = uint64(fefd)
 	}
-	if expression != nil {
-		frameSize := uint64(expression.frameSize)
-		startTimeMs := float32(expression.startTimeMs)
+	var expression *v2.Expression
+	if facialExpressionData != nil {
+		frameSize := uint64(facialExpressionData.frameSize)
+		startTimeMs := float32(facialExpressionData.startTimeMs)
 		size := int32(frameSize * framedDim)
 		var Expressiondata = make([]float32, size)
 		for i := 0; i < int(size); i++ {
-			data := *(*C.float)(unsafe.Pointer(uintptr(unsafe.Pointer(expression.data)) + uintptr(C.sizeof_float*C.int(i))))
+			data := *(*C.float)(unsafe.Pointer(uintptr(unsafe.Pointer(facialExpressionData.data)) + uintptr(C.sizeof_float*C.int(i))))
 			Expressiondata[i] = float32(data)
 		}
 		expression = &v2.Expression{

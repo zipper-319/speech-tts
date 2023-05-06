@@ -1,8 +1,8 @@
 package service
 
 /*
-#cgo CFLAGS: -I../include
-#cgo LDFLAGS: -L../lib_interface -lCmTts
+#cgo CFLAGS: -I../include -DCOMPATIBLE_V1=1
+#cgo LDFLAGS: -L../libs -lCmTts
 #include <stdio.h>
 #include <stdlib.h>
 #include "ActionSynthesizer.h"
@@ -94,13 +94,13 @@ func getCallbackV2() *C.ActionCallback {
 
 func getCallbackV1() *C.TTS_Callback {
 	callback := C.TTS_Callback{}
-	callback.onStart = C.typOnStartV1(C.CcOnStartV1)
-	callback.onAudio = C.typOnAudioV1(C.CcOnAudio)
-	callback.onEnd = C.typOnEndV1(C.CcOnEndV1)
-	callback.onDebug = C.typOnDebugV1(C.CcOnDebugV1)
-	callback.onTimedMouthShape = C.typOnTimedMouthShapeV1(C.CcOnTimedMouthShapeV1)
-	callback.onCurTextSegment = C.typOnCurTextSegmentV1(C.CcOnCurTextSegment)
-	callback.onFacialExpression = C.typOnFacialExpressionV1(C.CcOnFacialExpressionV1)
+	callback.onStart = C.typOnStartV1(C.goOnStartV1)
+	callback.onAudio = C.typOnAudioV1(C.goOnAudioV1)
+	callback.onEnd = C.typOnEndV1(C.goOnEndV1)
+	callback.onDebug = C.typOnDebugV1(C.goOnDebugV1)
+	callback.onTimedMouthShape = C.typOnTimedMouthShapeV1(C.goOnTimedMouthShapeV1)
+	callback.onCurTextSegment = C.typOnCurTextSegmentV1(C.goOnCurTextSegmentV1)
+	callback.onFacialExpression = C.typOnFacialExpressionV1(C.goOnFacialExpressionV1)
 	return &callback
 }
 

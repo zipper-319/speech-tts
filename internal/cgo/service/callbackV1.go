@@ -1,14 +1,11 @@
-package TtsSdkv1
+package service
 
 /*
-#cgo CFLAGS: -I../include
-#cgo LDFLAGS: -L../lib_interface -lCmTts
 #include <stdio.h>
 #include <stdlib.h>
 #include "ActionSynthesizer.h"
 #include "AnimationDef.h"
 #include "MouthShape.h"
-// #include "ExpressionDef.h"
 */
 import "C"
 import (
@@ -51,7 +48,7 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 		}
 		object.ParamMap = make(map[string]interface{})
 	}
-	sendResp(object, response)
+	sendRespV1(object, response)
 
 }
 
@@ -76,7 +73,7 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 		Error:  err,
 	}
 
-	sendResp(object, response)
+	sendRespV1(object, response)
 	close(object.BackChan)
 
 }
@@ -139,7 +136,7 @@ func goOnFacialExpressionV1(pUserData unsafe.Pointer, expression *C.FacialExpres
 	}
 }
 
-func sendResp(object *data.HandlerObjectV1, response v1.TtsRes) {
+func sendRespV1(object *data.HandlerObjectV1, response v1.TtsRes) {
 	if object != nil && object.BackChan != nil {
 		object.BackChan <- response
 	}

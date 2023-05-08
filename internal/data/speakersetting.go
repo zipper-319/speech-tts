@@ -42,7 +42,8 @@ type SpeakerInfo struct {
 type HandlerObject struct {
 	context.Context
 	SpeakerInfo
-	ParamMap map[string]interface{}
+	ParamMap      map[string]interface{}
+	IsInterrupted bool
 }
 
 type HandlerObjectV2 struct {

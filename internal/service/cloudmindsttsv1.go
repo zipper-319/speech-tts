@@ -45,6 +45,7 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	for response := range object.BackChan {
 		err := conn.Send(&response)
 		if err != nil {
+			object.IsInterrupted = true
 			return err
 		}
 	}

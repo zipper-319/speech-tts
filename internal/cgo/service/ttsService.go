@@ -154,7 +154,7 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, object *data.HandlerObject
 	sdkSettings.speaker = C.CString(req.ParameterSpeakerName)
 	defer C.free(unsafe.Pointer(sdkSettings.speaker))
 	sdkSettings.speed = C.CString(req.Speed)
-	defer C.free(unsafe.Pointer(sdkSettings.sdkSettings))
+	defer C.free(unsafe.Pointer(sdkSettings.speed))
 	sdkSettings.volume = C.CString(req.Volume)
 	defer C.free(unsafe.Pointer(sdkSettings.volume))
 	sdkSettings.pitch = C.CString(req.Pitch)

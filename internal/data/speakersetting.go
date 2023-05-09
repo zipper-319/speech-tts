@@ -59,7 +59,8 @@ type HandlerObjectV1 struct {
 func NewSpeakerSetting(path string) (*SpeakerSetting, error) {
 	var speakerSetting SpeakerSetting
 	viper.AddConfigPath(path)
-	viper.SetConfigName("speaker")
+	viper.SetConfigName("config")
+	viper.SetConfigType("json")
 	err := viper.ReadInConfig()
 	if err != nil {
 		return nil, err

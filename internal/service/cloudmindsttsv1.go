@@ -38,7 +38,7 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	if v, exists := utils.SpeakerMap[strings.ToLower(req.ParameterSpeakerName)]; exists {
 		req.ParameterSpeakerName = v
 	}
-	object := s.uc.GeneHandlerObjectV1(ctx, req.ParameterSpeakerName)
+	object := s.uc.GeneHandlerObjectV1(ctx, req.ParameterSpeakerName, s.log)
 	if err := s.uc.CallTTSServiceV1(req, object); err != nil {
 		return err
 	}

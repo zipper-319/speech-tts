@@ -1,6 +1,9 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/middleware/metrics"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
 	"speech-tts/internal/conf"
@@ -16,6 +19,10 @@ func NewHTTPServer(c *conf.Server, tts *service.CloudMindsTTSService, ttsV1 *ser
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			tracing.Server(),
+			metrics.Server(),
+			server(logger, c.Grpc.Timeout.Seconds*1000),
+			validate.Validator(),
 		),
 	}
 	if c.Http.Network != "" {

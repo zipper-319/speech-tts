@@ -59,6 +59,7 @@ import "C"
 import (
 	"context"
 	"errors"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
@@ -227,7 +228,7 @@ func (t *TTSService) GeneHandlerObjectV2(ctx context.Context, speaker string) *d
 	}
 }
 
-func (t *TTSService) GeneHandlerObjectV1(ctx context.Context, speaker string) *data.HandlerObjectV1 {
+func (t *TTSService) GeneHandlerObjectV1(ctx context.Context, speaker string, logger *log.Helper) *data.HandlerObjectV1 {
 	backChan := make(chan v1.TtsRes, 10)
 	paramMap := make(map[string]interface{})
 	return &data.HandlerObjectV1{
@@ -237,6 +238,7 @@ func (t *TTSService) GeneHandlerObjectV1(ctx context.Context, speaker string) *d
 				ParameterSpeakerName: speaker,
 			},
 			ParamMap: paramMap,
+			Log:      logger,
 		},
 		BackChan: backChan,
 	}

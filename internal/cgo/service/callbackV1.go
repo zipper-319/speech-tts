@@ -16,7 +16,8 @@ import (
 
 //export goOnStartV1
 func goOnStartV1(pUserData unsafe.Pointer) {
-	// todo: 这里start我先把它屏蔽了
+	object := (*data.HandlerObjectV1)(pUserData)
+	object.Log.Infof("enter to OnAudioV1")
 	return
 }
 
@@ -26,8 +27,8 @@ func goOnStartV1(pUserData unsafe.Pointer) {
 
 //export goOnAudioV1
 func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
-
 	object := (*data.HandlerObjectV1)(pUserData)
+	object.Log.Infof("start to OnAudioV1")
 	response := v1.TtsRes{
 		Pcm:    C.GoBytes(unsafe.Pointer(dataAudio), len),
 		Status: v1.PcmStatus_STATUS_MID,
@@ -49,7 +50,7 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 		object.ParamMap = make(map[string]interface{})
 	}
 	sendRespV1(object, response)
-
+	object.Log.Infof("end to OnAudioV1")
 }
 
 /**
@@ -59,6 +60,7 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 //export goOnEndV1
 func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 	object := (*data.HandlerObjectV1)(pUserData)
+	object.Log.Infof("start to OnEndV1")
 	var err v1.TtsErr
 
 	if flag == 0 {
@@ -75,7 +77,7 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 
 	sendRespV1(object, response)
 	close(object.BackChan)
-
+	object.Log.Infof("end to OnEndV1")
 }
 
 //export goOnDebugV1

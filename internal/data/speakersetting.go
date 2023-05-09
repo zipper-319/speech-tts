@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/spf13/viper"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
@@ -44,6 +45,7 @@ type HandlerObject struct {
 	SpeakerInfo
 	ParamMap      map[string]interface{}
 	IsInterrupted bool
+	Log           *log.Helper
 }
 
 type HandlerObjectV2 struct {

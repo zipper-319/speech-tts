@@ -1,9 +1,13 @@
-FROM golang:1.16 AS builder
+FROM golang:1.17 AS builder
 
 COPY . /src
 WORKDIR /src
 
-RUN GOPROXY=https://goproxy.cn make build
+RUN apt upgrade &&\
+    apt install -d libcurl3 -y
+
+
+RUN bash build.sh
 
 FROM debian:stable-slim
 

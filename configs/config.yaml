@@ -15,3 +15,20 @@ data:
     write_timeout: 0.2s
   app:
     path: ./res
+  otel:
+    addr: 172.16.24.200:32672
+    name: speech.tts
+
+log:
+  root_path: runtime/
+  save_path: logs/
+  save_filename: log
+  time_format: 2006-01-02
+  max_size: 50
+  max_backups: 10
+  max_days: 30
+  compress: false
+  json_format: true
+  show_line: true
+  log_in_console: true
+  level: debug

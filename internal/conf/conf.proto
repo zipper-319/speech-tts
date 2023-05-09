@@ -8,6 +8,7 @@ import "google/protobuf/duration.proto";
 message Bootstrap {
   Server server = 1;
   Data data = 2;
+  Log log = 3;
 }
 
 message Server {
@@ -39,7 +40,27 @@ message Data {
   message App {
     string path = 1;
   }
+  message Otel {
+    string addr = 1;
+    string name = 2;
+  }
   Database database = 1;
   Redis redis = 2;
   App   app = 3;
+  Otel  otel = 4;
+}
+
+message Log {
+  string root_path = 1;
+  string save_path = 2;
+  string save_filename = 3;
+  string time_format = 4;
+  int32 max_size = 5;
+  int32 max_backups = 6;
+  bool compress = 7;
+  bool json_format = 8;
+  bool show_line = 9;
+  bool log_in_console= 10;
+  string level = 11;
+  int32 max_days = 12;
 }

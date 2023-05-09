@@ -22,6 +22,7 @@ go.work
 *.a
 *.so
 *.so.*
+res
 
 # OS General
 Thumbs.db

@@ -15,7 +15,6 @@ export GODEBUG=cgocheck=0
 export dataServiceEnv=172.16.23.15:31637
 
 
-go mod tidy -compat=1.17
 go mod download
 go mod verify
 mkdir -p bin/

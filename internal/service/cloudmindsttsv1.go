@@ -2,8 +2,12 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"speech-tts/internal/cgo/service"
+	"speech-tts/internal/trace"
 	"speech-tts/internal/utils"
 	"strings"
 
@@ -25,6 +29,7 @@ func NewCloudMindsTTSServiceV1(logger log.Logger, uc *service.TTSService) *Cloud
 
 func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallServer) error {
 	ctx := context.Background()
+	spanCtx, span := trace.NewTraceSpan(ctx, "TTSService v1 call")
 
 	if req.ParameterSpeakerName == "" {
 		for _, speaker := range s.uc.SupportedSpeaker {
@@ -38,14 +43,25 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	if v, exists := utils.SpeakerMap[strings.ToLower(req.ParameterSpeakerName)]; exists {
 		req.ParameterSpeakerName = v
 	}
-	object := s.uc.GeneHandlerObjectV1(ctx, req.ParameterSpeakerName, s.log)
+
+	span.SetAttributes(attribute.Key("speakerName").String(req.ParameterSpeakerName))
+	span.SetAttributes(attribute.Key("traceId").String(req.TraceId))
+	span.SetAttributes(attribute.Key("rootTraceId").String(req.RootTraceId))
+	span.SetAttributes(attribute.Key("text").String(req.Text))
+	defer span.End()
+
+	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, s.log)
 	if err := s.uc.CallTTSServiceV1(req, object); err != nil {
 		return err
 	}
 	for response := range object.BackChan {
+		span.SetAttributes(attribute.Key("response.audioPcm.len").Int(len(response.Pcm)))
+		span.SetAttributes(attribute.Key("response.status").Int(int(response.Status)))
 		err := conn.Send(&response)
 		if err != nil {
+			span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))
 			object.IsInterrupted = true
+			span.SetAttributes(attribute.Key("IsInterrupted").Bool(object.IsInterrupted))
 			return err
 		}
 	}

@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"os"
-	Mylog "speech-tts/internal/log"
-
 	"speech-tts/internal/conf"
+	Mylog "speech-tts/internal/log"
+	"speech-tts/internal/trace"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -31,6 +31,7 @@ var (
 
 func init() {
 	flag.StringVar(&flagconf, "conf", "./configs", "config path, eg: -conf config.yaml")
+
 }
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
@@ -67,6 +68,7 @@ func main() {
 
 	myLogger := Mylog.NewLogger(bc.Log)
 	myLogger.SetLogger()
+	trace.InitTracer(bc.Data.Otel.Addr, bc.Data.Otel.Name)
 
 	app, cleanup, err := wireApp(bc.Server, bc.Data.App.Path, myLogger.GetLogger())
 	if err != nil {

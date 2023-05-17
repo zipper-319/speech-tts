@@ -2,17 +2,16 @@ package main
 
 import (
 	"flag"
-	"os"
-	"speech-tts/internal/conf"
-	Mylog "speech-tts/internal/log"
-	"speech-tts/internal/trace"
-
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"os"
+	"speech-tts/internal/conf"
+	"speech-tts/internal/pkg/log"
+	"speech-tts/internal/pkg/trace"
 
 	_ "go.uber.org/automaxprocs"
 )

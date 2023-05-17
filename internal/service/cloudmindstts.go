@@ -7,7 +7,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"speech-tts/internal/cgo/service"
-	"speech-tts/internal/trace"
+	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
 	"strings"
 
@@ -45,7 +45,7 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	}
 	for response := range object.BackChan {
 		if response.ResultOneof != nil {
-			if audio,ok :=response.ResultOneof.(*pb.TtsRes_SynthesizedAudio); ok {
+			if audio, ok := response.ResultOneof.(*pb.TtsRes_SynthesizedAudio); ok {
 				span.SetAttributes(attribute.Key("response.audioPcm.len").Int(len(audio.SynthesizedAudio.Pcm)))
 				span.SetAttributes(attribute.Key("audio.IsPunctuation").Int(int(audio.SynthesizedAudio.IsPunctuation)))
 			}

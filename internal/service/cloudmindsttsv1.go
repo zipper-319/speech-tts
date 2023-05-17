@@ -7,7 +7,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"speech-tts/internal/cgo/service"
-	"speech-tts/internal/trace"
+	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
 	"strings"
 
@@ -51,6 +51,7 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	defer span.End()
 
 	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, s.log)
+
 	if err := s.uc.CallTTSServiceV1(req, object); err != nil {
 		return err
 	}

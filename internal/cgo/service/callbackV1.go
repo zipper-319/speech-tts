@@ -9,17 +9,19 @@ package service
 */
 import "C"
 import (
-	"log"
 	v1 "speech-tts/api/tts/v1"
 	"speech-tts/internal/data"
+	"speech-tts/internal/pkg/pointer"
 	"unsafe"
 )
 
 //export goOnStartV1
 func goOnStartV1(pUserData unsafe.Pointer) {
-	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
-	log.Println("start to goOnStartV1")
-	object := (*data.HandlerObjectV1)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV1)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Infof("enter to OnAudioV1")
 	return
 }
@@ -30,8 +32,12 @@ func goOnStartV1(pUserData unsafe.Pointer) {
 
 //export goOnAudioV1
 func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
-	log.Println("start to goOnAudioV1")
-	object := (*data.HandlerObjectV1)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV1)
+	if !ok {
+		panic("irregularity type")
+	}
+
 	object.Log.Infof("start to OnAudioV1")
 	response := v1.TtsRes{
 		Pcm:    C.GoBytes(unsafe.Pointer(dataAudio), len),
@@ -63,9 +69,13 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 
 //export goOnEndV1
 func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
-	log.Println("start to goOnEndV1")
-	object := (*data.HandlerObjectV1)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV1)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Infof("start to OnEndV1")
+
 	var err v1.TtsErr
 
 	if flag == 0 {

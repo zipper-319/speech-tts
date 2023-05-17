@@ -64,6 +64,7 @@ import (
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
 	"speech-tts/internal/data"
+	"speech-tts/internal/pkg/pointer"
 	"strings"
 	"unsafe"
 )
@@ -199,12 +200,13 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, object *data.HandlerObject
 		setting.digitalPerson = C.CString("SweetGirl")
 	}
 	defer C.free(unsafe.Pointer(setting.digitalPerson))
+	userData := pointer.Save(object)
 
 	id := C.ActionSynthesizer_SynthesizeAction_V1(
 		C.CString(req.Text),
 		&setting,
 		getCallbackV1(),
-		unsafe.Pointer(object),
+		userData,
 		C.CString(req.RootTraceId+"_"+req.TraceId),
 	)
 	if id < 0 {

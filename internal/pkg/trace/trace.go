@@ -11,7 +11,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"os"
-	mylog "speech-tts/internal/log"
+	mylog "speech-tts/internal/pkg/log"
 )
 
 type Tracer struct {
@@ -78,4 +78,3 @@ func NewTraceSpan(ctx context.Context, spanName string) (context.Context, trace.
 	tracer := otel.Tracer(serviceName)
 	return tracer.Start(ctx, spanName, trace.WithSpanKind(trace.SpanKindInternal))
 }
-

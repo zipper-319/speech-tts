@@ -8,7 +8,7 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
-	addr := "172.16.23.31:31349"
+	addr := "127.0.0.1:9000"
 	text := "成都今天的天气"
 	speaker := "DaXiaoFang"
 	wg := sync.WaitGroup{}

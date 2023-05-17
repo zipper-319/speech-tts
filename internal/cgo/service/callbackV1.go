@@ -9,6 +9,7 @@ package service
 */
 import "C"
 import (
+	"log"
 	v1 "speech-tts/api/tts/v1"
 	"speech-tts/internal/data"
 	"speech-tts/internal/pkg/pointer"
@@ -32,6 +33,7 @@ func goOnStartV1(pUserData unsafe.Pointer) {
 
 //export goOnAudioV1
 func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
+	log.Println("____________start to goOnAudioV1--------------")
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {

@@ -43,6 +43,7 @@ func main() {
 		if err := ttsService.CallTTSServiceV1(req, userData); err != nil {
 			panic(err)
 		}
+		log.NewHelper(logger).Info("---------end to CallTTSServiceV1-----------")
 		for response := range object.BackChan {
 			log.Info(response)
 		}
@@ -61,7 +62,7 @@ func main() {
 		//TTSEnd:
 		//time.Sleep(200 * time.Millisecond)
 		pointer.Unref(userData)
-		log.NewHelper(logger).Info("pUserData-------------object", unsafe.Pointer(object))
+		log.NewHelper(logger).Info("--------finish to call ---------", unsafe.Pointer(object))
 		i += 1
 		log.NewHelper(logger).Infof("finish %d time; cost:%dms", i, time.Since(now).Milliseconds())
 	}

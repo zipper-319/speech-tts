@@ -104,7 +104,12 @@ func goOnDebugV1(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 
 //export goOnTimedMouthShapeV1
 func goOnTimedMouthShapeV1(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, size C.int, text *C.char) {
-	object := (*data.HandlerObjectV1)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV1)
+	if !ok {
+		panic("irregularity type")
+	}
+	object.Log.Infof("start to goOnTimedMouthShapeV1")
 
 	var mouthShapes = make([]*v1.TimedMouthShape, int32(size))
 	for i := 0; i < int(size); i++ {
@@ -120,21 +125,33 @@ func goOnTimedMouthShapeV1(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, s
 	} else {
 		object.ParamMap["mouths"] = mouthShapes
 	}
+	object.Log.Infof("end to goOnTimedMouthShapeV1")
 }
 
 //export goOnCurTextSegmentV1
 func goOnCurTextSegmentV1(pUserData unsafe.Pointer, normalizedText *C.char, originalText *C.char) {
-	object := (*data.HandlerObjectV1)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV1)
+	if !ok {
+		panic("irregularity type")
+	}
+	object.Log.Infof("start to goOnCurTextSegmentV1")
 
 	if object.ParamMap != nil {
 		object.ParamMap["normalizedText"] = C.GoString(normalizedText)
 		object.ParamMap["originalText"] = C.GoString(originalText)
 	}
+	object.Log.Infof("end to goOnCurTextSegmentV1")
 }
 
 //export goOnFacialExpressionV1
 func goOnFacialExpressionV1(pUserData unsafe.Pointer, expression *C.FacialExpression) {
-	object := (*data.HandlerObjectV1)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV1)
+	if !ok {
+		panic("irregularity type")
+	}
+	object.Log.Infof("start to goOnFacialExpressionV1")
 
 	frameSize := uint64(expression.frame_size)
 	frameDim := uint64(expression.frame_dim)
@@ -153,6 +170,7 @@ func goOnFacialExpressionV1(pUserData unsafe.Pointer, expression *C.FacialExpres
 			FrameTime: float32(expression.frame_time),
 		}
 	}
+	object.Log.Infof("end to goOnFacialExpressionV1")
 }
 
 func sendRespV1(object *data.HandlerObjectV1, response v1.TtsRes) {

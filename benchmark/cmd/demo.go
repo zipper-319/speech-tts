@@ -45,7 +45,7 @@ func main() {
 		}
 		log.NewHelper(logger).Info("---------end to CallTTSServiceV1-----------")
 		for response := range object.BackChan {
-			log.Info(response)
+			log.NewHelper(logger).Infof("response: status:%d; pcm length:%d;", response.Status, len(response.Pcm))
 		}
 		//	for {
 		//		select {

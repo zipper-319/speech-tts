@@ -9,6 +9,7 @@ import (
 	v1 "speech-tts/api/tts/v1"
 	"speech-tts/internal/cgo/service"
 	"speech-tts/internal/data"
+	"speech-tts/internal/pkg/pointer"
 	"strconv"
 	"time"
 	"unsafe"
@@ -38,7 +39,8 @@ func main() {
 			Text:    text,
 			TraceId: strconv.Itoa(i),
 		}
-		if err := ttsService.CallTTSServiceV1(req, object); err != nil {
+		userData := pointer.Save(object)
+		if err := ttsService.CallTTSServiceV1(req, userData); err != nil {
 			panic(err)
 		}
 		for response := range object.BackChan {
@@ -58,7 +60,7 @@ func main() {
 		//	}
 		//TTSEnd:
 		//time.Sleep(200 * time.Millisecond)
-
+		pointer.Unref(userData)
 		log.NewHelper(logger).Info("pUserData-------------object", unsafe.Pointer(object))
 		i += 1
 		log.NewHelper(logger).Infof("finish %d time; cost:%dms", i, time.Since(now).Milliseconds())

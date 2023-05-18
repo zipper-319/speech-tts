@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
 	"sync"
@@ -35,19 +36,22 @@ func GetGrpcConn(addr string, ctx context.Context) (*grpc.ClientConn, error) {
 }
 
 func TestTTSV1(addr, text, speaker string) error {
-	ctx := context.Background()
+	md := metadata.Pairs(
+		"authorization", "Bearer some-secret-token",
+	)
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	now := time.Now()
 	conn, err := GetGrpcConn(addr, ctx)
 	if err != nil {
 		return err
 	}
-	ttsV1Clinet := v1.NewCloudMindsTTSClient(conn)
+	ttsV1Client := v1.NewCloudMindsTTSClient(conn)
 	req := &v1.TtsReq{
 		Text: text,
 		//ParameterSpeakerName: speaker,
 	}
 
-	response, err := ttsV1Clinet.Call(ctx, req)
+	response, err := ttsV1Client.Call(ctx, req)
 	if err != nil {
 		log.Error(err)
 	}

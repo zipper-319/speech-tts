@@ -8,7 +8,13 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/google/wire"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"reflect"
+	"runtime/debug"
+	"strings"
 	"time"
 )
 
@@ -81,4 +87,71 @@ func extractError(err error) (log.Level, string) {
 		return log.LevelError, fmt.Sprintf("%+v", err)
 	}
 	return log.LevelInfo, ""
+}
+
+// wrappedStream wraps around the embedded grpc.ServerStream,and intercepts the RecvMsg and SendMsg method call.
+// SendMsg method call.
+type wrappedStream struct {
+	grpc.ServerStream
+	log.Logger
+	firstTime time.Time
+	sendTimes int
+}
+
+func (w *wrappedStream) RecvMsg(m interface{}) error {
+	log.NewHelper(w.Logger).Infof("Receive a message (Type: %T) after %dms", m, time.Since(w.firstTime).Milliseconds())
+	return w.ServerStream.RecvMsg(m)
+}
+
+func (w *wrappedStream) SendMsg(m interface{}) error {
+	w.sendTimes += 1
+	log.NewHelper(w.Logger).Infof("Send %d message (Type: %T) after %dms", w.sendTimes, m, time.Since(w.firstTime).Milliseconds())
+	return w.ServerStream.SendMsg(m)
+}
+
+func newWrappedStream(s grpc.ServerStream, logger log.Logger) grpc.ServerStream {
+	return &wrappedStream{
+		ServerStream: s,
+		Logger:       logger,
+		firstTime:    time.Now(),
+	}
+}
+
+// valid validates the authorization
+func valid(authorization []string) bool {
+	if len(authorization) < 1 {
+		return false
+	}
+	token := strings.TrimPrefix(authorization[0], "Bearer ")
+	//Perform the token validation here.For the sake of this example,the code
+	//here forgoes any of usual OAuth2 token validation and instead checks for
+	// for token matching an arbitrary string.
+	return token == "some-secret-token"
+}
+
+func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
+	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		// authentication (token verification)
+		log.NewHelper(logger).Infof("FullMethod:%s", info.FullMethod)
+		var err error
+		defer func() {
+			if e := recover(); e != nil {
+				debug.PrintStack()
+				err = status.Errorf(codes.Internal, "Panic err: %v", e)
+			}
+		}()
+		md, ok := metadata.FromIncomingContext(ss.Context())
+		if !ok {
+			return status.Errorf(codes.Internal, "from incoming context err")
+		}
+		if !valid(md["authorization"]) {
+			return status.Errorf(codes.InvalidArgument, "authorization err")
+		}
+
+		err = handler(srv, newWrappedStream(ss, logger))
+		if err != nil {
+			log.NewHelper(logger).Infof("RPC failed with error %v", err)
+		}
+		return err
+	}
 }

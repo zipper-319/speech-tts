@@ -70,6 +70,10 @@ import (
 
 var ProviderSet = wire.NewSet(NewTTSService)
 
+var (
+	actionCallback = C.ActionCallback{}
+	ttsCallback    = C.TTS_Callback{}
+)
 
 // GetSDKVersion 获取sdk的版本
 func GetSDKVersion() string {
@@ -81,21 +85,16 @@ func GetResServiceVersion() string {
 	return C.GoString(C.ActionSynthesizer_GetResServiceVersion())
 }
 
-func getCallbackV2() *C.ActionCallback {
-	callback := C.ActionCallback{}
-	callback.onStart = C.typOnStart(C.goOnStart)
-	callback.onSynthesizedData = C.typOnSynthesizedData(C.goOnSynthesizedData)
-	callback.onEnd = C.typOnEnd(C.goOnEnd)
-	callback.onDebug = C.typOnDebug(C.goOnDebug)
-	callback.onTimedMouthShape = C.typOnTimedMouthShape(C.goOnTimedMouthShape)
-	callback.onFacialExpression = C.typOnFacialExpression(C.goOnFacialExpression)
-	callback.onBodyMovement = C.typOnBodyMovement(C.goOnBodyMovement)
-	callback.onActionElement = C.typOnActionElement(C.goOnActionElement)
-	return &callback
-}
+func init() {
 
-func getCallbackV1() *C.TTS_Callback{
-	var ttsCallback = C.TTS_Callback{}
+	actionCallback.onStart = C.typOnStart(C.goOnStart)
+	actionCallback.onSynthesizedData = C.typOnSynthesizedData(C.goOnSynthesizedData)
+	actionCallback.onEnd = C.typOnEnd(C.goOnEnd)
+	actionCallback.onDebug = C.typOnDebug(C.goOnDebug)
+	actionCallback.onTimedMouthShape = C.typOnTimedMouthShape(C.goOnTimedMouthShape)
+	actionCallback.onFacialExpression = C.typOnFacialExpression(C.goOnFacialExpression)
+	actionCallback.onBodyMovement = C.typOnBodyMovement(C.goOnBodyMovement)
+	actionCallback.onActionElement = C.typOnActionElement(C.goOnActionElement)
 
 	ttsCallback.onStart = C.typOnStartV1(C.goOnStartV1)
 	ttsCallback.onAudio = C.typOnAudioV1(C.goOnAudioV1)
@@ -105,7 +104,6 @@ func getCallbackV1() *C.TTS_Callback{
 	ttsCallback.onCurTextSegment = C.typOnCurTextSegmentV1(C.goOnCurTextSegmentV1)
 	ttsCallback.onFacialExpression = C.typOnFacialExpressionV1(C.goOnFacialExpressionV1)
 
-	return &ttsCallback
 }
 
 type TTSService struct {
@@ -171,7 +169,7 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, object *data.HandlerObject
 	id := C.ActionSynthesizer_SynthesizeAction(
 		C.CString(req.Text),
 		&sdkSettings,
-		getCallbackV2(),
+		&actionCallback,
 		unsafe.Pointer(object),
 		C.CString(req.RootTraceId+"_"+req.TraceId))
 
@@ -206,7 +204,7 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 	id := C.ActionSynthesizer_SynthesizeAction_V1(
 		C.CString(req.Text),
 		&setting,
-		getCallbackV1(),
+		&ttsCallback,
 		pUserData,
 		C.CString(req.RootTraceId+"_"+req.TraceId),
 	)

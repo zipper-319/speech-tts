@@ -39,6 +39,9 @@
   
     - [CloudMindsTTS](#ttsschema-CloudMindsTTS)
   
+- [tts/error/error_reason.proto](#tts_error_error_reason-proto)
+    - [ErrorReason](#ttsErr-ErrorReason)
+  
 - [tts/v1/schema.proto](#tts_v1_schema-proto)
     - [Expression](#schema-Expression)
     - [MixTtsReq](#schema-MixTtsReq)
@@ -554,6 +557,36 @@ Action基元数据
 | Call | [TtsReq](#ttsschema-TtsReq) | [TtsRes](#ttsschema-TtsRes) stream |  |
 | GetVersion | [VerVersionReq](#ttsschema-VerVersionReq) | [VerVersionRsp](#ttsschema-VerVersionRsp) |  |
 | GetTtsConfig | [VerReq](#ttsschema-VerReq) | [RespGetTtsConfig](#ttsschema-RespGetTtsConfig) |  |
+
+ 
+
+
+
+<a name="tts_error_error_reason-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## tts/error/error_reason.proto
+
+
+ 
+
+
+<a name="ttsErr-ErrorReason"></a>
+
+### ErrorReason
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| GREETER_UNSPECIFIED | 0 |  |
+| USER_NOT_FOUND | 1 |  |
+| INVALID_IDENTITY | 2 |  |
+| INVALID_TOKEN | 3 |  |
+
+
+ 
+
+ 
 
  
 

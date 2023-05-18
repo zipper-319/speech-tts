@@ -24,7 +24,7 @@ func NewGRPCServer(c *conf.Server, tts *service.CloudMindsTTSService, ttsV1 *ser
 			server(logger, c.Grpc.Timeout.Seconds*1000),
 			validate.Validator(),
 		),
-		grpc.StreamInterceptor(),
+		grpc.StreamInterceptor(streamInterceptor(logger)),
 	}
 	if c.Grpc.Network != "" {
 		opts = append(opts, grpc.Network(c.Grpc.Network))

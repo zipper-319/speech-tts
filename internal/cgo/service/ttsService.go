@@ -69,7 +69,7 @@ import (
 )
 
 var ProviderSet = wire.NewSet(NewTTSService)
-var ttsCallback = C.TTS_Callback{}
+
 
 // GetSDKVersion 获取sdk的版本
 func GetSDKVersion() string {
@@ -94,7 +94,8 @@ func getCallbackV2() *C.ActionCallback {
 	return &callback
 }
 
-func init() {
+func getCallbackV1() *C.TTS_Callback{
+	var ttsCallback = C.TTS_Callback{}
 
 	ttsCallback.onStart = C.typOnStartV1(C.goOnStartV1)
 	ttsCallback.onAudio = C.typOnAudioV1(C.goOnAudioV1)
@@ -104,6 +105,7 @@ func init() {
 	ttsCallback.onCurTextSegment = C.typOnCurTextSegmentV1(C.goOnCurTextSegmentV1)
 	ttsCallback.onFacialExpression = C.typOnFacialExpressionV1(C.goOnFacialExpressionV1)
 
+	return &ttsCallback
 }
 
 type TTSService struct {
@@ -204,7 +206,7 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 	id := C.ActionSynthesizer_SynthesizeAction_V1(
 		C.CString(req.Text),
 		&setting,
-		&ttsCallback,
+		getCallbackV1(),
 		pUserData,
 		C.CString(req.RootTraceId+"_"+req.TraceId),
 	)

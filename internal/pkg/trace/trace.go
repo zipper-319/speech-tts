@@ -74,7 +74,10 @@ func InitTracer(addr, name string) func(context.Context) error {
 	return tp.Shutdown
 }
 
-func NewTraceSpan(ctx context.Context, spanName string) (context.Context, trace.Span) {
+func NewTraceSpan(ctx context.Context, spanName string, carrier propagation.TextMapCarrier) (context.Context, trace.Span) {
+	if carrier != nil {
+		ctx = otel.GetTextMapPropagator().Extract(ctx, carrier)
+	}
 	tracer := otel.Tracer(serviceName)
 	return tracer.Start(ctx, spanName, trace.WithSpanKind(trace.SpanKindInternal))
 }

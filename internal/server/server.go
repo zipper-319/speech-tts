@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 	"reflect"
 	"runtime/debug"
+	"speech-tts/internal/pkg/trace"
 	"strings"
 	"time"
 )
@@ -92,10 +93,15 @@ func extractError(err error) (log.Level, string) {
 // wrappedStream wraps around the embedded grpc.ServerStream,and intercepts the RecvMsg and SendMsg method call.
 // SendMsg method call.
 type wrappedStream struct {
+	ctx context.Context
 	grpc.ServerStream
 	log.Logger
 	firstTime time.Time
 	sendTimes int
+}
+
+func (w *wrappedStream) Context() context.Context {
+	return w.ctx
 }
 
 func (w *wrappedStream) RecvMsg(m interface{}) error {
@@ -109,11 +115,13 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	return w.ServerStream.SendMsg(m)
 }
 
-func newWrappedStream(s grpc.ServerStream, logger log.Logger) grpc.ServerStream {
+func newWrappedStream(s grpc.ServerStream, logger log.Logger, ctx context.Context) grpc.ServerStream {
 	return &wrappedStream{
+		ctx:          ctx,
 		ServerStream: s,
 		Logger:       logger,
 		firstTime:    time.Now(),
+		sendTimes:    0,
 	}
 }
 
@@ -132,23 +140,38 @@ func valid(authorization []string) bool {
 func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		// authentication (token verification)
-		log.NewHelper(logger).Infof("FullMethod:%s", info.FullMethod)
 		var err error
+		fullMethod := info.FullMethod
+		now := time.Now()
+		log.NewHelper(logger).Infof("--------------FullMethod:%s---------", fullMethod)
 		defer func() {
 			if e := recover(); e != nil {
 				debug.PrintStack()
 				err = status.Errorf(codes.Internal, "Panic err: %v", e)
 			}
+			log.NewHelper(logger).Infof("FullMethod:%s; cost:%ds", fullMethod, time.Since(now).Seconds())
 		}()
-		md, ok := metadata.FromIncomingContext(ss.Context())
+
+		ctx := ss.Context()
+
+		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
 			return status.Errorf(codes.Internal, "from incoming context err")
 		}
+		tr, ok := transport.FromServerContext(ctx)
+
+		if ok {
+
+			spanCtx, span := trace.NewTraceSpan(ctx, fmt.Sprintf("TTSService %s call", fullMethod), tr.RequestHeader())
+			ctx = spanCtx
+			defer span.End()
+		}
+
 		if !valid(md["authorization"]) {
 			return status.Errorf(codes.InvalidArgument, "authorization err")
 		}
 
-		err = handler(srv, newWrappedStream(ss, logger))
+		err = handler(srv, newWrappedStream(ss, logger, ctx))
 		if err != nil {
 			log.NewHelper(logger).Infof("RPC failed with error %v", err)
 		}

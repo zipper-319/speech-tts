@@ -29,7 +29,7 @@ func NewCloudMindsTTSService(logger log.Logger, uc *service.TTSService) *CloudMi
 
 func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallServer) error {
 	ctx := context.Background()
-	spanCtx, span := trace.NewTraceSpan(ctx, "TTSService v1 call")
+	spanCtx, span := trace.NewTraceSpan(ctx, "TTSService v1 call", nil)
 
 	if v, exists := utils.SpeakerMap[strings.ToLower(req.ParameterSpeakerName)]; exists {
 		req.ParameterSpeakerName = v

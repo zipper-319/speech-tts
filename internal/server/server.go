@@ -14,7 +14,6 @@ import (
 	"google.golang.org/grpc/status"
 	"reflect"
 	"runtime/debug"
-	v1 "speech-tts/api/tts/v1"
 	"speech-tts/internal/pkg/trace"
 	"strings"
 	"time"
@@ -111,15 +110,7 @@ type validator interface {
 
 func (w *wrappedStream) RecvMsg(m interface{}) error {
 	log.NewHelper(w.Logger).Infof("Receive a message (Type: %T) after %dms", m, time.Since(w.firstTime).Milliseconds())
-	if req, ok := m.(*v1.TtsReq); ok {
-		//if v, ok := m.(validator); ok {
-		//	if err := v.Validate(); err != nil {
-		//		return status.Errorf(codes.InvalidArgument, "Panic err: %v", err)
-		//	}
-		//}
-		log.NewHelper(w.Logger).Infof("Receive tts call req: %v", req)
-	}
-
+	println("ttsReq: ", m)
 	return w.ServerStream.RecvMsg(m)
 }
 
@@ -175,7 +166,7 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 		tr, ok := transport.FromServerContext(ctx)
 
 		if ok {
-
+			log.NewHelper(logger).Infof(fmt.Sprintf("************TTSService %s call******", fullMethod))
 			spanCtx, span := trace.NewTraceSpan(ctx, fmt.Sprintf("TTSService %s call", fullMethod), tr.RequestHeader())
 			ctx = spanCtx
 			defer span.End()

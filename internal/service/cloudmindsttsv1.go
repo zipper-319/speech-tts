@@ -29,8 +29,8 @@ func NewCloudMindsTTSServiceV1(logger log.Logger, uc *service.TTSService) *Cloud
 }
 
 func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallServer) error {
-	ctx := context.Background()
-	spanCtx, span := trace.NewTraceSpan(ctx, "TTSService v1 call", nil)
+
+	spanCtx, span := trace.NewTraceSpan(conn.Context(), "TTSService v1 call", nil)
 
 	if req.ParameterSpeakerName == "" {
 		for _, speaker := range s.uc.SupportedSpeaker {

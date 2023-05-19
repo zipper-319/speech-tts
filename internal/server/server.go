@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 	"reflect"
 	"runtime/debug"
+	v1 "speech-tts/api/tts/v1"
 	"speech-tts/internal/pkg/trace"
 	"strings"
 	"time"
@@ -110,7 +111,14 @@ type validator interface {
 
 func (w *wrappedStream) RecvMsg(m interface{}) error {
 	log.NewHelper(w.Logger).Infof("Receive a message (Type: %T) after %dms", m, time.Since(w.firstTime).Milliseconds())
-	println("ttsReq: ", m)
+	if req, ok := m.(*v1.TtsReq); ok {
+		//if v, ok := m.(validator); ok {
+		//	if err := v.Validate(); err != nil {
+		//		return status.Errorf(codes.InvalidArgument, "Panic err: %v", err)
+		//	}
+		//}
+		log.NewHelper(w.Logger).Infof("Receive tts call req: text:%s, speaker:%s, traceId:%s, speed:%s", req.Text, req.ParameterSpeakerName, req.TraceId, req.Speed)
+	}
 	return w.ServerStream.RecvMsg(m)
 }
 

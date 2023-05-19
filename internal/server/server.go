@@ -168,7 +168,9 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 		defer func() {
 			span.End()
 			span.SetAttributes(attribute.Key("grpc_code").Int(int(code)))
-			span.SetAttributes(attribute.Key("err").String(err.Error()))
+			if err != nil{
+				span.SetAttributes(attribute.Key("err").String(err.Error()))
+			}
 		}()
 
 		if !valid(tr.RequestHeader().Get("authorization")) {

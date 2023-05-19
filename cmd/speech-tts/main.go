@@ -12,6 +12,7 @@ import (
 	"speech-tts/internal/conf"
 	"speech-tts/internal/pkg/log"
 	"speech-tts/internal/pkg/trace"
+	"syscall"
 
 	_ "go.uber.org/automaxprocs"
 )
@@ -38,6 +39,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 		kratos.ID(id),
 		kratos.Name(Name),
 		kratos.Version(Version),
+		kratos.Signal(syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT, syscall.SIGSEGV),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(

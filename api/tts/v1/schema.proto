@@ -99,10 +99,10 @@ enum pcmStatus {
 
 message TtsReq {
 	string location = 1;						// Cloud 传固定值
-   	string type = 2;							// CloudMinds  传固定值
+	string type = 2;							// CloudMinds  传固定值
 	speakerInfo speaker = 3;					// 具体发音人的id 发音人具体参考
-	string speed = 4;							// 1 2 3 4 5 发音速度 默认3
-	string volume = 5;							// 1 2 3 4 5 发音音量 默认3
+	string speed = 4 [(validate.rules).string.pattern = "^[1-5]?$"];							// 1 2 3 4 5 发音速度 默认3
+	string volume = 5 [(validate.rules).string.pattern = "^[1-5]?$"];							// 1 2 3 4 5 发音音量 默认3
 	string pitch = 6;							// low medium high  音调 默认 medium
 	bool streamEnable = 7;						// 是否流式合成  默认 false
 	string text = 8;							// 具体需要合成的文本

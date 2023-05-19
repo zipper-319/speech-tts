@@ -62,9 +62,27 @@ func (m *TtsReq) validate(all bool) error {
 
 	// no validation rules for Speaker
 
-	// no validation rules for Speed
+	if !_TtsReq_Speed_Pattern.MatchString(m.GetSpeed()) {
+		err := TtsReqValidationError{
+			field:  "Speed",
+			reason: "value does not match regex pattern \"[0-5]\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Volume
+	if !_TtsReq_Volume_Pattern.MatchString(m.GetVolume()) {
+		err := TtsReqValidationError{
+			field:  "Volume",
+			reason: "value does not match regex pattern \"[0-5]\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Pitch
 
@@ -160,6 +178,10 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TtsReqValidationError{}
+
+var _TtsReq_Speed_Pattern = regexp.MustCompile("[0-5]")
+
+var _TtsReq_Volume_Pattern = regexp.MustCompile("[0-5]")
 
 // Validate checks the field values on TtsRes with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

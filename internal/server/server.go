@@ -104,8 +104,17 @@ func (w *wrappedStream) Context() context.Context {
 	return w.ctx
 }
 
+type validator interface {
+	Validate() error
+}
+
 func (w *wrappedStream) RecvMsg(m interface{}) error {
 	log.NewHelper(w.Logger).Infof("Receive a message (Type: %T) after %dms", m, time.Since(w.firstTime).Milliseconds())
+	if v, ok := m.(validator); ok {
+		if err := v.Validate(); err != nil {
+			return status.Errorf(codes.InvalidArgument, "Panic err: invalid argument")
+		}
+	}
 	return w.ServerStream.RecvMsg(m)
 }
 
@@ -143,13 +152,13 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 		var err error
 		fullMethod := info.FullMethod
 		now := time.Now()
-		log.NewHelper(logger).Infof("--------------FullMethod:%s---------", fullMethod)
+		log.NewHelper(logger).Infof("---------------------start FullMethod:%s --------------------", fullMethod)
 		defer func() {
 			if e := recover(); e != nil {
 				debug.PrintStack()
 				err = status.Errorf(codes.Internal, "Panic err: %v", e)
 			}
-			log.NewHelper(logger).Infof("FullMethod:%s; cost:%ds", fullMethod, time.Since(now).Seconds())
+			log.NewHelper(logger).Infof("-----------------------end FullMethod:%s; cost:%.3fs----------------", fullMethod, time.Since(now).Seconds())
 		}()
 
 		ctx := ss.Context()
@@ -171,8 +180,7 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 			return status.Errorf(codes.InvalidArgument, "authorization err")
 		}
 
-		err = handler(srv, newWrappedStream(ss, logger, ctx))
-		if err != nil {
+		if err = handler(srv, newWrappedStream(ss, logger, ctx)); err != nil {
 			log.NewHelper(logger).Infof("RPC failed with error %v", err)
 		}
 		return err

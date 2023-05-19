@@ -112,7 +112,7 @@ func (w *wrappedStream) RecvMsg(m interface{}) error {
 	log.NewHelper(w.Logger).Infof("Receive a message (Type: %T) after %dms", m, time.Since(w.firstTime).Milliseconds())
 	if v, ok := m.(validator); ok {
 		if err := v.Validate(); err != nil {
-			return status.Errorf(codes.InvalidArgument, "Panic err: invalid argument")
+			return status.Errorf(codes.InvalidArgument, "Panic err: %v",err)
 		}
 	}
 	return w.ServerStream.RecvMsg(m)

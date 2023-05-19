@@ -65,7 +65,7 @@ func (m *TtsReq) validate(all bool) error {
 	if !_TtsReq_Speed_Pattern.MatchString(m.GetSpeed()) {
 		err := TtsReqValidationError{
 			field:  "Speed",
-			reason: "value does not match regex pattern \"[0-5]\"",
+			reason: "value does not match regex pattern \"^[1-5]?$\"",
 		}
 		if !all {
 			return err
@@ -76,7 +76,7 @@ func (m *TtsReq) validate(all bool) error {
 	if !_TtsReq_Volume_Pattern.MatchString(m.GetVolume()) {
 		err := TtsReqValidationError{
 			field:  "Volume",
-			reason: "value does not match regex pattern \"[0-5]\"",
+			reason: "value does not match regex pattern \"^[1-5]?$\"",
 		}
 		if !all {
 			return err
@@ -88,7 +88,16 @@ func (m *TtsReq) validate(all bool) error {
 
 	// no validation rules for StreamEnable
 
-	// no validation rules for Text
+	if utf8.RuneCountInString(m.GetText()) < 1 {
+		err := TtsReqValidationError{
+			field:  "Text",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for TextPreHandle
 
@@ -179,9 +188,9 @@ var _ interface {
 	ErrorName() string
 } = TtsReqValidationError{}
 
-var _TtsReq_Speed_Pattern = regexp.MustCompile("[0-5]")
+var _TtsReq_Speed_Pattern = regexp.MustCompile("^[1-5]?$")
 
-var _TtsReq_Volume_Pattern = regexp.MustCompile("[0-5]")
+var _TtsReq_Volume_Pattern = regexp.MustCompile("^[1-5]?$")
 
 // Validate checks the field values on TtsRes with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

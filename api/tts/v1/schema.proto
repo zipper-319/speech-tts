@@ -105,7 +105,7 @@ message TtsReq {
 	string volume = 5 [(validate.rules).string.pattern = "^[1-5]?$"];							// 1 2 3 4 5 发音音量 默认3
 	string pitch = 6;							// low medium high  音调 默认 medium
 	bool streamEnable = 7;						// 是否流式合成  默认 false
-	string text = 8;							// 具体需要合成的文本
+	string text = 8 [(validate.rules).string.min_len = 1];							// 具体需要合成的文本
 	bool textPreHandle = 9;						// 是否需要文本预处理
 	string voiceTuning = 10; 					// voiceTuning开关,传 "on"或者"off"
 	// 情感发音，取值范围["Chat","Angry","Gentle","Cheerful","Serious","General","Affectionate","Lyrical","Newscast","CustomerService"]

@@ -8,13 +8,12 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/google/wire"
+	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"reflect"
 	"runtime/debug"
-	v1 "speech-tts/api/tts/v1"
 	"speech-tts/internal/pkg/trace"
 	"strings"
 	"time"
@@ -110,15 +109,7 @@ type validator interface {
 }
 
 func (w *wrappedStream) RecvMsg(m interface{}) error {
-	log.NewHelper(w.Logger).Infof("Receive a message (Type: %T) after %dms", m, time.Since(w.firstTime).Milliseconds())
-	if req, ok := m.(*v1.TtsReq); ok {
-		//if v, ok := m.(validator); ok {
-		//	if err := v.Validate(); err != nil {
-		//		return status.Errorf(codes.InvalidArgument, "Panic err: %v", err)
-		//	}
-		//}
-		log.NewHelper(w.Logger).Infof("Receive tts call req: text:%s, speaker:%s, traceId:%s, speed:%s", req.Text, req.ParameterSpeakerName, req.TraceId, req.Speed)
-	}
+	//log.NewHelper(w.Logger).Infof("Receive a message (Type: %T) after %dms", m, time.Since(w.firstTime).Milliseconds())
 	return w.ServerStream.RecvMsg(m)
 }
 
@@ -139,11 +130,11 @@ func newWrappedStream(s grpc.ServerStream, logger log.Logger, ctx context.Contex
 }
 
 // valid validates the authorization
-func valid(authorization []string) bool {
+func valid(authorization string) bool {
 	if len(authorization) < 1 {
 		return false
 	}
-	token := strings.TrimPrefix(authorization[0], "Bearer ")
+	token := strings.TrimPrefix(authorization, "Bearer ")
 	//Perform the token validation here.For the sake of this example,the code
 	//here forgoes any of usual OAuth2 token validation and instead checks for
 	// for token matching an arbitrary string.
@@ -154,6 +145,7 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		// authentication (token verification)
 		var err error
+		code := codes.OK
 		fullMethod := info.FullMethod
 		now := time.Now()
 		log.NewHelper(logger).Infof("---------------------start FullMethod:%s --------------------", fullMethod)
@@ -167,24 +159,25 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 
 		ctx := ss.Context()
 
-		md, ok := metadata.FromIncomingContext(ctx)
-		if !ok {
-			return status.Errorf(codes.Internal, "from incoming context err")
-		}
 		tr, ok := transport.FromServerContext(ctx)
-
-		if ok {
-			log.NewHelper(logger).Infof(fmt.Sprintf("************TTSService %s call******", fullMethod))
-			spanCtx, span := trace.NewTraceSpan(ctx, fmt.Sprintf("TTSService %s call", fullMethod), tr.RequestHeader())
-			ctx = spanCtx
-			defer span.End()
+		if !ok {
+			code = codes.Internal
+			return status.Errorf(code, "from incoming context err")
 		}
+		ctx, span := trace.NewTraceSpan(ctx, "TTSService", tr.RequestHeader())
+		defer func() {
+			span.End()
+			span.SetAttributes(attribute.Key("grpc_code").Int(int(code)))
+			span.SetAttributes(attribute.Key("err").String(err.Error()))
+		}()
 
-		if !valid(md["authorization"]) {
-			return status.Errorf(codes.InvalidArgument, "authorization err")
+		if !valid(tr.RequestHeader().Get("authorization")) {
+			code = codes.PermissionDenied
+			return status.Errorf(code, "authorization err")
 		}
 
 		if err = handler(srv, newWrappedStream(ss, logger, ctx)); err != nil {
+			code = codes.Internal
 			log.NewHelper(logger).Infof("RPC failed with error %v", err)
 		}
 		return err

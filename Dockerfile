@@ -1,28 +1,17 @@
-FROM golang:1.17 AS builder
+FROM harbor.cloudminds.com/library/asr-mkl-base:bionic.CM-Beta-1.3
 
-COPY . /src
-WORKDIR /src
+ENV LOGPATH=/opt/speech/tts/runtime/logs
+ENV PROJECT=speech-tts
+ENV MODULE=tts-server
+ENV dataServiceEnv=tts-data-service:9001
 
-RUN apt upgrade &&\
+RUN apt update &&\
     apt install -d libcurl3 -y
 
+EXPOSE 4012
+EXPOSE 3012
 
-RUN bash build.sh
+WORKDIR /opt/speech/tts
 
-FROM debian:stable-slim
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates  \
-        netbase \
-        && rm -rf /var/lib/apt/lists/ \
-        && apt-get autoremove -y && apt-get autoclean -y
-
-COPY --from=builder /src/bin /app
-
-WORKDIR /app
-
-EXPOSE 8000
-EXPOSE 9000
-VOLUME /data/conf
-
-CMD ["./server", "-conf", "/data/conf"]
+COPY bin .
+COPY run_speech_tts_srv.sh /etc/services.d/speech-tts/run

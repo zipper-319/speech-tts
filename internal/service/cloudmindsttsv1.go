@@ -72,7 +72,10 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	return nil
 }
 func (s *CloudMindsTTSServiceV1) GetVersion(ctx context.Context, req *pb.VerReq) (*pb.VerRsp, error) {
-	return &pb.VerRsp{}, nil
+	version := fmt.Sprintf("%s && %s", s.uc.Version, s.uc.ResServiceVersion)
+	return &pb.VerRsp{
+		Version: version,
+	}, nil
 }
 func (s *CloudMindsTTSServiceV1) MixCall(req *pb.MixTtsReq, conn pb.CloudMindsTTS_MixCallServer) error {
 	for {
@@ -83,5 +86,15 @@ func (s *CloudMindsTTSServiceV1) MixCall(req *pb.MixTtsReq, conn pb.CloudMindsTT
 	}
 }
 func (s *CloudMindsTTSServiceV1) GetSpeaker(ctx context.Context, req *pb.VerReq) (*pb.SpeakerList, error) {
-	return &pb.SpeakerList{}, nil
+	speakerList := make([]*pb.SpeakerParameter, len(s.uc.Speakers))
+	for i, speaker := range s.uc.Speakers {
+		speakerList[i] = &pb.SpeakerParameter{
+			SpeakerId:            int32(speaker.SpeakerId),
+			SpeakerName:          speaker.SpeakerName,
+			ParameterSpeakerName: speaker.ParameterSpeakerName,
+		}
+	}
+	return &pb.SpeakerList{
+		List: speakerList,
+	}, nil
 }

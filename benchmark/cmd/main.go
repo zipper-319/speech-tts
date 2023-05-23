@@ -9,17 +9,20 @@ import (
 
 var threadNum int
 var useCaseNum int
+var addr string
 
 func init() {
 	flag.IntVar(&threadNum, "t", 1, "thread number, eg: -t 1")
 	flag.IntVar(&useCaseNum, "u", 10, "useCase number, eg: -u 10")
+	flag.StringVar(&addr, "a", "127.0.0.1:9000", "addr, eg: -a 127.0.0.1:9000")
+
 }
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
 	flag.Parse()
 	log.Printf("thread number:%d; useCase number:%d", threadNum, useCaseNum)
-	addr := "127.0.0.1:9000"
+
 	text := "成都今天的天气"
 	speaker := "DaXiaoFang"
 	wg := sync.WaitGroup{}

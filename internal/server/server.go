@@ -166,11 +166,11 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 		}
 		ctx, span := trace.NewTraceSpan(ctx, "TTSService", tr.RequestHeader())
 		defer func() {
-			span.End()
 			span.SetAttributes(attribute.Key("grpc_code").Int(int(code)))
-			if err != nil{
+			if err != nil {
 				span.SetAttributes(attribute.Key("err").String(err.Error()))
 			}
+			span.End()
 		}()
 
 		if !valid(tr.RequestHeader().Get("authorization")) {

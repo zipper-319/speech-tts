@@ -1,9 +1,19 @@
 FROM harbor.cloudminds.com/library/asr-mkl-base:bionic.CM-Beta-1.3
 
-ENV LOGPATH=/opt/speech/tts/runtime/logs
-ENV PROJECT=speech-tts
-ENV MODULE=tts-server
-ENV dataServiceEnv=tts-data-service:9001
+ENV LOGPATH=/opt/speech/tts/runtime/logs \
+    PROJECT=speech-tts   \
+    MODULE=tts-server    \
+    dataServiceEnv=tts-data-service:9001  \
+    TZ=Asia/Shanghai \
+    DEBIAN_FRONTEND=noninteractive
+
+RUN apt update \
+    && apt install -y tzdata \
+    && ln -fs /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo ${TZ} > /etc/timezone \
+    && dpkg-reconfigure --frontend noninteractive tzdata \
+    && rm -rf /var/lib/apt/lists/*
+
 
 RUN apt update &&\
     apt install -d libcurl3 -y
@@ -13,5 +23,5 @@ EXPOSE 3012
 
 WORKDIR /opt/speech/tts
 
-COPY bin .
+COPY bin/* ./bin/
 COPY run_speech_tts_srv.sh /etc/services.d/speech-tts/run

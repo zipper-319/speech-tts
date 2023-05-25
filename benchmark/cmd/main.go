@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"speech-tts/benchmark"
 	"sync"
@@ -15,7 +16,6 @@ func init() {
 	flag.IntVar(&threadNum, "t", 1, "thread number, eg: -t 1")
 	flag.IntVar(&useCaseNum, "u", 10, "useCase number, eg: -u 10")
 	flag.StringVar(&addr, "a", "127.0.0.1:9000", "addr, eg: -a 127.0.0.1:9000")
-
 }
 
 func main() {
@@ -28,10 +28,10 @@ func main() {
 	wg := sync.WaitGroup{}
 	for i := 0; i < threadNum; i++ {
 		wg.Add(1)
-		go func() {
+		go func(t int) {
 			for j := 0; j < useCaseNum; j++ {
 
-				if err := benchmark.TestTTSV1(addr, text, speaker); err != nil {
+				if err := benchmark.TestTTSV1(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j))); err != nil {
 					log.Println("_________")
 					log.Printf("goroutine id:%d; err:%v", i, err)
 					log.Println("_________")
@@ -39,7 +39,7 @@ func main() {
 				}
 			}
 			wg.Done()
-		}()
+		}(i)
 	}
 	wg.Wait()
 }

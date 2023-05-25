@@ -15,6 +15,7 @@ import (
 	"syscall"
 
 	_ "go.uber.org/automaxprocs"
+	_ "speech-tts/internal/pkg/catch"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"

@@ -22,6 +22,8 @@ import (
 func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig *C.FacialExpressionConfig, bodyMovementConfig *C.BodyMovementConfig) {
 
 	object := (*data.HandlerObjectV2)(pUserData)
+	object.Log.Info("start to goOnStart")
+
 	var facialExpressionFrameDim, bodyMovemenFrameDim uint64 = 0, 0
 	var facialExpressionFrameDurMs, bodyMovemenFrameDurMs float32 = 0, 0
 	if facialExpressionConfig != nil {
@@ -53,6 +55,7 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 		},
 	}
 	sendResp(object, response)
+	object.Log.Info("end to goOnStart")
 }
 
 /**
@@ -62,16 +65,22 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 //export goOnEnd
 func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 	object := (*data.HandlerObjectV2)(pUserData)
+	object.Log.Info("start to goOnEnd")
+
 	response := v2.TtsRes{
 		ErrorCode: int32(flag),
 		Status:    3,
 	}
 	sendResp(object, response)
+	close(object.BackChan)
+	object.Log.Info("end to goOnEnd")
 }
 
 //export goOnDebug
 func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
+
 	object := (*data.HandlerObjectV2)(pUserData)
+	object.Log.Info("start to goOnDebug")
 
 	response := v2.TtsRes{
 		Status: 2,
@@ -84,14 +93,16 @@ func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 	}
 
 	sendResp(object, response)
+	object.Log.Info("end to goOnDebug")
 }
 
 //export goOnTimedMouthShape
 func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, size C.int, startTimeMs C.float) {
 
 	object := (*data.HandlerObjectV2)(pUserData)
-	var mouths = make([]*v2.TimedMouthShape, int32(size))
+	object.Log.Info("start to goOnTimedMouthShape")
 
+	var mouths = make([]*v2.TimedMouthShape, int32(size))
 	for i := 0; i < int(size); i++ {
 		m := *(*C.TimedMouthShape)(unsafe.Pointer(uintptr(unsafe.Pointer(mouth)) + uintptr(C.sizeof_TimedMouthShape*C.int(i))))
 		mouths[i] = &v2.TimedMouthShape{
@@ -110,11 +121,14 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 	}
 
 	sendResp(object, response)
+	object.Log.Info("end to goOnTimedMouthShape")
 }
 
 //export goOnActionElement
 func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, operation_type C.int, coordinate unsafe.Pointer, render_duration C.int) {
 	object := (*data.HandlerObjectV2)(pUserData)
+	object.Log.Info("start to goOnActionElement")
+
 	coordinateC := *(*C.Coordinate)(coordinate)
 	response := v2.TtsRes{
 		Status: 2,
@@ -133,11 +147,13 @@ func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, opera
 		},
 	}
 	sendResp(object, response)
+	object.Log.Info("end to goOnActionElement")
 }
 
 //export goOnSynthesizedData
 func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio, coordinate *C.Coordinate) {
 	object := (*data.HandlerObjectV2)(pUserData)
+	object.Log.Info("start to goOnSynthesizedData")
 
 	length := (C.int)(audioData.audio_size)
 	wav := C.GoBytes(unsafe.Pointer(audioData.audio_data), 2*length)
@@ -157,11 +173,13 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 		},
 	}
 	sendResp(object, response)
+	object.Log.Info("end to goOnSynthesizedData")
 }
 
 //export goOnFacialExpression
 func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.FacialExpressionSegment) {
 	object := (*data.HandlerObjectV2)(pUserData)
+	object.Log.Info("start to goOnFacialExpression")
 
 	var framedDim uint64
 	if fefd, ok := (object.ParamMap["FacialExpressionFrameDim"]).(int32); ok {
@@ -190,11 +208,13 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 		},
 	}
 	sendResp(object, response)
+	object.Log.Info("end to goOnFacialExpression")
 }
 
 //export goOnBodyMovement
 func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer) {
 	object := (*data.HandlerObjectV2)(pUserData)
+	object.Log.Info("start to goOnBodyMovement")
 
 	var bodyMovement *v2.BodyMovement
 	bodyMovementDataC := (*C.BodyMovementSegment)(bodyMovementData)
@@ -225,6 +245,7 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 		},
 	}
 	sendResp(object, response)
+	object.Log.Info("end to goOnBodyMovement")
 }
 
 func sendResp(object *data.HandlerObjectV2, response v2.TtsRes) {

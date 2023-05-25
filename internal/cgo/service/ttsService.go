@@ -10,8 +10,6 @@ package service
 #include "TtsSetting.h"
 #include "AnimationDef.h"
 
-const SpeakerDescriptor* supportedSpeakers = NULL;
-unsigned int element_num = 0;
 
 extern void goOnStart(void*, const char*, FacialExpressionConfig*, BodyMovementConfig* movementConfig);
 extern void goOnSynthesizedData(void*, SynthesizedAudio*, Coordinate*);
@@ -48,12 +46,6 @@ typedef void (*typOnCurTextSegmentV1)(void* pUserData, const char* normalizedTex
 typedef void (*typOnFacialExpressionV1)(void* pUserData, FacialExpression* expression);
 
 
-static void createUser(void **pUser) {
-	if(pUser) *pUser = malloc(sizeof(SpeakerDescriptor));
-}
-const char* getCArrValue(const char** src, int i) {
-	return src[i];
-}
 */
 import "C"
 import (
@@ -166,12 +158,17 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, object *data.HandlerObject
 	sdkSettings.featureSet = C.uint(paramFormatter(req.ParameterFlag))
 	sdkSettings.digitalPerson = C.CString(req.ParameterDigitalPerson)
 	defer C.free(unsafe.Pointer(sdkSettings.digitalPerson))
+	text := C.CString(req.Text)
+	defer C.free(unsafe.Pointer(text))
+	traceId := C.CString(req.RootTraceId + "_" + req.TraceId)
+	defer C.free(unsafe.Pointer(traceId))
 	id := C.ActionSynthesizer_SynthesizeAction(
-		C.CString(req.Text),
+		text,
 		&sdkSettings,
 		&actionCallback,
 		unsafe.Pointer(object),
-		C.CString(req.RootTraceId+"_"+req.TraceId))
+		traceId,
+	)
 
 	if id < 0 {
 		return errors.New("fail to call api of the sdk")
@@ -200,13 +197,16 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 		setting.digitalPerson = C.CString("SweetGirl")
 	}
 	defer C.free(unsafe.Pointer(setting.digitalPerson))
-
+	text := C.CString(req.Text)
+	defer C.free(unsafe.Pointer(text))
+	traceId := C.CString(req.RootTraceId + "_" + req.TraceId)
+	defer C.free(unsafe.Pointer(traceId))
 	id := C.ActionSynthesizer_SynthesizeAction_V1(
-		C.CString(req.Text),
+		text,
 		&setting,
 		&ttsCallback,
 		pUserData,
-		C.CString(req.RootTraceId+"_"+req.TraceId),
+		traceId,
 	)
 	if id < 0 {
 		return errors.New("fail to call api of the sdk")
@@ -214,7 +214,7 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 	return nil
 }
 
-func (t *TTSService) GeneHandlerObjectV2(ctx context.Context, speaker string) *data.HandlerObjectV2 {
+func (t *TTSService) GeneHandlerObjectV2(ctx context.Context, speaker string, logger *log.Helper) *data.HandlerObjectV2 {
 	backChan := make(chan v2.TtsRes, 10)
 	paramMap := make(map[string]interface{})
 	return &data.HandlerObjectV2{
@@ -224,6 +224,7 @@ func (t *TTSService) GeneHandlerObjectV2(ctx context.Context, speaker string) *d
 				ParameterSpeakerName: speaker,
 			},
 			ParamMap: paramMap,
+			Log:      logger,
 		},
 		BackChan: backChan,
 	}

@@ -17,13 +17,13 @@ import (
 
 type CloudMindsTTSServiceV1 struct {
 	pb.UnimplementedCloudMindsTTSServer
-	log *log.Helper
+	log log.Logger
 	uc  *service.TTSService
 }
 
 func NewCloudMindsTTSServiceV1(logger log.Logger, uc *service.TTSService) *CloudMindsTTSServiceV1 {
 	return &CloudMindsTTSServiceV1{
-		log: log.NewHelper(logger),
+		log: logger,
 		uc:  uc,
 	}
 }
@@ -51,8 +51,9 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	span.SetAttributes(attribute.Key("rootTraceId").String(req.RootTraceId))
 	span.SetAttributes(attribute.Key("text").String(req.Text))
 	defer span.End()
+	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
 
-	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, s.log)
+	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, logger)
 	PUserData := pointer.Save(object)
 	if err := s.uc.CallTTSServiceV1(req, PUserData); err != nil {
 		return err
@@ -60,7 +61,6 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	audioLen := 0
 	for response := range object.BackChan {
 		audioLen += len(response.Pcm)
-		span.SetAttributes(attribute.Key("response.status").Int(int(response.Status)))
 		err := conn.Send(&response)
 		if err != nil {
 			span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))

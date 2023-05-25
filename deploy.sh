@@ -12,7 +12,7 @@ expect -c '
   send "123456\r"
   interact
 '
-VERSION="v4.1.0"
+VERSION="v4.1.1"
 
 docker build  --no-cache -t harbor.cloudminds.com/$AppName/$IMAGE_NAME:$VERSION.$CI_COMMIT_TAG .
 echo DOCKER_REGISTRY_USER=$user DOCKER_REGISTRY_PASSWORD=$password

@@ -14,6 +14,8 @@ import (
 	"google.golang.org/grpc/status"
 	"reflect"
 	"runtime/debug"
+	v1 "speech-tts/api/tts/v1"
+	v2 "speech-tts/api/tts/v2"
 	"speech-tts/internal/pkg/trace"
 	"strings"
 	"time"
@@ -96,8 +98,9 @@ type wrappedStream struct {
 	ctx context.Context
 	grpc.ServerStream
 	log.Logger
-	firstTime time.Time
-	sendTimes int
+	firstTime    time.Time
+	sendTimes    int
+	sendAudioLen int
 }
 
 func (w *wrappedStream) Context() context.Context {
@@ -115,7 +118,22 @@ func (w *wrappedStream) RecvMsg(m interface{}) error {
 
 func (w *wrappedStream) SendMsg(m interface{}) error {
 	w.sendTimes += 1
-	log.NewHelper(w.Logger).Infof("Send %d message (Type: %T) after %dms", w.sendTimes, m, time.Since(w.firstTime).Milliseconds())
+	audioLength := 0
+	if m != nil {
+		if resp, ok := m.(*v1.TtsRes); ok {
+			audioLength = len(resp.Pcm)
+			w.sendAudioLen += audioLength
+		}
+		if resp, ok := m.(*v2.TtsRes); ok {
+			if audio, ok := resp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
+				audioLength = len(audio.SynthesizedAudio.Pcm)
+				w.sendAudioLen += audioLength
+			}
+		}
+	}
+
+	log.NewHelper(w.Logger).Infof("Send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d",
+		w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen)
 	return w.ServerStream.SendMsg(m)
 }
 

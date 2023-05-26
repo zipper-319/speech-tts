@@ -15,7 +15,7 @@ var addr string
 func init() {
 	flag.IntVar(&threadNum, "t", 1, "thread number, eg: -t 1")
 	flag.IntVar(&useCaseNum, "u", 10, "useCase number, eg: -u 10")
-	flag.StringVar(&addr, "a", "127.0.0.1:9000", "addr, eg: -a 127.0.0.1:9000")
+	flag.StringVar(&addr, "a", "127.0.0.1:3012", "addr, eg: -a 127.0.0.1:3012")
 }
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 		go func(t int) {
 			for j := 0; j < useCaseNum; j++ {
 
-				if err := benchmark.TestTTSV1(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j))); err != nil {
+				if err := benchmark.TestTTSV2(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j))); err != nil {
 					log.Println("_________")
 					log.Printf("goroutine id:%d; err:%v", i, err)
 					log.Println("_________")

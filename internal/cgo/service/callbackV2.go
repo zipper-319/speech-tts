@@ -11,6 +11,7 @@ import "C"
 import (
 	v2 "speech-tts/api/tts/v2"
 	"speech-tts/internal/data"
+	"speech-tts/internal/pkg/pointer"
 	"unsafe"
 )
 
@@ -21,7 +22,11 @@ import (
 //export goOnStart
 func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig *C.FacialExpressionConfig, bodyMovementConfig *C.BodyMovementConfig) {
 
-	object := (*data.HandlerObjectV2)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Info("start to goOnStart")
 
 	var facialExpressionFrameDim, bodyMovemenFrameDim uint64 = 0, 0
@@ -64,7 +69,11 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 
 //export goOnEnd
 func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
-	object := (*data.HandlerObjectV2)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Info("start to goOnEnd")
 
 	response := v2.TtsRes{
@@ -79,7 +88,11 @@ func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 //export goOnDebug
 func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 
-	object := (*data.HandlerObjectV2)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Info("start to goOnDebug")
 
 	response := v2.TtsRes{
@@ -99,7 +112,11 @@ func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 //export goOnTimedMouthShape
 func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, size C.int, startTimeMs C.float) {
 
-	object := (*data.HandlerObjectV2)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Info("start to goOnTimedMouthShape")
 
 	var mouths = make([]*v2.TimedMouthShape, int32(size))
@@ -126,7 +143,11 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 
 //export goOnActionElement
 func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, operation_type C.int, coordinate unsafe.Pointer, render_duration C.int) {
-	object := (*data.HandlerObjectV2)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Info("start to goOnActionElement")
 
 	coordinateC := *(*C.Coordinate)(coordinate)
@@ -152,7 +173,11 @@ func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, opera
 
 //export goOnSynthesizedData
 func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio, coordinate *C.Coordinate) {
-	object := (*data.HandlerObjectV2)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Info("start to goOnSynthesizedData")
 
 	length := (C.int)(audioData.audio_size)
@@ -178,7 +203,11 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 
 //export goOnFacialExpression
 func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.FacialExpressionSegment) {
-	object := (*data.HandlerObjectV2)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Info("start to goOnFacialExpression")
 
 	var framedDim uint64
@@ -213,7 +242,11 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 
 //export goOnBodyMovement
 func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer) {
-	object := (*data.HandlerObjectV2)(pUserData)
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		panic("irregularity type")
+	}
 	object.Log.Info("start to goOnBodyMovement")
 
 	var bodyMovement *v2.BodyMovement

@@ -7,6 +7,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"speech-tts/internal/cgo/service"
+	"speech-tts/internal/pkg/pointer"
 	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
 	"strings"
@@ -42,9 +43,10 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
 	object := s.uc.GeneHandlerObjectV2(spanCtx, req.ParameterSpeakerName, logger)
+	PUserData := pointer.Save(object)
 
 	audioLen := 0
-	if err := s.uc.CallTTSServiceV2(req, object); err != nil {
+	if err := s.uc.CallTTSServiceV2(req, PUserData); err != nil {
 		return err
 	}
 	for response := range object.BackChan {

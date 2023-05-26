@@ -172,7 +172,7 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 				debug.PrintStack()
 				err = status.Errorf(codes.Internal, "Panic err: %v", e)
 			}
-			log.NewHelper(logger).Infof("-----------------------end FullMethod:%s; cost:%.3fs----------------", fullMethod, time.Since(now).Seconds())
+			log.NewHelper(logger).Infof("-----------------------end FullMethod:%s; cost:%.3fs; err:%v----------------", fullMethod, time.Since(now).Seconds(), err)
 		}()
 
 		ctx := ss.Context()
@@ -191,10 +191,10 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 			span.End()
 		}()
 
-		if !valid(tr.RequestHeader().Get("authorization")) {
-			code = codes.PermissionDenied
-			return status.Errorf(code, "authorization err")
-		}
+		//if !valid(tr.RequestHeader().Get("authorization")) {
+		//	code = codes.PermissionDenied
+		//	return status.Errorf(code, "authorization err")
+		//}
 
 		if err = handler(srv, newWrappedStream(ss, logger, ctx)); err != nil {
 			code = codes.Internal

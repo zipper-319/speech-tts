@@ -142,7 +142,7 @@ func (t *TTSService) GetSpeakerSetting() *data.SpeakerSetting {
 	return t.SpeakerSetting
 }
 
-func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, object *data.HandlerObjectV2) error {
+func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) error {
 	var sdkSettings = C.TtsSetting{}
 
 	sdkSettings.speaker = C.CString(req.ParameterSpeakerName)
@@ -166,10 +166,9 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, object *data.HandlerObject
 		text,
 		&sdkSettings,
 		&actionCallback,
-		unsafe.Pointer(object),
+		pUserData,
 		traceId,
 	)
-
 	if id < 0 {
 		return errors.New("fail to call api of the sdk")
 	}

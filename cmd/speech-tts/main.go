@@ -12,6 +12,7 @@ import (
 	"speech-tts/internal/conf"
 	"speech-tts/internal/pkg/log"
 	"speech-tts/internal/pkg/trace"
+	"speech-tts/internal/utils"
 	"syscall"
 
 	_ "go.uber.org/automaxprocs"
@@ -24,6 +25,7 @@ var (
 	Name string
 	// Version is the version of the compiled software.
 	Version string
+	Commit  string
 	// flagconf is the config flag.
 	flagconf string
 
@@ -32,7 +34,7 @@ var (
 
 func init() {
 	flag.StringVar(&flagconf, "conf", "./configs", "config path, eg: -conf config.yaml")
-
+	utils.SetServerVersion(Version, Commit)
 }
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {

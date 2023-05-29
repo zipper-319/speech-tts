@@ -1,6 +1,12 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
-VERSION=$(shell git describe --tags --always)
+PROJECT_NAME:="speech-tts"
+COMMIT:=$(git describe --tags --always)
+FILE:=$(date +%F).log
+VERSION:="v4.1.6"
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/internal/cgo/libs
+export dataServiceEnv=172.16.23.15:31637
 
 ifeq ($(GOHOSTOS), windows)
 	#the `find.exe` is different from `find` in bash/shell.
@@ -56,6 +62,17 @@ api:
 # build
 build:
 	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+
+
+.PHONY: start
+start:
+	go mod download
+	go mod verify
+	mkdir -p bin/
+	export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):`pwd`/internal/cgo/libs;
+	export dataServiceEnv=172.16.23.15:31637;
+	go build  -ldflags "-s -w -X main.Commit=$(COMMIT) -X main.Version=$(VERSION)" -o ./bin/$(PROJECT_NAME)  `pwd`/cmd/$(PROJECT_NAME)/... && ulimit -c unlimited && mkdir -p log/ && bin/$(PROJECT_NAME)
+
 
 .PHONY: generate
 # generate

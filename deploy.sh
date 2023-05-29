@@ -8,7 +8,8 @@ password="Q9dMZp_pGX"
 CI_COMMIT_TAG=`git log --pretty=format:"%h" -1`
 DOCKER_REGISTRY_HOST="harbor.cloudminds.com"
 expect -c '
-  spawn scp -P  10022 root@172.16.31.72:~/speech-tts/bin/speech-tts ./bin
+  set project [ lindex $argv 0 ]
+  spawn scp -P  10022 root@172.16.31.72:~/speech-tts/bin/$project ./bin
   expect "*password"
   send "123456\r"
   interact

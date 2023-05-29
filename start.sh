@@ -3,6 +3,7 @@
 PROJECT_NAME="speech-tts"
 COMMIT=$(git describe --tags --always)
 FILE=$(date +%F).log
+VERSION="v4.1.6"
 
 
 PID=$(ps x| grep $PROJECT_NAME | grep -v grep | awk '{print $1}')
@@ -18,4 +19,4 @@ export dataServiceEnv=172.16.23.15:31637
 go mod download
 go mod verify
 mkdir -p bin/
-go build  -ldflags "-s -w -X main.commit=$COMMIT" -o ./bin/$PROJECT_NAME  `pwd`/cmd/$PROJECT_NAME/... && ulimit -c unlimited && mkdir -p log/ && bin/$PROJECT_NAME
+go build  -ldflags "-s -w -X main.Commit=$COMMIT -X main.Version=$VERSION" -o ./bin/$PROJECT_NAME  `pwd`/cmd/$PROJECT_NAME/... && ulimit -c unlimited && mkdir -p log/ && bin/$PROJECT_NAME

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"go.opentelemetry.io/otel/attribute"
@@ -74,7 +75,19 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	return nil
 }
 func (s *CloudMindsTTSServiceV1) GetVersion(ctx context.Context, req *pb.VerReq) (*pb.VerRsp, error) {
-	version := fmt.Sprintf("%s && %s", s.uc.Version, s.uc.ResServiceVersion)
+	res := struct {
+		ServerVersion     string
+		TtsModelVersion   string
+		ResServiceVersion string
+	}{
+		utils.GetServerVersion(),
+		s.uc.Version,
+		s.uc.ResServiceVersion,
+	}
+
+	verStr, _ := json.Marshal(res)
+	version := string(verStr)
+
 	return &pb.VerRsp{
 		Version: version,
 	}, nil

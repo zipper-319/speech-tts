@@ -68,8 +68,31 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	return nil
 }
 func (s *CloudMindsTTSService) GetVersion(ctx context.Context, req *pb.VerVersionReq) (*pb.VerVersionRsp, error) {
-	return &pb.VerVersionRsp{}, nil
+	version := fmt.Sprintf("%s && %s", s.uc.Version, s.uc.ResServiceVersion)
+
+	return &pb.VerVersionRsp{
+		Version: version,
+	}, nil
 }
 func (s *CloudMindsTTSService) GetTtsConfig(ctx context.Context, req *pb.VerReq) (*pb.RespGetTtsConfig, error) {
-	return &pb.RespGetTtsConfig{}, nil
+	speakerList := make([]*pb.SpeakerParameter, len(s.uc.Speakers))
+
+	for i, speaker := range s.uc.Speakers {
+		speakerList[i] = &pb.SpeakerParameter{
+			SpeakerId:            int32(speaker.SpeakerId),
+			SpeakerName:          speaker.SpeakerName,
+			ParameterSpeakerName: speaker.ParameterSpeakerName,
+		}
+	}
+
+	return &pb.RespGetTtsConfig{
+		SpeakerList: &pb.SpeakerList{
+			List: speakerList,
+		},
+		SpeedList:         s.uc.SupportedSpeed,
+		VolumeList:        s.uc.SupportedVolume,
+		PitchList:         s.uc.GetSupportedPitch(),
+		EmotionList:       s.uc.GetSupportedEmotion(),
+		DigitalPersonList: s.uc.GetSupportedDigitalPerson(),
+	}, nil
 }

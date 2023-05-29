@@ -142,6 +142,42 @@ func (t *TTSService) GetSpeakerSetting() *data.SpeakerSetting {
 	return t.SpeakerSetting
 }
 
+func (t *TTSService) GetSupportedPitch() []*v2.MessagePitch {
+	pitchList := make([]*v2.MessagePitch, 0, len(t.SpeakerSetting.SupportedPitch))
+	for _, pitch := range t.SpeakerSetting.SupportedPitch {
+		pitchList = append(pitchList, &v2.MessagePitch{
+			Id:          int32(pitch.Id),
+			Name:        pitch.Name,
+			ChineseName: pitch.ChineseName,
+		})
+	}
+	return pitchList
+}
+
+func (t *TTSService) GetSupportedEmotion() []*v2.MessageEmotion {
+	emotionList := make([]*v2.MessageEmotion, 0, len(t.SpeakerSetting.SupportedEmotion))
+	for _, emotion := range t.SpeakerSetting.SupportedEmotion {
+		emotionList = append(emotionList, &v2.MessageEmotion{
+			Id:          int32(emotion.Id),
+			Name:        emotion.Name,
+			ChineseName: emotion.ChineseName,
+		})
+	}
+	return emotionList
+}
+
+func (t *TTSService) GetSupportedDigitalPerson() []*v2.MessageDigitalPerson {
+	digitalPersonList := make([]*v2.MessageDigitalPerson, 0, len(t.SpeakerSetting.SupportedDigitalPerson))
+	for _, digitalPerson := range t.SpeakerSetting.SupportedDigitalPerson {
+		digitalPersonList = append(digitalPersonList, &v2.MessageDigitalPerson{
+			Id:          int32(digitalPerson.Id),
+			Name:        digitalPerson.Name,
+			ChineseName: digitalPerson.ChineseName,
+		})
+	}
+	return digitalPersonList
+}
+
 func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) error {
 	var sdkSettings = C.TtsSetting{}
 

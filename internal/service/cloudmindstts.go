@@ -75,8 +75,8 @@ func (s *CloudMindsTTSService) GetVersion(ctx context.Context, req *pb.VerVersio
 		ResServiceVersion string
 	}{
 		utils.GetServerVersion(),
-		s.uc.Version,
-		s.uc.ResServiceVersion,
+		s.uc.GetSDKVersion(),
+		s.uc.GetResServiceVersion(),
 	}
 
 	verStr, _ := json.Marshal(res)

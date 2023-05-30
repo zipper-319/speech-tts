@@ -67,16 +67,6 @@ var (
 	ttsCallback    = C.TTS_Callback{}
 )
 
-// GetSDKVersion 获取sdk的版本
-func GetSDKVersion() string {
-	return C.GoString(C.ActionSynthesizer_GetVersion())
-}
-
-// GetResServiceVersion 获取sdk的热修复版本
-func GetResServiceVersion() string {
-	return C.GoString(C.ActionSynthesizer_GetResServiceVersion())
-}
-
 func init() {
 
 	actionCallback.onStart = C.typOnStart(C.goOnStart)
@@ -100,8 +90,8 @@ func init() {
 
 type TTSService struct {
 	ResPath           string
-	Version           string
-	ResServiceVersion string
+	version           string
+	resServiceVersion string
 	Speakers          []*data.SpeakerInfo
 	*data.SpeakerSetting
 }
@@ -121,17 +111,27 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting) *TTSServ
 			SpeakerId:            supportedSpeaker.Id,
 			SpeakerName:          supportedSpeaker.ChineseName,
 			ParameterSpeakerName: supportedSpeaker.Name,
-			IsSupportEmotion:     m.flags>>1 == 1,
+			IsSupportEmotion:     m.flags&C.SUPPORT_EMOTION != 0,
 		}
 		C.free(unsafe.Pointer(cname))
 	}
 	return &TTSService{
 		ResPath:           resPath,
-		Version:           C.GoString(version),
-		ResServiceVersion: C.GoString(resServiceVersion),
+		version:           C.GoString(version),
+		resServiceVersion: C.GoString(resServiceVersion),
 		SpeakerSetting:    speakerSetting,
 		Speakers:          speakers,
 	}
+}
+
+// GetSDKVersion 获取sdk的版本
+func (t *TTSService) GetSDKVersion() string {
+	return t.version
+}
+
+// GetResServiceVersion 获取sdk的热修复版本
+func (t *TTSService) GetResServiceVersion() string {
+	return t.resServiceVersion
 }
 
 func (t *TTSService) GetSpeakers() []*data.SpeakerInfo {

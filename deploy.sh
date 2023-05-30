@@ -16,13 +16,14 @@ expect {
 "*(yes/no)?" { send "yes\r",exp_continue }
 "*password"  { send "123456\r" }
 }
-expect ":~#" { send "cd speech-tts\r" }
-expect ":~/speech-tts#" { send "bash build.sh $VERSION $AppName\r" }
-expect ":~/speech-tts#" { send "exit\r" }
+expect "*:~#" { send "cd speech-tts\r" }
+expect "*:~/speech-tts#" { send "bash build.sh $VERSION $AppName\r" }
+expect "*:~/speech-tts#" { send "exit \r" }
+expect eof
 EOF
 
 expect -c '
-  spawn scp -P  10022 root@172.16.31.72:~/speech-tts/bin/$project ./bin
+  spawn scp -P  10022 root@172.16.31.72:~/speech-tts/bin/speech-tts ./bin
   expect "*password"
   send "123456\r"
   interact

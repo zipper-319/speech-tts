@@ -15,5 +15,5 @@ go mod tidy -compat=1.17
 go mod download
 go mod verify
 mkdir -p bin/
-go build  -ldflags "-s -w -X main.commit=$COMMIT -X main.Version=$version" -o ./bin/$PROJECT_NAME  `pwd`/cmd/$PROJECT_NAME/...
+go build  -ldflags "-s -w -X main.Commit=$COMMIT -X main.Version=$version" -o ./bin/$PROJECT_NAME  `pwd`/cmd/$PROJECT_NAME/...
 echo "build success"

@@ -9,6 +9,7 @@ CI_COMMIT_TAG=`git log --pretty=format:"%h" -1`
 DOCKER_REGISTRY_HOST="harbor.cloudminds.com"
 VERSION="v4.1.6"
 
+
 expect <<EOF
 set timeout 30
 spawn ssh 172.16.31.72 -p 10022 -l root
@@ -17,7 +18,7 @@ expect {
 "*password"  { send "123456\r" }
 }
 expect "*:~#" { send "cd speech-tts\r" }
-expect "*:~/speech-tts#" { send "bash build.sh $VERSION $AppName\r" }
+expect "*:~/speech-tts#" { send "bash build.sh $VERSION $AppName $CI_COMMIT_TAG\r" }
 expect "*:~/speech-tts#" { send "exit \r" }
 expect eof
 EOF

@@ -1,12 +1,12 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
-PROJECT_NAME:="speech-tts"
-COMMIT:=$(git describe --tags --always)
-FILE:=$(date +%F).log
-VERSION:="v4.1.6"
+PROJECT_NAME = speech-tts
+COMMIT := $(shell git describe --tags --always)
+FILE = $(date +%F).log
+VERSION = v4.1.6
+DSUrl = 172.16.23.15:31637
+pwd := $(shell pwd)
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/internal/cgo/libs
-export dataServiceEnv=172.16.23.15:31637
 
 ifeq ($(GOHOSTOS), windows)
 	#the `find.exe` is different from `find` in bash/shell.
@@ -20,6 +20,7 @@ else
 	INTERNAL_PROTO_FILES=$(shell find internal -name *.proto)
 	API_PROTO_FILES=$(shell find api -name *.proto)
 endif
+
 
 .PHONY: init
 # init env
@@ -61,17 +62,17 @@ api:
 .PHONY: build
 # build
 build:
-	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
-
-
-.PHONY: start
-start:
 	go mod download
 	go mod verify
 	mkdir -p bin/
-	export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):`pwd`/internal/cgo/libs;
-	export dataServiceEnv=172.16.23.15:31637;
-	go build  -ldflags "-s -w -X main.Commit=$(COMMIT) -X main.Version=$(VERSION)" -o ./bin/$(PROJECT_NAME)  `pwd`/cmd/$(PROJECT_NAME)/... && ulimit -c unlimited && mkdir -p log/ && bin/$(PROJECT_NAME)
+	export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
+	go build  -ldflags "-s -w -X main.Commit=$(COMMIT) -X main.Version=$(VERSION)" -o ./bin/$(PROJECT_NAME)  $(pwd)/cmd/$(PROJECT_NAME)/...
+
+
+
+start: build
+	export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
+	ulimit -c unlimited && bin/$(PROJECT_NAME)
 
 
 .PHONY: generate
@@ -106,3 +107,5 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
+
+

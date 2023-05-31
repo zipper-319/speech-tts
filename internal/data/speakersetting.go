@@ -38,6 +38,7 @@ type SpeakerInfo struct {
 	SpeakerName          string
 	ParameterSpeakerName string
 	IsSupportEmotion     bool
+	IsSupportMixedVoice  bool
 }
 
 type HandlerObject struct {

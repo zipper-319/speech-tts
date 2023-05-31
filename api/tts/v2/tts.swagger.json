@@ -373,6 +373,10 @@
         "is_support_emotion": {
           "type": "boolean",
           "title": "是否支持情感"
+        },
+        "is_support_mixed_voice": {
+          "type": "boolean",
+          "title": "是否支持混合发音"
         }
       }
     },

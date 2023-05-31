@@ -94,9 +94,10 @@ type TTSService struct {
 	resServiceVersion string
 	Speakers          []*data.SpeakerInfo
 	*data.SpeakerSetting
+	log.Logger
 }
 
-func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting) *TTSService {
+func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger log.Logger) *TTSService {
 	cResPath := C.CString(resPath)
 	defer C.free(unsafe.Pointer(cResPath))
 	C.ActionSynthesizer_Init(cResPath)
@@ -107,11 +108,16 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting) *TTSServ
 	for i, supportedSpeaker := range speakerSetting.SupportedSpeaker {
 		cname := C.CString(supportedSpeaker.Name)
 		m := C.GetSpeakerDescriptor(cname)
+		isEmotion := m.flags&C.SUPPORT_EMOTION != 0
+		isMixedVoice := m.flags&C.SUPPORT_MIXED_VOICE != 0
+		log.NewHelper(logger).Infof("-----cname:%s------flags:%d, isEmotion:%t, isMixedVoice:%t, language:%s",
+			supportedSpeaker.Name, int(m.flags), isEmotion, isMixedVoice, C.GoString(m.language))
 		speakers[i] = &data.SpeakerInfo{
 			SpeakerId:            supportedSpeaker.Id,
 			SpeakerName:          supportedSpeaker.ChineseName,
 			ParameterSpeakerName: supportedSpeaker.Name,
-			IsSupportEmotion:     m.flags&C.SUPPORT_EMOTION != 0,
+			IsSupportEmotion:     isEmotion,
+			IsSupportMixedVoice:  isMixedVoice,
 		}
 		C.free(unsafe.Pointer(cname))
 	}
@@ -119,8 +125,9 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting) *TTSServ
 		ResPath:           resPath,
 		version:           C.GoString(version),
 		resServiceVersion: C.GoString(resServiceVersion),
-		SpeakerSetting:    speakerSetting,
 		Speakers:          speakers,
+		SpeakerSetting:    speakerSetting,
+		Logger:            logger,
 	}
 }
 

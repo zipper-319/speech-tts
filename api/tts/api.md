@@ -384,6 +384,7 @@ Action基元数据
 | speaker_name | [string](#string) |  | 发音人名字 |
 | parameter_speaker_name | [string](#string) |  | 发音人英文名字 |
 | is_support_emotion | [bool](#bool) |  | 是否支持情感 |
+| is_support_mixed_voice | [bool](#bool) |  | 是否支持混合发音 |
 
 
 

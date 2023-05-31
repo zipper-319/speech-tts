@@ -2539,6 +2539,8 @@ func (m *SpeakerParameter) validate(all bool) error {
 
 	// no validation rules for IsSupportEmotion
 
+	// no validation rules for IsSupportMixedVoice
+
 	if len(errors) > 0 {
 		return SpeakerParameterMultiError(errors)
 	}

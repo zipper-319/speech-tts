@@ -18,6 +18,7 @@ import (
 
 import (
 	_ "go.uber.org/automaxprocs"
+	_ "speech-tts/internal/pkg/catch"
 )
 
 // Injectors from wire.go:
@@ -28,7 +29,7 @@ func wireApp(confServer *conf.Server, string2 string, logger log.Logger) (*krato
 	if err != nil {
 		return nil, nil, err
 	}
-	ttsService := service.NewTTSService(string2, speakerSetting)
+	ttsService := service.NewTTSService(string2, speakerSetting, logger)
 	cloudMindsTTSService := service2.NewCloudMindsTTSService(logger, ttsService)
 	cloudMindsTTSServiceV1 := service2.NewCloudMindsTTSServiceV1(logger, ttsService)
 	grpcServer := server.NewGRPCServer(confServer, cloudMindsTTSService, cloudMindsTTSServiceV1, logger)

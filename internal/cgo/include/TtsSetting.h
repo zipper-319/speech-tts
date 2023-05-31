@@ -7,23 +7,62 @@ extern "C"
 #endif
 
 /**
-* 发音人特性集
+* 正则断句模式
 */
 enum {
     /**
-    * 支持混合发音
+    * 默认切分（句号类分句+逗号类分句+顿号双空格）
     */
-    SUPPORT_MIXED_VOICE = 1<<0,
+    Normalize_Cut_Default = 0,
     /**
-    * 支持情绪
+    * 长切分（句号类分句+逗号类双空格+顿号双空格）
     */
-    SUPPORT_EMOTION = 1<<1,
+    Normalize_Cut_Long = 1,
     /**
-    * 顿号用于分句
+    * 短切分（句号类分句+逗号类分句+双空格分句）
     */
-    CUT_SENTENCES_USE_CHINESE_SERIAL_COMMA = 1<<2,
+    Normalize_Cut_Short = 2,
 };
 
+/**
+* feature标签
+*/
+enum {
+    /**
+    * 不支持
+    */
+    NOT_SUPPORT = 0,
+    /**
+    * 支持
+    */
+    SUPPORT = 1,
+};
+
+/**
+* feature shift
+*/
+enum {
+    LEFT_SHIFT_support_mixed_voice = 4,
+    LEFT_SHIFT_support_emotion = 5,
+};
+
+/**
+* feature helper
+*/
+enum {
+    SUPPORT_MIXED_VOICE = SUPPORT<<LEFT_SHIFT_support_mixed_voice,
+    SUPPORT_EMOTION = SUPPORT<<LEFT_SHIFT_support_emotion,
+    NORMALIZE_CUT_MASK = 0x0000000F,
+};
+
+/*
+typedef struct {
+    unsigned placeholder: 26;
+    unsigned support_emotion: 1;
+    unsigned support_mixed_voice: 1;
+    unsigned normalize_cut_type: 4;
+}FeatureFlag;
+*/
 
 /**
 * 发音人描述符
@@ -52,11 +91,12 @@ typedef struct{
 
     /**
     * 发音人特性
+    * 从高位到低位（31~0）|26bit(undefined)|1bit(support_emotion)|1bit(support_mixed_voice)|4bit(normalize_cut_type)|
     */
     unsigned int flags;
 
     /**
-    * 发音人的扩展特性
+    * 发音人的扩展特性（未使用）
     */
     const char* extended_features;
 
@@ -89,7 +129,7 @@ enum {
     */
     PARAMETER_PITCH = 2,
     /**
-    * 输出模式
+    * @deprecated 输出模式
     */
     PARAMETER_OUTPUT_MODE = 3,
     /**
@@ -106,7 +146,7 @@ enum {
     PARAMETER_DIGITAL_PERSON = 6,
 //以下仅供内部debug
     /**
-    * tuning
+    * @deprecated tuning
     */
     PARAMETER_TUNING = 100,
 };

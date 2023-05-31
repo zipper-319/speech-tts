@@ -94,6 +94,7 @@ func (s *CloudMindsTTSService) GetTtsConfig(ctx context.Context, req *pb.VerReq)
 			SpeakerId:            int32(speaker.SpeakerId),
 			SpeakerName:          speaker.SpeakerName,
 			ParameterSpeakerName: speaker.ParameterSpeakerName,
+			IsSupportEmotion:     speaker.IsSupportEmotion,
 		}
 	}
 

@@ -11,6 +11,7 @@ import (
 	"os"
 	"speech-tts/internal/conf"
 	"speech-tts/internal/pkg/log"
+	"speech-tts/internal/pkg/nacos"
 	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
 	"syscall"
@@ -37,7 +38,7 @@ func init() {
 	utils.SetServerVersion(Version, Commit)
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, config *conf.Data) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -49,6 +50,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
+		kratos.Registrar(nacos.NewRegister(config)),
 	)
 }
 
@@ -74,7 +76,7 @@ func main() {
 	myLogger.SetLogger()
 	trace.InitTracer(bc.Data.Otel.Addr, bc.Data.Otel.Name)
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data.App.Path, myLogger.GetLogger())
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Data.App.Path, myLogger.GetLogger())
 	if err != nil {
 		panic(err)
 	}

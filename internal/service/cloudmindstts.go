@@ -18,14 +18,18 @@ import (
 
 type CloudMindsTTSService struct {
 	pb.UnimplementedCloudMindsTTSServer
-	log log.Logger
-	uc  *service.TTSService
+	log         log.Logger
+	uc          *service.TTSService
+	sdkFailTime int
+	failTexts   map[string]struct{}
 }
 
 func NewCloudMindsTTSService(logger log.Logger, uc *service.TTSService) *CloudMindsTTSService {
+	failTexts := make(map[string]struct{})
 	return &CloudMindsTTSService{
-		log: logger,
-		uc:  uc,
+		log:       logger,
+		uc:        uc,
+		failTexts: failTexts,
 	}
 }
 
@@ -43,13 +47,22 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	defer span.End()
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
+	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v",
+		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag)
 	object := s.uc.GeneHandlerObjectV2(spanCtx, req.ParameterSpeakerName, logger)
 	PUserData := pointer.Save(object)
 
 	audioLen := 0
 	if err := s.uc.CallTTSServiceV2(req, PUserData); err != nil {
+		s.sdkFailTime += 1
+		s.failTexts[req.Text] = struct{}{}
+		if s.sdkFailTime >= 3 && len(s.failTexts) >= 3 { // 连续三次失败，服务重启
+			logger.Error("sdk fail three time;fail texts:%v", s.failTexts)
+			panic(err)
+		}
 		return err
 	}
+	s.sdkFailTime = 0
 	for response := range object.BackChan {
 		if response.ResultOneof != nil {
 			if audio, ok := response.ResultOneof.(*pb.TtsRes_SynthesizedAudio); ok {

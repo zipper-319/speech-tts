@@ -3,7 +3,7 @@ GOPATH:=$(shell go env GOPATH)
 PROJECT_NAME = speech-tts
 COMMIT := $(shell git describe --tags --always)
 FILE = $(date +%F).log
-VERSION = v4.1.6
+VERSION = v4.1.7
 DSUrl = 172.16.23.15:31637
 pwd := $(shell pwd)
 
@@ -66,7 +66,7 @@ build:
 	go mod verify
 	mkdir -p bin/
 	export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
-	go build  -ldflags "-s -w -X main.Commit=$(COMMIT) -X main.Version=$(VERSION)" -o ./bin/$(PROJECT_NAME)  $(pwd)/cmd/$(PROJECT_NAME)/...
+	go build  -ldflags "-s -w -X main.Commit=$(COMMIT) -X main.Version=$(VERSION)  -X main.Name=$(PROJECT_NAME)" -o ./bin/$(PROJECT_NAME)  $(pwd)/cmd/$(PROJECT_NAME)/...
 
 
 
@@ -78,7 +78,6 @@ start: build
 .PHONY: generate
 # generate
 generate:
-	go mod tidy
 	go get github.com/google/wire/cmd/wire@latest
 	go generate ./...
 

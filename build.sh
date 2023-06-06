@@ -12,9 +12,9 @@ version=$1
 PROJECT_NAME=$2
 COMMIT=$3
 
-go mod tidy -compat=1.17
+
 go mod download
 go mod verify
 mkdir -p bin/
-go build  -ldflags "-s -w -X main.Commit=$COMMIT -X main.Version=$version" -o ./bin/$PROJECT_NAME  `pwd`/cmd/$PROJECT_NAME/...
+go build  -ldflags "-s -w -X main.Commit=$COMMIT -X main.Version=$version -X main.Name=$PROJECT_NAME" -o ./bin/$PROJECT_NAME  `pwd`/cmd/$PROJECT_NAME/...
 echo "build success"

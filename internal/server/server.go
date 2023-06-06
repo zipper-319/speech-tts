@@ -131,6 +131,10 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 			}
 		}
 	}
+	_, span := trace.NewTraceSpan(w.ctx, "SendMsg", nil)
+	defer span.End()
+	span.SetAttributes(attribute.Key("SendMsg times").Int(w.sendTimes))
+	span.SetAttributes(attribute.Key("SendMsg length").Int(audioLength))
 
 	log.NewHelper(w.Logger).Infof("Send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d",
 		w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen)

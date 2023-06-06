@@ -44,10 +44,23 @@ message Data {
     string addr = 1;
     string name = 2;
   }
+  message Nacos{
+    string addr = 1;
+    int32 port = 2;
+    string contextPath =3;
+    string namespaceId = 4;
+    string group = 5;
+    int32 timeoutMs = 6;
+    bool  notLoadCacheAtStart = 7;
+    string logDir = 8;
+    string cacheDir = 9;
+    string logLevel = 10;
+  }
   Database database = 1;
   Redis redis = 2;
   App   app = 3;
   Otel  otel = 4;
+  Nacos nacos = 5;
 }
 
 message Log {
@@ -64,3 +77,5 @@ message Log {
   string level = 11;
   int32 max_days = 12;
 }
+
+

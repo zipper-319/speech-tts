@@ -1,13 +1,16 @@
 module speech-tts
 
-go 1.18
+go 1.19
 
 require (
 	github.com/envoyproxy/protoc-gen-validate v0.10.0
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20230504091536-aed172b8ddd3
-	github.com/go-kratos/kratos/v2 v2.6.1
+	github.com/go-kratos/kratos/contrib/registry/nacos/v2 v2.0.0-20230530065457-69d73225a921
+	github.com/go-kratos/kratos/v2 v2.6.2
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
+	github.com/nacos-group/nacos-sdk-go v1.1.4
+	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.13.0
 	go.opentelemetry.io/otel v1.16.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.11.0
@@ -23,20 +26,29 @@ require (
 )
 
 require (
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.18 // indirect
+	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/go-kratos/aegis v0.1.4 // indirect
+	github.com/go-errors/errors v1.0.1 // indirect
+	github.com/go-kratos/aegis v0.2.0 // indirect
+	github.com/go-kratos/kratos/contrib/registry/discovery/v2 v2.0.0-20230530065457-69d73225a921 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
+	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/subcommands v1.0.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

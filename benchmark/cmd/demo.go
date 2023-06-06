@@ -28,7 +28,7 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
-	ttsService := service.NewTTSService(path, speakerSetting)
+	ttsService := service.NewTTSService(path, speakerSetting, logger)
 	text := "成都今天的天气"
 	i := 0
 	for {

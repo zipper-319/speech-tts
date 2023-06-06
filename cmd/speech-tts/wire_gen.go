@@ -24,7 +24,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, string2 string, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, string2 string, logger log.Logger) (*kratos.App, func(), error) {
 	speakerSetting, err := data.NewSpeakerSetting(string2)
 	if err != nil {
 		return nil, nil, err
@@ -34,7 +34,7 @@ func wireApp(confServer *conf.Server, string2 string, logger log.Logger) (*krato
 	cloudMindsTTSServiceV1 := service2.NewCloudMindsTTSServiceV1(logger, ttsService)
 	grpcServer := server.NewGRPCServer(confServer, cloudMindsTTSService, cloudMindsTTSServiceV1, logger)
 	httpServer := server.NewHTTPServer(confServer, cloudMindsTTSService, cloudMindsTTSServiceV1, logger)
-	app := newApp(logger, grpcServer, httpServer)
+	app := newApp(logger, grpcServer, httpServer, confData)
 	return app, func() {
 	}, nil
 }

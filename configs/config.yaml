@@ -18,6 +18,17 @@ data:
   otel:
     addr: 172.16.24.200:32672
     name: speech.tts
+  nacos:
+    addr: nacos.region-dev-2.service.iamidata.com
+    port: 31684
+    contextPath: /nacos
+    namespaceId: 0021fbf85038b162b3d43794a1944bde39680a5d
+    group: speech-tts-86
+    timeoutMs: 5000
+    notLoadCacheAtStart: true
+    logDir: ./runtime/nacos-logs
+    cacheDir: ./runtime/nacos-cache
+    logLevel: debug
 
 log:
   root_path: runtime/
@@ -32,3 +43,5 @@ log:
   show_line: true
   log_in_console: true
   level: debug
+
+

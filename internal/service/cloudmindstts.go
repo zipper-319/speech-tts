@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"speech-tts/internal/cgo/service"
@@ -40,6 +41,12 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	if v, exists := utils.SpeakerMap[strings.ToLower(req.ParameterSpeakerName)]; exists {
 		req.ParameterSpeakerName = v
 	}
+
+	if req.TraceId == "" {
+		uuidNum, _ := uuid.NewRandom()
+		req.TraceId = fmt.Sprintf("%s-%s", "sdk", uuidNum.String())
+	}
+
 	span.SetAttributes(attribute.Key("speakerName").String(req.ParameterSpeakerName))
 	span.SetAttributes(attribute.Key("traceId").String(req.TraceId))
 	span.SetAttributes(attribute.Key("rootTraceId").String(req.RootTraceId))
@@ -51,7 +58,7 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag)
 	object := s.uc.GeneHandlerObjectV2(spanCtx, req.ParameterSpeakerName, logger)
 	PUserData := pointer.Save(object)
-
+	defer pointer.Unref(PUserData)
 	audioLen := 0
 	if err := s.uc.CallTTSServiceV2(req, PUserData); err != nil {
 		s.sdkFailTime += 1
@@ -79,6 +86,7 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		}
 	}
 	span.SetAttributes(attribute.Key("response.audioPcm.len").Int(audioLen))
+
 	return nil
 }
 func (s *CloudMindsTTSService) GetVersion(ctx context.Context, req *pb.VerVersionReq) (*pb.VerVersionRsp, error) {

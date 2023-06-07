@@ -9,6 +9,7 @@ package service
 */
 import "C"
 import (
+	"log"
 	v1 "speech-tts/api/tts/v1"
 	"speech-tts/internal/data"
 	"speech-tts/internal/pkg/pointer"
@@ -18,10 +19,12 @@ import (
 
 //export goOnStartV1
 func goOnStartV1(pUserData unsafe.Pointer) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnStartV1;irregularity type")
+		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnStartV1", nil)
 	defer span.End()
@@ -38,7 +41,8 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnAudioV1;irregularity type")
+		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnAudioV1", nil)
 	defer span.End()
@@ -76,7 +80,8 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnEndV1;irregularity type")
+		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnEndV1", nil)
 	defer span.End()
@@ -111,7 +116,8 @@ func goOnTimedMouthShapeV1(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, s
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnTimedMouthShapeV1,irregularity type")
+		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnTimedMouthShapeV1", nil)
 	defer span.End()
@@ -139,7 +145,8 @@ func goOnCurTextSegmentV1(pUserData unsafe.Pointer, normalizedText *C.char, orig
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnCurTextSegmentV1,irregularity type")
+		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnCurTextSegmentV1", nil)
 	defer span.End()
@@ -157,7 +164,8 @@ func goOnFacialExpressionV1(pUserData unsafe.Pointer, expression *C.FacialExpres
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnFacialExpressionV1,irregularity type")
+		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnFacialExpressionV1", nil)
 	defer span.End()

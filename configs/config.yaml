@@ -39,7 +39,7 @@ log:
   max_backups: 10
   max_days: 30
   compress: false
-  json_format: true
+  json_format: false
   show_line: true
   log_in_console: true
   level: debug

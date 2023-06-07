@@ -50,7 +50,7 @@ typedef void (*typOnFacialExpressionV1)(void* pUserData, FacialExpression* expre
 import "C"
 import (
 	"context"
-	"errors"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	v1 "speech-tts/api/tts/v1"
@@ -212,8 +212,9 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) 
 		pUserData,
 		traceId,
 	)
+	log.NewHelper(t.Logger).Infof("ActionSynthesizer_SynthesizeAction return id:%d", int(id))
 	if id < 0 {
-		return errors.New("fail to call api of the sdk")
+		return fmt.Errorf("fail to call api of the sdk;id:%d", int(id))
 	}
 	return nil
 }
@@ -250,8 +251,10 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 		pUserData,
 		traceId,
 	)
+
+	log.NewHelper(t.Logger).Infof("ActionSynthesizer_SynthesizeAction_V1 return id:%d", int(id))
 	if id < 0 {
-		return errors.New("fail to call api of the sdk")
+		return fmt.Errorf("fail to call api of the sdk;id:%d", int(id))
 	}
 	return nil
 }

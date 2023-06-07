@@ -9,6 +9,7 @@ package service
 */
 import "C"
 import (
+	"log"
 	v2 "speech-tts/api/tts/v2"
 	"speech-tts/internal/data"
 	"speech-tts/internal/pkg/pointer"
@@ -25,7 +26,8 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnStart,irregularity type")
+		return
 	}
 	object.Log.Info("start to goOnStart")
 
@@ -72,7 +74,8 @@ func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnEnd,irregularity type")
+		return
 	}
 	object.Log.Info("start to goOnEnd")
 
@@ -91,7 +94,8 @@ func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnDebug,irregularity type")
+		return
 	}
 	object.Log.Info("start to goOnDebug")
 
@@ -115,7 +119,8 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnTimedMouthShape,irregularity type")
+		return
 	}
 	object.Log.Info("start to goOnTimedMouthShape")
 
@@ -146,7 +151,8 @@ func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, opera
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnActionElement,irregularity type")
+		return
 	}
 	object.Log.Info("start to goOnActionElement")
 
@@ -176,7 +182,8 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnSynthesizedData,irregularity type")
+		return
 	}
 	object.Log.Info("start to goOnSynthesizedData")
 
@@ -206,7 +213,8 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnFacialExpression,irregularity type")
+		return
 	}
 	object.Log.Info("start to goOnFacialExpression")
 
@@ -245,7 +253,8 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
-		panic("irregularity type")
+		log.Println("goOnBodyMovement,irregularity type")
+		return
 	}
 	object.Log.Info("start to goOnBodyMovement")
 

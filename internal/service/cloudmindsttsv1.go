@@ -58,6 +58,7 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 
 	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, logger)
 	PUserData := pointer.Save(object)
+	defer pointer.Unref(PUserData)
 	if err := s.uc.CallTTSServiceV1(req, PUserData); err != nil {
 		return err
 	}
@@ -73,7 +74,7 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 		}
 	}
 	span.SetAttributes(attribute.Key("response.audioPcm.len").Int(audioLen))
-	pointer.Unref(PUserData)
+
 	return nil
 }
 func (s *CloudMindsTTSServiceV1) GetVersion(ctx context.Context, req *pb.VerReq) (*pb.VerRsp, error) {

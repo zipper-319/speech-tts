@@ -202,7 +202,7 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 
 		if err = handler(srv, newWrappedStream(ss, logger, ctx)); err != nil {
 			code = codes.Internal
-			log.NewHelper(logger).Infof("RPC failed with error %v", err)
+			log.NewHelper(logger).Errorf("------------RPC failed with error: %v", err)
 		}
 		return err
 	}

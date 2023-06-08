@@ -23,6 +23,7 @@ import (
 //export goOnStart
 func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig *C.FacialExpressionConfig, bodyMovementConfig *C.BodyMovementConfig) {
 
+	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {

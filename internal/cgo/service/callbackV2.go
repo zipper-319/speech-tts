@@ -35,9 +35,18 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 	var facialExpressionFrameDim, bodyMovemenFrameDim uint64 = 0, 0
 	var facialExpressionFrameDurMs, bodyMovemenFrameDurMs float32 = 0, 0
 	if facialExpressionConfig != nil {
-		facialExpressionFrameDim = uint64(facialExpressionConfig.frameDim)
+		frameDimLen := uint64(facialExpressionConfig.frameDim)
+		facialExpressionFrameDim = frameDimLen
 		facialExpressionFrameDurMs = float32(facialExpressionConfig.frameDurMs)
+		controlNameList := make([]string, frameDimLen)
+		if facialExpressionConfig.control_name != nil && int(facialExpressionConfig.frameDim) > 0 {
+			tmpSlice := (*[1 << 30]*C.char)(unsafe.Pointer(facialExpressionConfig.control_name))[:frameDimLen:frameDimLen]
+			for i, s := range tmpSlice {
+				controlNameList[i] = C.GoString(s)
+			}
+		}
 	}
+
 	if bodyMovementConfig != nil {
 		bodyMovemenFrameDim = uint64(bodyMovementConfig.frameDim)
 		bodyMovemenFrameDurMs = float32(bodyMovementConfig.frameDurMs)

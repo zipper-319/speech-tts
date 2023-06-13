@@ -23,6 +23,8 @@
     - [FacialExpressionConfig](#ttsschema-FacialExpressionConfig)
     - [MessageDigitalPerson](#ttsschema-MessageDigitalPerson)
     - [MessageEmotion](#ttsschema-MessageEmotion)
+    - [MessageExpression](#ttsschema-MessageExpression)
+    - [MessageMovement](#ttsschema-MessageMovement)
     - [MessagePitch](#ttsschema-MessagePitch)
     - [RespGetTtsConfig](#ttsschema-RespGetTtsConfig)
     - [SpeakerList](#ttsschema-SpeakerList)
@@ -197,6 +199,7 @@ Action基元数据
 | ----- | ---- | ----- | ----------- |
 | frame_dim | [int32](#int32) |  | 每帧的维度，即一帧由frameDim个float组成 |
 | frame_dur_ms | [float](#float) |  | 每帧的持续时长 |
+| control_name | [string](#string) |  | 每帧的名字 |
 
 
 
@@ -280,6 +283,7 @@ Action基元数据
 | ----- | ---- | ----- | ----------- |
 | frame_dim | [int32](#int32) |  | 每帧的维度，即一帧由frameDim个float组成 |
 | frame_dur_ms | [float](#float) |  | 每帧的持续时长 |
+| control_name | [string](#string) |  | 每帧的名字 |
 
 
 
@@ -320,6 +324,38 @@ Action基元数据
 
 
 
+<a name="ttsschema-MessageExpression"></a>
+
+### MessageExpression
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| chinese_name | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="ttsschema-MessageMovement"></a>
+
+### MessageMovement
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| chinese_name | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="ttsschema-MessagePitch"></a>
 
 ### MessagePitch
@@ -350,7 +386,9 @@ Action基元数据
 | volume_list | [string](#string) | repeated | SupportedVolume |
 | pitch_list | [MessagePitch](#ttsschema-MessagePitch) | repeated | SupportedPitch |
 | emotion_list | [MessageEmotion](#ttsschema-MessageEmotion) | repeated | SupportedEmotion |
-| digital_person_list | [MessageDigitalPerson](#ttsschema-MessageDigitalPerson) | repeated | SupportedDigitalPerson |
+| digital_person_list | [MessageDigitalPerson](#ttsschema-MessageDigitalPerson) | repeated | DigitalPerson 废弃不用 |
+| movement_list | [MessageMovement](#ttsschema-MessageMovement) | repeated | SupportedMovement 动作 |
+| expression_list | [MessageExpression](#ttsschema-MessageExpression) | repeated | SupportedExpression 表情 |
 
 
 
@@ -380,7 +418,7 @@ Action基元数据
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| speaker_id | [int32](#int32) |  | 发音人id |
+| speaker_id | [int32](#int32) |  | 发音人id （废弃不用） |
 | speaker_name | [string](#string) |  | 发音人名字 |
 | parameter_speaker_name | [string](#string) |  | 发音人英文名字 |
 | is_support_emotion | [bool](#bool) |  | 是否支持情感 |
@@ -454,10 +492,12 @@ Action基元数据
 | pitch | [string](#string) |  | 取值范围请用 GetTtsConfig PitchList.Name |
 | emotions | [string](#string) |  | 如果该发音人支持情感，取值范围请用 GetTtsConfig EmotionList.Name，如果不支持请传&#34;&#34;，否则会报错 |
 | parameter_speaker_name | [string](#string) |  | 取值范围请用 GetTtsConfig函数的返回Speakerlist.parameterSpeakerName |
-| parameter_digital_person | [string](#string) |  | 数字人形象， |
+| parameter_digital_person | [string](#string) |  | 数字人形象， (废弃不用) |
 | parameter_flag | [TtsReq.ParameterFlagEntry](#ttsschema-TtsReq-ParameterFlagEntry) | repeated | 额外信息参数，口型key:mouth,字符串&#34;true&#34;或者&#34;false&#34;、动作key:movement,字符串&#34;true&#34;或者&#34;false&#34;、表情key:expression,字符串&#34;true&#34;或者&#34;false&#34; |
 | trace_id | [string](#string) |  |  |
 | root_trace_id | [string](#string) |  |  |
+| movement | [string](#string) |  | 取值范围请用 GetTtsConfig movement_list |
+| expression | [string](#string) |  | 取值范围请用 GetTtsConfig expression_list |
 
 
 

@@ -154,6 +154,10 @@
           "type": "number",
           "format": "float",
           "title": "每帧的持续时长"
+        },
+        "control_name": {
+          "type": "string",
+          "title": "每帧的名字"
         }
       }
     },
@@ -244,6 +248,10 @@
           "type": "number",
           "format": "float",
           "title": "每帧的持续时长"
+        },
+        "control_name": {
+          "type": "string",
+          "title": "每帧的名字"
         }
       }
     },
@@ -278,6 +286,28 @@
         "chinese_name": {
           "type": "string",
           "title": "对应中文"
+        }
+      }
+    },
+    "ttsschemaMessageExpression": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "chinese_name": {
+          "type": "string"
+        }
+      }
+    },
+    "ttsschemaMessageMovement": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "chinese_name": {
+          "type": "string"
         }
       }
     },
@@ -338,7 +368,21 @@
           "items": {
             "$ref": "#/definitions/ttsschemaMessageDigitalPerson"
           },
-          "title": "SupportedDigitalPerson"
+          "title": "DigitalPerson 废弃不用"
+        },
+        "movement_list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ttsschemaMessageMovement"
+          },
+          "title": "SupportedMovement  动作"
+        },
+        "expression_list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ttsschemaMessageExpression"
+          },
+          "title": "SupportedExpression 表情"
         }
       }
     },
@@ -360,7 +404,7 @@
         "speaker_id": {
           "type": "integer",
           "format": "int32",
-          "title": "发音人id"
+          "title": "发音人id （废弃不用）"
         },
         "speaker_name": {
           "type": "string",

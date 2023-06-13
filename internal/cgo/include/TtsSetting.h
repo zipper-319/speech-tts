@@ -15,13 +15,17 @@ enum {
     */
     Normalize_Cut_Default = 0,
     /**
-    * 长切分（句号类分句+逗号类双空格+顿号双空格）
+    * 长切分（句号类双空格+逗号类双空格+顿号双空格）
     */
     Normalize_Cut_Long = 1,
     /**
     * 短切分（句号类分句+逗号类分句+双空格分句）
     */
     Normalize_Cut_Short = 2,
+    /**
+    * 长切分（句号类分句+逗号类双空格+顿号双空格）
+    */
+    Normalize_Cut_Long_Period = 3,
 };
 
 /**
@@ -141,9 +145,13 @@ enum {
     */
     PARAMETER_SPEAKING_STYLE = 5,
     /**
-    * 数字人形象
+    * 动作描述
     */
-    PARAMETER_DIGITAL_PERSON = 6,
+    PARAMETER_MOVEMENT_DESCRIPTOR = 6,
+    /**
+    * 表情描述
+    */
+    PARAMETER_EXPRESSION_DESCRIPTOR = 7,
 //以下仅供内部debug
     /**
     * @deprecated tuning
@@ -199,9 +207,13 @@ typedef struct{
     */
     unsigned int featureSet;
     /**
-    * 当肢体动作使能时，指定肢体动作对应的数字人
+    * 对于v1接口，置为NULL; 对于v2接口, 且表情使能时，指定表情描述符
     */
-    const char* digitalPerson;
+    const char* expressionDescriptor;
+    /**
+    * 对于v1接口，置为NULL; 对于v2接口, 且动作使能时，指定动作描述符
+    */
+    const char* movementDescriptor;
 }TtsSetting;
 
 

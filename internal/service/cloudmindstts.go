@@ -112,7 +112,6 @@ func (s *CloudMindsTTSService) GetTtsConfig(ctx context.Context, req *pb.VerReq)
 
 	for i, speaker := range s.uc.Speakers {
 		speakerList[i] = &pb.SpeakerParameter{
-			SpeakerId:            int32(speaker.SpeakerId),
 			SpeakerName:          speaker.SpeakerName,
 			ParameterSpeakerName: speaker.ParameterSpeakerName,
 			IsSupportEmotion:     speaker.IsSupportEmotion,
@@ -124,10 +123,11 @@ func (s *CloudMindsTTSService) GetTtsConfig(ctx context.Context, req *pb.VerReq)
 		SpeakerList: &pb.SpeakerList{
 			List: speakerList,
 		},
-		SpeedList:         s.uc.SupportedSpeed,
-		VolumeList:        s.uc.SupportedVolume,
-		PitchList:         s.uc.GetSupportedPitch(),
-		EmotionList:       s.uc.GetSupportedEmotion(),
-		DigitalPersonList: s.uc.GetSupportedDigitalPerson(),
+		SpeedList:      s.uc.SupportedSpeed,
+		VolumeList:     s.uc.SupportedVolume,
+		PitchList:      s.uc.GetSupportedPitch(),
+		EmotionList:    s.uc.GetSupportedEmotion(),
+		MovementList:   s.uc.GetSupportedMovement(),
+		ExpressionList: s.uc.GetSupportedExpression(),
 	}, nil
 }

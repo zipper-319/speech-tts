@@ -34,15 +34,6 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	spanCtx, span := trace.NewTraceSpan(conn.Context(), "TTSService v1 call", nil)
 	defer span.End()
 
-	if req.ParameterSpeakerName == "" {
-		for _, speaker := range s.uc.SupportedSpeaker {
-			if speaker.Id == int(req.Speaker) {
-				req.ParameterSpeakerName = speaker.Name
-				break
-			}
-		}
-	}
-
 	if v, exists := utils.SpeakerMap[strings.ToLower(req.ParameterSpeakerName)]; exists {
 		req.ParameterSpeakerName = v
 	}
@@ -55,6 +46,10 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
 	logger.Infof("call TTSServiceV1;the req——————text:%s;speakerName:%s;Emotions:%s",
 		req.Text, req.ParameterSpeakerName, req.Emotions)
+
+	if req.ParameterSpeakerName == "" {
+		req.ParameterSpeakerName = "DaXiaoFang"
+	}
 
 	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, logger)
 	PUserData := pointer.Save(object)
@@ -107,7 +102,6 @@ func (s *CloudMindsTTSServiceV1) GetSpeaker(ctx context.Context, req *pb.VerReq)
 	speakerList := make([]*pb.SpeakerParameter, len(s.uc.Speakers))
 	for i, speaker := range s.uc.Speakers {
 		speakerList[i] = &pb.SpeakerParameter{
-			SpeakerId:            int32(speaker.SpeakerId),
 			SpeakerName:          speaker.SpeakerName,
 			ParameterSpeakerName: speaker.ParameterSpeakerName,
 		}

@@ -35,6 +35,7 @@ var (
 	_ = sort.Sort
 )
 
+
 // Validate checks the field values on TtsReq with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -75,6 +76,10 @@ func (m *TtsReq) validate(all bool) error {
 	// no validation rules for TraceId
 
 	// no validation rules for RootTraceId
+
+	// no validation rules for Movement
+
+	// no validation rules for Expression
 
 	if len(errors) > 0 {
 		return TtsReqMultiError(errors)
@@ -1108,6 +1113,8 @@ func (m *FacialExpressionConfig) validate(all bool) error {
 
 	// no validation rules for FrameDurMs
 
+	// no validation rules for ControlName
+
 	if len(errors) > 0 {
 		return FacialExpressionConfigMultiError(errors)
 	}
@@ -1213,6 +1220,8 @@ func (m *BodyMovementConfig) validate(all bool) error {
 	// no validation rules for FrameDim
 
 	// no validation rules for FrameDurMs
+
+	// no validation rules for ControlName
 
 	if len(errors) > 0 {
 		return BodyMovementConfigMultiError(errors)
@@ -2298,6 +2307,74 @@ func (m *RespGetTtsConfig) validate(all bool) error {
 
 	}
 
+	for idx, item := range m.GetMovementList() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RespGetTtsConfigValidationError{
+						field:  fmt.Sprintf("MovementList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RespGetTtsConfigValidationError{
+						field:  fmt.Sprintf("MovementList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RespGetTtsConfigValidationError{
+					field:  fmt.Sprintf("MovementList[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetExpressionList() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RespGetTtsConfigValidationError{
+						field:  fmt.Sprintf("ExpressionList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RespGetTtsConfigValidationError{
+						field:  fmt.Sprintf("ExpressionList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RespGetTtsConfigValidationError{
+					field:  fmt.Sprintf("ExpressionList[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return RespGetTtsConfigMultiError(errors)
 	}
@@ -2937,3 +3014,213 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MessageDigitalPersonValidationError{}
+
+// Validate checks the field values on MessageMovement with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *MessageMovement) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MessageMovement with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MessageMovementMultiError, or nil if none found.
+func (m *MessageMovement) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MessageMovement) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for ChineseName
+
+	if len(errors) > 0 {
+		return MessageMovementMultiError(errors)
+	}
+
+	return nil
+}
+
+// MessageMovementMultiError is an error wrapping multiple validation errors
+// returned by MessageMovement.ValidateAll() if the designated constraints
+// aren't met.
+type MessageMovementMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MessageMovementMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MessageMovementMultiError) AllErrors() []error { return m }
+
+// MessageMovementValidationError is the validation error returned by
+// MessageMovement.Validate if the designated constraints aren't met.
+type MessageMovementValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MessageMovementValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MessageMovementValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MessageMovementValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MessageMovementValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MessageMovementValidationError) ErrorName() string { return "MessageMovementValidationError" }
+
+// Error satisfies the builtin error interface
+func (e MessageMovementValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMessageMovement.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MessageMovementValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MessageMovementValidationError{}
+
+// Validate checks the field values on MessageExpression with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *MessageExpression) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MessageExpression with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MessageExpressionMultiError, or nil if none found.
+func (m *MessageExpression) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MessageExpression) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for ChineseName
+
+	if len(errors) > 0 {
+		return MessageExpressionMultiError(errors)
+	}
+
+	return nil
+}
+
+// MessageExpressionMultiError is an error wrapping multiple validation errors
+// returned by MessageExpression.ValidateAll() if the designated constraints
+// aren't met.
+type MessageExpressionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MessageExpressionMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MessageExpressionMultiError) AllErrors() []error { return m }
+
+// MessageExpressionValidationError is the validation error returned by
+// MessageExpression.Validate if the designated constraints aren't met.
+type MessageExpressionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MessageExpressionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MessageExpressionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MessageExpressionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MessageExpressionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MessageExpressionValidationError) ErrorName() string {
+	return "MessageExpressionValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MessageExpressionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMessageExpression.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MessageExpressionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MessageExpressionValidationError{}

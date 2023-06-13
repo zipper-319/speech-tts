@@ -10,31 +10,30 @@ import (
 
 type SpeakerSetting struct {
 	SupportedSpeaker []struct {
-		Id          int    `json:"id"`
 		Name        string `json:"name"`
-		ChineseName string `mapstructure:"chinese_name"`
+		ChineseName string `json:"chinese_name"`
 	} `json:"SupportedSpeaker"`
 	SupportedSpeed  []string `json:"SupportedSpeed"`
 	SupportedVolume []string `json:"SupportedVolume"`
 	SupportedPitch  []struct {
-		Id          int    `json:"id"`
 		Name        string `json:"name"`
-		ChineseName string `mapstructure:"chinese_name"`
+		ChineseName string `json:"chinese_name"`
 	} `json:"SupportedPitch"`
 	SupportedEmotion []struct {
-		Id          int    `json:"id"`
 		Name        string `json:"name"`
-		ChineseName string `mapstructure:"chinese_name"`
+		ChineseName string `json:"chinese_name"`
 	} `json:"SupportedEmotion"`
-	SupportedDigitalPerson []struct {
-		Id          int    `json:"id"`
+	SupportedMovementDescriptor []struct {
 		Name        string `json:"name"`
-		ChineseName string `mapstructure:"chinese_name"`
-	} `json:"SupportedDigitalPerson"`
+		ChineseName string `json:"chinese_name"`
+	} `json:"SupportedMovementDescriptor"`
+	SupportedExpressionDescriptor []struct {
+		Name        string `json:"name"`
+		ChineseName string `json:"chinese_name"`
+	} `json:"SupportedExpressionDescriptor"`
 }
 
 type SpeakerInfo struct {
-	SpeakerId            int
 	SpeakerName          string
 	ParameterSpeakerName string
 	IsSupportEmotion     bool

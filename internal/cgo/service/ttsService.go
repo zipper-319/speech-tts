@@ -113,7 +113,6 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger l
 		log.NewHelper(logger).Infof("-----cname:%s------flags:%d, isEmotion:%t, isMixedVoice:%t, language:%s",
 			supportedSpeaker.Name, int(m.flags), isEmotion, isMixedVoice, C.GoString(m.language))
 		speakers[i] = &data.SpeakerInfo{
-			SpeakerId:            supportedSpeaker.Id,
 			SpeakerName:          supportedSpeaker.ChineseName,
 			ParameterSpeakerName: supportedSpeaker.Name,
 			IsSupportEmotion:     isEmotion,
@@ -153,7 +152,6 @@ func (t *TTSService) GetSupportedPitch() []*v2.MessagePitch {
 	pitchList := make([]*v2.MessagePitch, 0, len(t.SpeakerSetting.SupportedPitch))
 	for _, pitch := range t.SpeakerSetting.SupportedPitch {
 		pitchList = append(pitchList, &v2.MessagePitch{
-			Id:          int32(pitch.Id),
 			Name:        pitch.Name,
 			ChineseName: pitch.ChineseName,
 		})
@@ -165,7 +163,6 @@ func (t *TTSService) GetSupportedEmotion() []*v2.MessageEmotion {
 	emotionList := make([]*v2.MessageEmotion, 0, len(t.SpeakerSetting.SupportedEmotion))
 	for _, emotion := range t.SpeakerSetting.SupportedEmotion {
 		emotionList = append(emotionList, &v2.MessageEmotion{
-			Id:          int32(emotion.Id),
 			Name:        emotion.Name,
 			ChineseName: emotion.ChineseName,
 		})
@@ -173,17 +170,39 @@ func (t *TTSService) GetSupportedEmotion() []*v2.MessageEmotion {
 	return emotionList
 }
 
-func (t *TTSService) GetSupportedDigitalPerson() []*v2.MessageDigitalPerson {
-	digitalPersonList := make([]*v2.MessageDigitalPerson, 0, len(t.SpeakerSetting.SupportedDigitalPerson))
-	for _, digitalPerson := range t.SpeakerSetting.SupportedDigitalPerson {
-		digitalPersonList = append(digitalPersonList, &v2.MessageDigitalPerson{
-			Id:          int32(digitalPerson.Id),
-			Name:        digitalPerson.Name,
-			ChineseName: digitalPerson.ChineseName,
+func (t *TTSService) GetSupportedMovement() []*v2.MessageMovement {
+	movementList := make([]*v2.MessageMovement, 0, len(t.SpeakerSetting.SupportedEmotion))
+	for _, emotion := range t.SpeakerSetting.SupportedMovementDescriptor {
+		movementList = append(movementList, &v2.MessageMovement{
+			Name:        emotion.Name,
+			ChineseName: emotion.ChineseName,
 		})
 	}
-	return digitalPersonList
+	return movementList
 }
+
+func (t *TTSService) GetSupportedExpression() []*v2.MessageExpression {
+	ExpressionList := make([]*v2.MessageExpression, 0, len(t.SpeakerSetting.SupportedEmotion))
+	for _, emotion := range t.SpeakerSetting.SupportedMovementDescriptor {
+		ExpressionList = append(ExpressionList, &v2.MessageExpression{
+			Name:        emotion.Name,
+			ChineseName: emotion.ChineseName,
+		})
+	}
+	return ExpressionList
+}
+
+//func (t *TTSService) GetSupportedDigitalPerson() []*v2.MessageDigitalPerson {
+//	digitalPersonList := make([]*v2.MessageDigitalPerson, 0, len(t.SpeakerSetting.SupportedDigitalPerson))
+//	for _, digitalPerson := range t.SpeakerSetting.SupportedDigitalPerson {
+//		digitalPersonList = append(digitalPersonList, &v2.MessageDigitalPerson{
+//			Id:          int32(digitalPerson.Id),
+//			Name:        digitalPerson.Name,
+//			ChineseName: digitalPerson.ChineseName,
+//		})
+//	}
+//	return digitalPersonList
+//}
 
 func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) error {
 	var sdkSettings = C.TtsSetting{}
@@ -199,8 +218,12 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) 
 	sdkSettings.speakingStyle = C.CString(req.Emotions)
 	defer C.free(unsafe.Pointer(sdkSettings.speakingStyle))
 	sdkSettings.featureSet = C.uint(paramFormatter(req.ParameterFlag))
-	sdkSettings.digitalPerson = C.CString(req.ParameterDigitalPerson)
-	defer C.free(unsafe.Pointer(sdkSettings.digitalPerson))
+	//sdkSettings.digitalPerson = C.CString(req.ParameterDigitalPerson)
+	//defer C.free(unsafe.Pointer(sdkSettings.digitalPerson))
+	sdkSettings.expressionDescriptor = C.CString(req.Expression)
+	defer C.free(unsafe.Pointer(sdkSettings.expressionDescriptor))
+	sdkSettings.movementDescriptor = C.CString(req.Movement)
+	defer C.free(unsafe.Pointer(sdkSettings.movementDescriptor))
 	text := C.CString(req.Text)
 	defer C.free(unsafe.Pointer(text))
 	traceId := C.CString(req.RootTraceId + "_" + req.TraceId)
@@ -234,12 +257,6 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 	defer C.free(unsafe.Pointer(setting.speakingStyle))
 	setting.featureSet = C.uint(3)
 
-	if len(t.SupportedDigitalPerson) > 0 {
-		setting.digitalPerson = C.CString(t.SupportedDigitalPerson[0].Name)
-	} else {
-		setting.digitalPerson = C.CString("SweetGirl")
-	}
-	defer C.free(unsafe.Pointer(setting.digitalPerson))
 	text := C.CString(req.Text)
 	defer C.free(unsafe.Pointer(text))
 	traceId := C.CString(req.RootTraceId + "_" + req.TraceId)

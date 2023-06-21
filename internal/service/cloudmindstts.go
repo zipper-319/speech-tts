@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
@@ -38,10 +39,6 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 
 	spanCtx, span := trace.NewTraceSpan(conn.Context(), "TTSService v2 call", nil)
 
-	if v, exists := utils.SpeakerMap[strings.ToLower(req.ParameterSpeakerName)]; exists {
-		req.ParameterSpeakerName = v
-	}
-
 	if req.TraceId == "" {
 		uuidNum, _ := uuid.NewRandom()
 		req.TraceId = fmt.Sprintf("%s-%s", "sdk", uuidNum.String())
@@ -54,8 +51,40 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	defer span.End()
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
-	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v",
-		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag)
+	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s ",
+		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag, req.Expression, req.Movement)
+
+	if req.Text == "" {
+		return errors.New("text param is null")
+	}
+
+	speaker := req.ParameterSpeakerName
+
+	if speaker == "" {
+		speaker = "DaXiaoFang"
+	} else {
+		temp := strings.Split(speaker, "_")
+		if len(temp) > 1 {
+			speaker = temp[0]
+		}
+	}
+
+	if !s.uc.IsLegalSpeaker(speaker) {
+		return errors.New("ParameterSpeakerName param is invalid")
+	}
+	if req.Emotions != "" && !s.uc.IsLegalEmotion(req.Emotions) {
+		return errors.New("emotion param is invalid")
+	}
+	if req.Pitch != "" && !s.uc.IsLegalPitch(req.Pitch) {
+		return errors.New("pitch param is invalid")
+	}
+	if req.Expression != "" && !s.uc.IsLegalExpression(req.Expression) {
+		return errors.New("expression param is invalid")
+	}
+	if req.Movement != "" && !s.uc.IsLegalExpression(req.Movement) {
+		return errors.New("movement param is invalid")
+	}
+
 	object := s.uc.GeneHandlerObjectV2(spanCtx, req.ParameterSpeakerName, logger)
 	PUserData := pointer.Save(object)
 	defer pointer.Unref(PUserData)

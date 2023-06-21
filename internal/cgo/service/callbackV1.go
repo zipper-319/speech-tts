@@ -9,6 +9,7 @@ package service
 */
 import "C"
 import (
+	"fmt"
 	"log"
 	v1 "speech-tts/api/tts/v1"
 	"speech-tts/internal/data"
@@ -65,6 +66,9 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 		if expression, ok := object.ParamMap["expression"].(v1.Expression); ok {
 			response.Expression = &expression
 		}
+		if debugInfo, ok := object.ParamMap["debugInfo"].(string); ok {
+			response.DebugInfo = debugInfo
+		}
 		object.ParamMap = make(map[string]interface{})
 	}
 	sendRespV1(object, response)
@@ -107,7 +111,24 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 }
 
 //export goOnDebugV1
-func goOnDebugV1(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
+func goOnDebugV1(pUserData unsafe.Pointer, debugType *C.char, info *C.char) {
+	handlerObject := pointer.Load(pUserData)
+	object, ok := handlerObject.(*data.HandlerObjectV1)
+	if !ok {
+		log.Println("goOnDebugV1;irregularity type")
+		return
+	}
+	_, span := trace.NewTraceSpan(object.Context, "goOnDebugV1", nil)
+	defer span.End()
+	object.Log.Infof("start to goOnDebugV1")
+
+	debugInfo := fmt.Sprintf("%s:%s", string(C.GoString(debugType)), string(C.GoString(info)))
+	temp := object.ParamMap["debugInfo"]
+	if info, ok := temp.(string); ok {
+		object.ParamMap["debugInfo"] = fmt.Sprintf("%s\n%s", info, debugInfo)
+	} else {
+		object.ParamMap["debugInfo"] = debugInfo
+	}
 	return
 }
 

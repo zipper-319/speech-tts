@@ -70,3 +70,48 @@ func NewSpeakerSetting(path string) (*SpeakerSetting, error) {
 	viper.Unmarshal(&speakerSetting)
 	return &speakerSetting, nil
 }
+
+func (ss *SpeakerSetting) IsLegalSpeaker(speaker string) bool {
+	for _, supportedSpeaker := range ss.SupportedSpeaker {
+		if supportedSpeaker.Name == speaker {
+			return true
+		}
+	}
+	return false
+}
+
+func (ss *SpeakerSetting) IsLegalEmotion(emotion string) bool {
+	for _, supportedEmotion := range ss.SupportedEmotion {
+		if supportedEmotion.Name == emotion {
+			return true
+		}
+	}
+	return false
+}
+
+func (ss *SpeakerSetting) IsLegalPitch(pitch string) bool {
+	for _, supportedPitch := range ss.SupportedPitch {
+		if supportedPitch.Name == pitch {
+			return true
+		}
+	}
+	return false
+}
+
+func (ss *SpeakerSetting) IsLegalMovement(movement string) bool {
+	for _, supportedMovement := range ss.SupportedMovementDescriptor {
+		if supportedMovement.Name == movement {
+			return true
+		}
+	}
+	return false
+}
+
+func (ss *SpeakerSetting) IsLegalExpression(expression string) bool {
+	for _, supportedExpression := range ss.SupportedExpressionDescriptor {
+		if supportedExpression.Name == expression {
+			return true
+		}
+	}
+	return false
+}

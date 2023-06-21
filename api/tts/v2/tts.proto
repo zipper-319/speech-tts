@@ -28,7 +28,7 @@ message TtsReq {
     string pitch = 4;                           // 取值范围请用 GetTtsConfig PitchList.Name
     string emotions = 5;                        // 如果该发音人支持情感，取值范围请用 GetTtsConfig EmotionList.Name，如果不支持请传""，否则会报错
     string parameter_speaker_name = 6;          // 取值范围请用 GetTtsConfig函数的返回Speakerlist.parameterSpeakerName
-    string parameter_digital_person = 7;        // 数字人形象，  (废弃不用)
+    string parameter_digital_person = 7;        // **********数字人形象，  (废弃不用)  *******************
     map<string, string> parameter_flag = 8;     // 额外信息参数，口型key:mouth,字符串"true"或者"false"、动作key:movement,字符串"true"或者"false"、表情key:expression,字符串"true"或者"false"
     string trace_id = 9;
     string root_trace_id = 10;
@@ -181,11 +181,11 @@ message MessageDigitalPerson {
 }
 
 message MessageMovement{
-    string name = 1;
-    string chinese_name = 2;
+    string name = 1;                                    // 用于传参
+    string chinese_name = 2;                            // 对应中文
 }
 
 message MessageExpression{
-    string name = 1;
-    string chinese_name = 2;
+    string name = 1;                                    // 用于传参
+    string chinese_name = 2;                            // 对应中文
 }

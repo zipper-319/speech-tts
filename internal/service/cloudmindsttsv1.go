@@ -3,17 +3,17 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
+	pb "speech-tts/api/tts/v1"
 	"speech-tts/internal/cgo/service"
 	"speech-tts/internal/pkg/pointer"
 	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
 	"strings"
-
-	pb "speech-tts/api/tts/v1"
 )
 
 type CloudMindsTTSServiceV1 struct {
@@ -34,10 +34,6 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	spanCtx, span := trace.NewTraceSpan(conn.Context(), "TTSService v1 call", nil)
 	defer span.End()
 
-	if v, exists := utils.SpeakerMap[strings.ToLower(req.ParameterSpeakerName)]; exists {
-		req.ParameterSpeakerName = v
-	}
-
 	span.SetAttributes(attribute.Key("speakerName").String(req.ParameterSpeakerName))
 	span.SetAttributes(attribute.Key("traceId").String(req.TraceId))
 	span.SetAttributes(attribute.Key("rootTraceId").String(req.RootTraceId))
@@ -47,11 +43,27 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	logger.Infof("call TTSServiceV1;the req——————text:%s;speakerName:%s;Emotions:%s",
 		req.Text, req.ParameterSpeakerName, req.Emotions)
 
-	if req.ParameterSpeakerName == "" {
-		req.ParameterSpeakerName = "DaXiaoFang"
+	speaker := req.ParameterSpeakerName
+
+	if speaker == "" {
+		speaker = "DaXiaoFang"
+	} else {
+		temp := strings.Split(speaker, "_")
+		if len(temp) > 1 {
+			speaker = temp[0]
+		}
+	}
+	if !s.uc.IsLegalSpeaker(speaker) {
+		return errors.New("ParameterSpeakerName param is invalid")
+	}
+	if req.Emotions != "" && !s.uc.IsLegalEmotion(req.Emotions) {
+		return errors.New("emotion param is invalid")
+	}
+	if req.Pitch != "" && !s.uc.IsLegalPitch(req.Pitch) {
+		return errors.New("pitch param is invalid")
 	}
 
-	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, logger)
+	object := s.uc.GeneHandlerObjectV1(spanCtx, speaker, logger)
 	PUserData := pointer.Save(object)
 	defer pointer.Unref(PUserData)
 	if err := s.uc.CallTTSServiceV1(req, PUserData); err != nil {

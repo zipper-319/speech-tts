@@ -80,7 +80,7 @@ enum ttsErr {
 	TTS_ERR_INVALID_SPEED = 10003;						// 无效的speed[1,5],默认3
 	TTS_ERR_INVALID_VOLUME = 10004;						// 无效的volume[1,5],默认3
 	TTS_ERR_INVALID_PITCH = 10005;						// 无效的pitch[low,medium,high],默认medium
-	TTS_ERR_INVALID_SPEAKER = 10006;					// 无效的speed[0,10]
+	TTS_ERR_INVALID_SPEAKER = 10006;					// 无效的发音人
 	TTS_ERR_INVALID_TYPE = 10007;						// 无效的type,只支持CloudMinds
 	TTS_ERR_SYN_CANCELLED = 10008;						// 音频合成cancelled
 	TTS_ERR_SYN_FAILURE = 10009;						// 音频合成异常：cuda oom

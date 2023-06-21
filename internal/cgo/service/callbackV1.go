@@ -111,7 +111,7 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 }
 
 //export goOnDebugV1
-func goOnDebugV1(pUserData unsafe.Pointer, debugType *C.char, info *C.char) {
+func goOnDebugV1(pUserData unsafe.Pointer, info *C.char) {
 	handlerObject := pointer.Load(pUserData)
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
@@ -120,12 +120,12 @@ func goOnDebugV1(pUserData unsafe.Pointer, debugType *C.char, info *C.char) {
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnDebugV1", nil)
 	defer span.End()
-	object.Log.Infof("start to goOnDebugV1")
+	debugInfo := string(C.GoString(info))
+	object.Log.Infof("start to goOnDebugV1;debugInfo:%s", debugInfo)
 
-	debugInfo := fmt.Sprintf("%s:%s", string(C.GoString(debugType)), string(C.GoString(info)))
 	temp := object.ParamMap["debugInfo"]
-	if info, ok := temp.(string); ok {
-		object.ParamMap["debugInfo"] = fmt.Sprintf("%s\n%s", info, debugInfo)
+	if i, exist := temp.(string); exist {
+		object.ParamMap["debugInfo"] = fmt.Sprintf("%s\n%s", i, debugInfo)
 	} else {
 		object.ParamMap["debugInfo"] = debugInfo
 	}

@@ -58,6 +58,7 @@ func TestTTSV1(addr, text, speaker, traceId, robotTraceId string) error {
 	response, err := ttsV1Client.Call(ctx, req)
 	if err != nil {
 		log.Error(err)
+		return err
 	}
 	for {
 		temp, err := response.Recv()

@@ -40,20 +40,18 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	span.SetAttributes(attribute.Key("text").String(req.Text))
 	defer span.End()
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
-	logger.Infof("call TTSServiceV1;the req——————text:%s;speakerName:%s;Emotions:%s",
-		req.Text, req.ParameterSpeakerName, req.Emotions)
+	logger.Infof("call TTSServiceV1;the req——————text:%s;speakerName:%s;Emotions:%s;Pitch:%s",
+		req.Text, req.ParameterSpeakerName, req.Emotions, req.Pitch)
 
-	speaker := req.ParameterSpeakerName
-
-	if speaker == "" {
-		speaker = "DaXiaoFang"
+	if req.ParameterSpeakerName == "" {
+		req.ParameterSpeakerName = "DaXiaoFang"
 	} else {
-		temp := strings.Split(speaker, "_")
+		temp := strings.Split(req.ParameterSpeakerName, "_")
 		if len(temp) > 1 {
-			speaker = temp[0]
+			req.ParameterSpeakerName = temp[0]
 		}
 	}
-	if !s.uc.IsLegalSpeaker(speaker) {
+	if !s.uc.IsLegalSpeaker(req.ParameterSpeakerName) {
 		return errors.New("ParameterSpeakerName param is invalid")
 	}
 	if req.Emotions != "" && !s.uc.IsLegalEmotion(req.Emotions) {
@@ -63,7 +61,7 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 		return errors.New("pitch param is invalid")
 	}
 
-	object := s.uc.GeneHandlerObjectV1(spanCtx, speaker, logger)
+	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, logger)
 	PUserData := pointer.Save(object)
 	defer pointer.Unref(PUserData)
 	if err := s.uc.CallTTSServiceV1(req, PUserData); err != nil {

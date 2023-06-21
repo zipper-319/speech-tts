@@ -58,18 +58,16 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		return errors.New("text param is null")
 	}
 
-	speaker := req.ParameterSpeakerName
-
-	if speaker == "" {
-		speaker = "DaXiaoFang"
+	if req.ParameterSpeakerName == "" {
+		req.ParameterSpeakerName = "DaXiaoFang"
 	} else {
-		temp := strings.Split(speaker, "_")
+		temp := strings.Split(req.ParameterSpeakerName, "_")
 		if len(temp) > 1 {
-			speaker = temp[0]
+			req.ParameterSpeakerName = temp[0]
 		}
 	}
 
-	if !s.uc.IsLegalSpeaker(speaker) {
+	if !s.uc.IsLegalSpeaker(req.ParameterSpeakerName) {
 		return errors.New("ParameterSpeakerName param is invalid")
 	}
 	if req.Emotions != "" && !s.uc.IsLegalEmotion(req.Emotions) {

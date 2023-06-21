@@ -1,10 +1,14 @@
 #!/bin/bash
 
 MODEL_Dir=`pwd`
-MODULE_DIR=/devepu/jenkins1/workspace/CmTts/jni/NATIVE/tts
+MODULE_DIR=/home/data/下载
 sourceDir=$MODULE_DIR/TTS_SDK_*
 cd $MODULE_DIR
-VERSION=`ls | grep TTS_SDK_ | awk -F_ '{print $3}'`
+VERSION=`ls | grep TTS_SDK_ | grep -v zip| awk -F_ '{print $3}'`
+if [[ -z $VERSION ]];then
+  echo "not find VERSION" $VERSION
+  exit -1
+fi
 echo 'version is' $VERSION
 MODEL_PATH="speech-tts-model-out"
 cd $MODEL_Dir
@@ -14,11 +18,8 @@ mkdir -p $MODEL_PATH/lib
 mkdir -p $MODEL_PATH/res
 
 cp $sourceDir/lib/*  $MODEL_PATH/lib/
-cp $sourceDir/libCmTts.so $MODEL_PATH/libCmTts.so.online_voicetuning
-cp -r $MODULE_DIR/res/* $MODEL_PATH/res
-rm -rf $MODEL_PATH/res/animation
-mkdir -p $MODEL_PATH/res/animation
-cp -r $MODULE_DIR/../animation/res/* $MODEL_PATH/res/animation
+cp $sourceDir/libCmTts.so.online_voicetuning $MODEL_PATH/libCmTts.so.online_voicetuning
+cp -r $sourceDir/res/* $MODEL_PATH/res
 cd $MODEL_Dir/$MODEL_PATH
 
 expect -c '

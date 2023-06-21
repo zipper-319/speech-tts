@@ -20,6 +20,7 @@ func init() {
 	flag.StringVar(&addr, "a", "127.0.0.1:3012", "addr, eg: -a 127.0.0.1:3012")
 	flag.StringVar(&speaker, "s", "DaXiaoFang", "speaker name, eg: -s DaXiaoFang")
 	flag.StringVar(&testVersion, "v", "v1", "test Version, eg: -v v1")
+	log.SetFlags(log.Lshortfile | log.Lmicroseconds | log.Flags())
 }
 
 func main() {

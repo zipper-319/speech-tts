@@ -2,10 +2,10 @@ package benchmark
 
 import (
 	"context"
-	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"io"
+	"log"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
 	"sync"
@@ -57,21 +57,25 @@ func TestTTSV1(addr, text, speaker, traceId, robotTraceId string) error {
 
 	response, err := ttsV1Client.Call(ctx, req)
 	if err != nil {
-		log.Error(err)
+		log.Println(err)
 		return err
 	}
 	for {
 		temp, err := response.Recv()
+		if err == io.EOF {
+			break
+		}
 		if err != nil {
+			log.Println(err)
 			break
 		}
 		if temp.Error != v1.TtsErr_TTS_ERR_OK {
-			log.Info("tts 内部服务错误：", temp.Error)
+			log.Printf("tts 内部服务错误：%v", temp.Error)
 		}
 		if temp.Status == v1.PcmStatus_STATUS_END {
-			log.Infof("cost:%d", time.Since(now).Milliseconds())
+			log.Printf("cost:%d", time.Since(now).Milliseconds())
 		} else {
-			log.Infof("pcm length:%d, status:%s", len(temp.Pcm), temp.Status)
+			log.Printf("pcm length:%d, status:%s", len(temp.Pcm), temp.Status)
 		}
 	}
 	return nil
@@ -88,12 +92,16 @@ func TestTTSV2(addr, text, speaker, traceId, robotTraceId string) error {
 	}
 	ttsV2Client := v2.NewCloudMindsTTSClient(conn)
 	req := &v2.TtsReq{
-		Text: text,
+		Text:                 text,
+		ParameterSpeakerName: speaker,
+		TraceId:              traceId,
+		RootTraceId:          robotTraceId,
 	}
 	now := time.Now()
 	response, err := ttsV2Client.Call(ctx, req)
 	if err != nil {
-		log.Error(err)
+		log.Println(err)
+		return err
 	}
 	for {
 		temp, err := response.Recv()
@@ -101,19 +109,19 @@ func TestTTSV2(addr, text, speaker, traceId, robotTraceId string) error {
 			break
 		}
 		if err != nil {
-			log.Error(err)
+			log.Println(err)
 			break
 		}
 		if temp.ErrorCode != 0 {
-			log.Info("tts 内部服务错误：", temp.ErrorCode)
+			log.Println("tts 内部服务错误：", temp.ErrorCode)
 			break
 		}
-		log.Infof("receive message(Type %T)", temp)
+		log.Printf("receive message(Type %T)", temp)
 
 		if audio, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
-			log.Infof("pcm length:%d, status:", len(audio.SynthesizedAudio.Pcm))
+			log.Printf("pcm length:%d, status:", len(audio.SynthesizedAudio.Pcm))
 		}
 	}
-	log.Infof("----------cost:%d\n\n", time.Since(now).Milliseconds())
+	log.Printf("----------cost:%d\n\n", time.Since(now).Milliseconds())
 	return nil
 }

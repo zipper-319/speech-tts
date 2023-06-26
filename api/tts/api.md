@@ -199,7 +199,7 @@ Action基元数据
 | ----- | ---- | ----- | ----------- |
 | frame_dim | [int32](#int32) |  | 每帧的维度，即一帧由frameDim个float组成 |
 | frame_dur_ms | [float](#float) |  | 每帧的持续时长 |
-| control_name | [string](#string) |  | 每帧的名字 |
+| control_name_list | [string](#string) | repeated | 每帧的名字 |
 
 
 
@@ -283,7 +283,7 @@ Action基元数据
 | ----- | ---- | ----- | ----------- |
 | frame_dim | [int32](#int32) |  | 每帧的维度，即一帧由frameDim个float组成 |
 | frame_dur_ms | [float](#float) |  | 每帧的持续时长 |
-| control_name | [string](#string) |  | 每帧的名字 |
+| control_name_list | [string](#string) | repeated | 每帧的名字 |
 
 
 
@@ -332,8 +332,8 @@ Action基元数据
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| chinese_name | [string](#string) |  |  |
+| name | [string](#string) |  | 用于传参 |
+| chinese_name | [string](#string) |  | 对应中文 |
 
 
 
@@ -348,8 +348,8 @@ Action基元数据
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| chinese_name | [string](#string) |  |  |
+| name | [string](#string) |  | 用于传参 |
+| chinese_name | [string](#string) |  | 对应中文 |
 
 
 
@@ -492,7 +492,7 @@ Action基元数据
 | pitch | [string](#string) |  | 取值范围请用 GetTtsConfig PitchList.Name |
 | emotions | [string](#string) |  | 如果该发音人支持情感，取值范围请用 GetTtsConfig EmotionList.Name，如果不支持请传&#34;&#34;，否则会报错 |
 | parameter_speaker_name | [string](#string) |  | 取值范围请用 GetTtsConfig函数的返回Speakerlist.parameterSpeakerName |
-| parameter_digital_person | [string](#string) |  | 数字人形象， (废弃不用) |
+| parameter_digital_person | [string](#string) |  | 数字人形象， (废弃不用) ******************* |
 | parameter_flag | [TtsReq.ParameterFlagEntry](#ttsschema-TtsReq-ParameterFlagEntry) | repeated | 额外信息参数，口型key:mouth,字符串&#34;true&#34;或者&#34;false&#34;、动作key:movement,字符串&#34;true&#34;或者&#34;false&#34;、表情key:expression,字符串&#34;true&#34;或者&#34;false&#34; |
 | trace_id | [string](#string) |  |  |
 | root_trace_id | [string](#string) |  |  |
@@ -820,7 +820,7 @@ Action基元数据
 | TTS_ERR_INVALID_SPEED | 10003 | 无效的speed[1,5],默认3 |
 | TTS_ERR_INVALID_VOLUME | 10004 | 无效的volume[1,5],默认3 |
 | TTS_ERR_INVALID_PITCH | 10005 | 无效的pitch[low,medium,high],默认medium |
-| TTS_ERR_INVALID_SPEAKER | 10006 | 无效的speed[0,10] |
+| TTS_ERR_INVALID_SPEAKER | 10006 | 无效的发音人 |
 | TTS_ERR_INVALID_TYPE | 10007 | 无效的type,只支持CloudMinds |
 | TTS_ERR_SYN_CANCELLED | 10008 | 音频合成cancelled |
 | TTS_ERR_SYN_FAILURE | 10009 | 音频合成异常：cuda oom |

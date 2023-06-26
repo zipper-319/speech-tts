@@ -155,8 +155,11 @@
           "format": "float",
           "title": "每帧的持续时长"
         },
-        "control_name": {
-          "type": "string",
+        "control_name_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
           "title": "每帧的名字"
         }
       }
@@ -249,8 +252,11 @@
           "format": "float",
           "title": "每帧的持续时长"
         },
-        "control_name": {
-          "type": "string",
+        "control_name_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
           "title": "每帧的名字"
         }
       }
@@ -293,10 +299,12 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "用于传参"
         },
         "chinese_name": {
-          "type": "string"
+          "type": "string",
+          "title": "对应中文"
         }
       }
     },
@@ -304,10 +312,12 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "用于传参"
         },
         "chinese_name": {
-          "type": "string"
+          "type": "string",
+          "title": "对应中文"
         }
       }
     },

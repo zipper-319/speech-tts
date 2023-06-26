@@ -32,13 +32,14 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 	}
 	object.Log.Info("start to goOnStart")
 
-	var facialExpressionFrameDim, bodyMovemenFrameDim uint64 = 0, 0
-	var facialExpressionFrameDurMs, bodyMovemenFrameDurMs float32 = 0, 0
+	var facialExpressionFrameDim, bodyMovementFrameDim uint64
+	var facialExpressionFrameDurMs, bodyMovementFrameDurMs float32
+	var controlNameList []string
 	if facialExpressionConfig != nil {
 		frameDimLen := uint64(facialExpressionConfig.frameDim)
 		facialExpressionFrameDim = frameDimLen
 		facialExpressionFrameDurMs = float32(facialExpressionConfig.frameDurMs)
-		controlNameList := make([]string, frameDimLen)
+		controlNameList = make([]string, frameDimLen)
 		if facialExpressionConfig.control_name != nil && int(facialExpressionConfig.frameDim) > 0 {
 			tmpSlice := (*[1 << 30]*C.char)(unsafe.Pointer(facialExpressionConfig.control_name))[:frameDimLen:frameDimLen]
 			for i, s := range tmpSlice {
@@ -48,12 +49,12 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 	}
 
 	if bodyMovementConfig != nil {
-		bodyMovemenFrameDim = uint64(bodyMovementConfig.frameDim)
-		bodyMovemenFrameDurMs = float32(bodyMovementConfig.frameDurMs)
+		bodyMovementFrameDim = uint64(bodyMovementConfig.frameDim)
+		bodyMovementFrameDurMs = float32(bodyMovementConfig.frameDurMs)
 	}
 	paramSetting := make(map[string]interface{})
 	paramSetting["FacialExpressionFrameDim"] = int32(facialExpressionFrameDim)
-	paramSetting["BodyMovemenFrameDim"] = int32(bodyMovemenFrameDim)
+	paramSetting["BodyMovementFrameDim"] = int32(bodyMovementFrameDim)
 	object.ParamMap = paramSetting
 	response := v2.TtsRes{
 		Status: 1,
@@ -61,12 +62,14 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 			ConfigText: &v2.ConfigAndText{
 				Text: C.GoString(ttsText),
 				FacialExpressionConfig: &v2.FacialExpressionConfig{
-					FrameDim:   int32(facialExpressionFrameDim),
-					FrameDurMs: facialExpressionFrameDurMs,
+					FrameDim:        int32(facialExpressionFrameDim),
+					FrameDurMs:      facialExpressionFrameDurMs,
+					ControlNameList:  controlNameList,
 				},
 				BodyMovementConfig: &v2.BodyMovementConfig{
-					FrameDim:   int32(bodyMovemenFrameDim),
-					FrameDurMs: bodyMovemenFrameDurMs,
+					FrameDim:   int32(bodyMovementFrameDim),
+					FrameDurMs: bodyMovementFrameDurMs,
+					ControlNameList: controlNameList,
 				},
 			},
 		},
@@ -272,7 +275,7 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 	bodyMovementDataC := (*C.BodyMovementSegment)(bodyMovementData)
 	// _, bodyMovementDim := getTmpDecoder(*id)
 	var bodyMovementFrameSizeFrameDim uint64
-	if bodyMovementDim, ok := (object.ParamMap["BodyMovemenFrameDim"]).(int32); ok {
+	if bodyMovementDim, ok := (object.ParamMap["BodyMovementFrameDim"]).(int32); ok {
 		bodyMovementFrameSizeFrameDim = uint64(bodyMovementDim)
 	}
 	if bodyMovementDataC != nil {

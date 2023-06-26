@@ -35,7 +35,6 @@ var (
 	_ = sort.Sort
 )
 
-
 // Validate checks the field values on TtsReq with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -1113,8 +1112,6 @@ func (m *FacialExpressionConfig) validate(all bool) error {
 
 	// no validation rules for FrameDurMs
 
-	// no validation rules for ControlName
-
 	if len(errors) > 0 {
 		return FacialExpressionConfigMultiError(errors)
 	}
@@ -1220,8 +1217,6 @@ func (m *BodyMovementConfig) validate(all bool) error {
 	// no validation rules for FrameDim
 
 	// no validation rules for FrameDurMs
-
-	// no validation rules for ControlName
 
 	if len(errors) > 0 {
 		return BodyMovementConfigMultiError(errors)

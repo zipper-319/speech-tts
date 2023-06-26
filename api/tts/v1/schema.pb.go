@@ -118,7 +118,7 @@ const (
 	TtsErr_TTS_ERR_INVALID_SPEED        TtsErr = 10003 // 无效的speed[1,5],默认3
 	TtsErr_TTS_ERR_INVALID_VOLUME       TtsErr = 10004 // 无效的volume[1,5],默认3
 	TtsErr_TTS_ERR_INVALID_PITCH        TtsErr = 10005 // 无效的pitch[low,medium,high],默认medium
-	TtsErr_TTS_ERR_INVALID_SPEAKER      TtsErr = 10006 // 无效的speed[0,10]
+	TtsErr_TTS_ERR_INVALID_SPEAKER      TtsErr = 10006 // 无效的发音人
 	TtsErr_TTS_ERR_INVALID_TYPE         TtsErr = 10007 // 无效的type,只支持CloudMinds
 	TtsErr_TTS_ERR_SYN_CANCELLED        TtsErr = 10008 // 音频合成cancelled
 	TtsErr_TTS_ERR_SYN_FAILURE          TtsErr = 10009 // 音频合成异常：cuda oom

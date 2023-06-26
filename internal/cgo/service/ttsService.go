@@ -110,8 +110,8 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger l
 		m := C.GetSpeakerDescriptor(cname)
 		isEmotion := m.flags&C.SUPPORT_EMOTION != 0
 		isMixedVoice := m.flags&C.SUPPORT_MIXED_VOICE != 0
-		log.NewHelper(logger).Infof("-----cname:%s------flags:%d, isEmotion:%t, isMixedVoice:%t, language:%s",
-			supportedSpeaker.Name, int(m.flags), isEmotion, isMixedVoice, C.GoString(m.language))
+		log.NewHelper(logger).Infof("----ChineseName:%s------cname:%s------flags:%d, isEmotion:%t, isMixedVoice:%t, language:%s",
+			supportedSpeaker.ChineseName, supportedSpeaker.Name, int(m.flags), isEmotion, isMixedVoice, C.GoString(m.language))
 		speakers[i] = &data.SpeakerInfo{
 			SpeakerName:          supportedSpeaker.ChineseName,
 			ParameterSpeakerName: supportedSpeaker.Name,

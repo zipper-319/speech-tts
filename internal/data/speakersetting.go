@@ -11,25 +11,25 @@ import (
 type SpeakerSetting struct {
 	SupportedSpeaker []struct {
 		Name        string `json:"name"`
-		ChineseName string `json:"chinese_name"`
+		ChineseName string `mapstructure:"chinese_name" mapstructure:"chinese_name"`
 	} `json:"SupportedSpeaker"`
 	SupportedSpeed  []string `json:"SupportedSpeed"`
 	SupportedVolume []string `json:"SupportedVolume"`
 	SupportedPitch  []struct {
 		Name        string `json:"name"`
-		ChineseName string `json:"chinese_name"`
+		ChineseName string `json:"chinese_name" mapstructure:"chinese_name"`
 	} `json:"SupportedPitch"`
 	SupportedEmotion []struct {
 		Name        string `json:"name"`
-		ChineseName string `json:"chinese_name"`
+		ChineseName string `json:"chinese_name" mapstructure:"chinese_name"`
 	} `json:"SupportedEmotion"`
 	SupportedMovementDescriptor []struct {
 		Name        string `json:"name"`
-		ChineseName string `json:"chinese_name"`
+		ChineseName string `json:"chinese_name" mapstructure:"chinese_name"`
 	} `json:"SupportedMovementDescriptor"`
 	SupportedExpressionDescriptor []struct {
 		Name        string `json:"name"`
-		ChineseName string `json:"chinese_name"`
+		ChineseName string `json:"chinese_name" mapstructure:"chinese_name"`
 	} `json:"SupportedExpressionDescriptor"`
 }
 
@@ -68,6 +68,9 @@ func NewSpeakerSetting(path string) (*SpeakerSetting, error) {
 		return nil, err
 	}
 	viper.Unmarshal(&speakerSetting)
+	log.Info("\n_________________________________________")
+	log.Info(speakerSetting)
+	log.Info("____________________________________________\n")
 	return &speakerSetting, nil
 }
 

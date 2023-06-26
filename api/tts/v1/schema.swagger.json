@@ -305,7 +305,7 @@
         "TTS_ERR_INVALID_VOICE_TUNING"
       ],
       "default": "TTS_ERR_INIT",
-      "title": "- TTS_ERR_INIT: keep\n - TTS_ERR_OK: tts服务正常返回\n - TTS_ERR_INVALID_RATE: rate值错误\n - TTS_ERR_TEXT_LENGTH_OVERFLOW: 请求文本过长\n - TTS_ERR_INVALID_SPEED: 无效的speed[1,5],默认3\n - TTS_ERR_INVALID_VOLUME: 无效的volume[1,5],默认3\n - TTS_ERR_INVALID_PITCH: 无效的pitch[low,medium,high],默认medium\n - TTS_ERR_INVALID_SPEAKER: 无效的speed[0,10]\n - TTS_ERR_INVALID_TYPE: 无效的type,只支持CloudMinds\n - TTS_ERR_SYN_CANCELLED: 音频合成cancelled\n - TTS_ERR_SYN_FAILURE: 音频合成异常：cuda oom\n - TTS_ERR_NO_FREE_MOUDLE: 没有可用的decoder\n - TTS_ERR_MODULE_INPUT_TEXT: 模型输入文本出错\n - TTS_ERR_TEXT_NORMALIZE: 文本序列化出错\n - TTS_ERR_INVALID_VOICE_TUNING: 无效的后置开关值[on,off]"
+      "title": "- TTS_ERR_INIT: keep\n - TTS_ERR_OK: tts服务正常返回\n - TTS_ERR_INVALID_RATE: rate值错误\n - TTS_ERR_TEXT_LENGTH_OVERFLOW: 请求文本过长\n - TTS_ERR_INVALID_SPEED: 无效的speed[1,5],默认3\n - TTS_ERR_INVALID_VOLUME: 无效的volume[1,5],默认3\n - TTS_ERR_INVALID_PITCH: 无效的pitch[low,medium,high],默认medium\n - TTS_ERR_INVALID_SPEAKER: 无效的发音人\n - TTS_ERR_INVALID_TYPE: 无效的type,只支持CloudMinds\n - TTS_ERR_SYN_CANCELLED: 音频合成cancelled\n - TTS_ERR_SYN_FAILURE: 音频合成异常：cuda oom\n - TTS_ERR_NO_FREE_MOUDLE: 没有可用的decoder\n - TTS_ERR_MODULE_INPUT_TEXT: 模型输入文本出错\n - TTS_ERR_TEXT_NORMALIZE: 文本序列化出错\n - TTS_ERR_INVALID_VOICE_TUNING: 无效的后置开关值[on,off]"
     }
   }
 }

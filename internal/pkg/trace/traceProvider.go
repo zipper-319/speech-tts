@@ -1,5 +1,0 @@
-package trace
-
-func NewTraceProvider() {
-
-}

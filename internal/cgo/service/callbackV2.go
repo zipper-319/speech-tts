@@ -24,10 +24,9 @@ import (
 func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig *C.FacialExpressionConfig, bodyMovementConfig *C.BodyMovementConfig) {
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV2)
-	if !ok {
-		log.Println("goOnStart,irregularity type")
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnStart; irregularity type")
 		return
 	}
 	object.Log.Info("start to goOnStart")
@@ -64,11 +63,11 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 				FacialExpressionConfig: &v2.FacialExpressionConfig{
 					FrameDim:        int32(facialExpressionFrameDim),
 					FrameDurMs:      facialExpressionFrameDurMs,
-					ControlNameList:  controlNameList,
+					ControlNameList: controlNameList,
 				},
 				BodyMovementConfig: &v2.BodyMovementConfig{
-					FrameDim:   int32(bodyMovementFrameDim),
-					FrameDurMs: bodyMovementFrameDurMs,
+					FrameDim:        int32(bodyMovementFrameDim),
+					FrameDurMs:      bodyMovementFrameDurMs,
 					ControlNameList: controlNameList,
 				},
 			},
@@ -84,10 +83,9 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 
 //export goOnEnd
 func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV2)
-	if !ok {
-		log.Println("goOnEnd,irregularity type")
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnEnd; irregularity type")
 		return
 	}
 	object.Log.Info("start to goOnEnd")
@@ -104,10 +102,9 @@ func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 //export goOnDebug
 func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV2)
-	if !ok {
-		log.Println("goOnDebug,irregularity type")
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnDebug; irregularity type")
 		return
 	}
 	object.Log.Info("start to goOnDebug")
@@ -129,10 +126,9 @@ func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 //export goOnTimedMouthShape
 func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, size C.int, startTimeMs C.float) {
 
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV2)
-	if !ok {
-		log.Println("goOnTimedMouthShape,irregularity type")
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnTimedMouthShape; irregularity type")
 		return
 	}
 	object.Log.Info("start to goOnTimedMouthShape")
@@ -161,10 +157,9 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 
 //export goOnActionElement
 func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, operation_type C.int, coordinate unsafe.Pointer, render_duration C.int) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV2)
-	if !ok {
-		log.Println("goOnActionElement,irregularity type")
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnActionElement; irregularity type")
 		return
 	}
 	object.Log.Info("start to goOnActionElement")
@@ -192,10 +187,9 @@ func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, opera
 
 //export goOnSynthesizedData
 func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio, coordinate *C.Coordinate) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV2)
-	if !ok {
-		log.Println("goOnSynthesizedData,irregularity type")
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnSynthesizedData; irregularity type")
 		return
 	}
 	object.Log.Info("start to goOnSynthesizedData")
@@ -223,10 +217,9 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 
 //export goOnFacialExpression
 func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.FacialExpressionSegment) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV2)
-	if !ok {
-		log.Println("goOnFacialExpression,irregularity type")
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnFacialExpression; irregularity type")
 		return
 	}
 	object.Log.Info("start to goOnFacialExpression")
@@ -263,10 +256,9 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 
 //export goOnBodyMovement
 func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV2)
-	if !ok {
-		log.Println("goOnBodyMovement,irregularity type")
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnBodyMovement; irregularity type")
 		return
 	}
 	object.Log.Info("start to goOnBodyMovement")
@@ -307,4 +299,17 @@ func sendResp(object *data.HandlerObjectV2, response v2.TtsRes) {
 	if object != nil && object.BackChan != nil {
 		object.BackChan <- response
 	}
+}
+
+func getHandlerObject(pUserData unsafe.Pointer) *data.HandlerObjectV2 {
+	handlerObject := pointer.Load(pUserData)
+	if handlerObject == nil {
+		log.Println("don't find to handler object")
+		return nil
+	}
+	object, ok := handlerObject.(*data.HandlerObjectV2)
+	if !ok {
+		return nil
+	}
+	return object
 }

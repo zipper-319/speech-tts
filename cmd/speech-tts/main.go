@@ -8,6 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	netHttp "net/http"
 	"os"
 	"speech-tts/internal/conf"
 	"speech-tts/internal/pkg/log"
@@ -17,6 +18,7 @@ import (
 	"syscall"
 
 	_ "go.uber.org/automaxprocs"
+	_ "net/http/pprof"
 	_ "speech-tts/internal/pkg/catch"
 )
 
@@ -36,6 +38,9 @@ var (
 func init() {
 	flag.StringVar(&flagconf, "conf", "./configs", "config path, eg: -conf config.yaml")
 	utils.SetServerVersion(Version, Commit)
+	go func() {
+		netHttp.ListenAndServe("0.0.0.0:6060", nil)
+	}()
 }
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, config *conf.Data) *kratos.App {

@@ -21,15 +21,14 @@ import (
 //export goOnStartV1
 func goOnStartV1(pUserData unsafe.Pointer) {
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV1)
-	if !ok {
-		log.Println("goOnStartV1;irregularity type")
+	object := getHandlerObjectV1(pUserData)
+	if object == nil {
+		log.Println("goOnStartV1; irregularity type")
 		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnStartV1", nil)
 	defer span.End()
-	object.Log.Infof("enter to OnAudioV1")
+	object.Log.Infof("end to goOnStartV1")
 	return
 }
 
@@ -39,10 +38,9 @@ func goOnStartV1(pUserData unsafe.Pointer) {
 
 //export goOnAudioV1
 func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV1)
-	if !ok {
-		log.Println("goOnAudioV1;irregularity type")
+	object := getHandlerObjectV1(pUserData)
+	if object == nil {
+		log.Println("goOnAudioV1; irregularity type")
 		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnAudioV1", nil)
@@ -81,10 +79,9 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 
 //export goOnEndV1
 func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV1)
-	if !ok {
-		log.Println("goOnEndV1;irregularity type")
+	object := getHandlerObjectV1(pUserData)
+	if object == nil {
+		log.Println("goOnEndV1; irregularity type")
 		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnEndV1", nil)
@@ -112,10 +109,9 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 
 //export goOnDebugV1
 func goOnDebugV1(pUserData unsafe.Pointer, info *C.char) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV1)
-	if !ok {
-		log.Println("goOnDebugV1;irregularity type")
+	object := getHandlerObjectV1(pUserData)
+	if object == nil {
+		log.Println("goOnDebugV1; irregularity type")
 		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnDebugV1", nil)
@@ -134,10 +130,9 @@ func goOnDebugV1(pUserData unsafe.Pointer, info *C.char) {
 
 //export goOnTimedMouthShapeV1
 func goOnTimedMouthShapeV1(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, size C.int, text *C.char) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV1)
-	if !ok {
-		log.Println("goOnTimedMouthShapeV1,irregularity type")
+	object := getHandlerObjectV1(pUserData)
+	if object == nil {
+		log.Println("goOnTimedMouthShapeV1; irregularity type")
 		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnTimedMouthShapeV1", nil)
@@ -163,10 +158,9 @@ func goOnTimedMouthShapeV1(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, s
 
 //export goOnCurTextSegmentV1
 func goOnCurTextSegmentV1(pUserData unsafe.Pointer, normalizedText *C.char, originalText *C.char) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV1)
-	if !ok {
-		log.Println("goOnCurTextSegmentV1,irregularity type")
+	object := getHandlerObjectV1(pUserData)
+	if object == nil {
+		log.Println("goOnCurTextSegmentV1; irregularity type")
 		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnCurTextSegmentV1", nil)
@@ -182,10 +176,9 @@ func goOnCurTextSegmentV1(pUserData unsafe.Pointer, normalizedText *C.char, orig
 
 //export goOnFacialExpressionV1
 func goOnFacialExpressionV1(pUserData unsafe.Pointer, expression *C.FacialExpression) {
-	handlerObject := pointer.Load(pUserData)
-	object, ok := handlerObject.(*data.HandlerObjectV1)
-	if !ok {
-		log.Println("goOnFacialExpressionV1,irregularity type")
+	object := getHandlerObjectV1(pUserData)
+	if object == nil {
+		log.Println("goOnFacialExpressionV1; irregularity type")
 		return
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnFacialExpressionV1", nil)
@@ -216,4 +209,18 @@ func sendRespV1(object *data.HandlerObjectV1, response v1.TtsRes) {
 	if object != nil && object.BackChan != nil && !object.IsInterrupted {
 		object.BackChan <- response
 	}
+}
+
+func getHandlerObjectV1(pUserData unsafe.Pointer) *data.HandlerObjectV1 {
+	handlerObject := pointer.Load(pUserData)
+	if handlerObject == nil {
+		log.Println("don't find to handler object")
+		return nil
+	}
+	object, ok := handlerObject.(*data.HandlerObjectV1)
+	if !ok {
+		log.Println("pUserData: ", pUserData)
+		return nil
+	}
+	return object
 }

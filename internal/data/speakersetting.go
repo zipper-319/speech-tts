@@ -11,7 +11,7 @@ import (
 type SpeakerSetting struct {
 	SupportedSpeaker []struct {
 		Name        string `json:"name"`
-		ChineseName string `mapstructure:"chinese_name" mapstructure:"chinese_name"`
+		ChineseName string `json:"chinese_name" mapstructure:"chinese_name"`
 	} `json:"SupportedSpeaker"`
 	SupportedSpeed  []string `json:"SupportedSpeed"`
 	SupportedVolume []string `json:"SupportedVolume"`

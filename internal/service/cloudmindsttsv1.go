@@ -62,9 +62,10 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	}
 
 	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, logger)
-	PUserData := pointer.Save(object)
-	defer pointer.Unref(PUserData)
-	if err := s.uc.CallTTSServiceV1(req, PUserData); err != nil {
+	pUserData := pointer.Save(object)
+	defer pointer.Unref(pUserData)
+	logger.Infof("CallTTSServiceV1;pUserData:%v", pUserData)
+	if err := s.uc.CallTTSServiceV1(req, pUserData); err != nil {
 		return err
 	}
 	audioLen := 0

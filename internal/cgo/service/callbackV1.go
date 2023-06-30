@@ -28,7 +28,7 @@ func goOnStartV1(pUserData unsafe.Pointer) {
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnStartV1", nil)
 	defer span.End()
-	object.Log.Infof("end to goOnStartV1")
+	object.Log.Info("end to goOnStartV1;pUserData:", pUserData)
 	return
 }
 
@@ -45,7 +45,7 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnAudioV1", nil)
 	defer span.End()
-	object.Log.Infof("start to OnAudioV1")
+	object.Log.Info("start to OnAudioV1; pUserData:", pUserData)
 	response := v1.TtsRes{
 		Pcm:    C.GoBytes(unsafe.Pointer(dataAudio), len),
 		Status: v1.PcmStatus_STATUS_MID,
@@ -70,7 +70,7 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 		object.ParamMap = make(map[string]interface{})
 	}
 	sendRespV1(object, response)
-	object.Log.Infof("end to OnAudioV1")
+	object.Log.Info("end to OnAudioV1")
 }
 
 /**
@@ -86,7 +86,7 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnEndV1", nil)
 	defer span.End()
-	object.Log.Infof("start to OnEndV1")
+	object.Log.Info("start to OnEndV1;pUserData:", pUserData)
 
 	var err v1.TtsErr
 
@@ -117,7 +117,7 @@ func goOnDebugV1(pUserData unsafe.Pointer, info *C.char) {
 	_, span := trace.NewTraceSpan(object.Context, "goOnDebugV1", nil)
 	defer span.End()
 	debugInfo := string(C.GoString(info))
-	object.Log.Infof("start to goOnDebugV1;debugInfo:%s", debugInfo)
+	object.Log.Infof("start to goOnDebugV1;debugInfo:%s; pUserData:%v", debugInfo, pUserData)
 
 	temp := object.ParamMap["debugInfo"]
 	if i, exist := temp.(string); exist {
@@ -137,7 +137,7 @@ func goOnTimedMouthShapeV1(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, s
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnTimedMouthShapeV1", nil)
 	defer span.End()
-	object.Log.Infof("start to goOnTimedMouthShapeV1")
+	object.Log.Infof("start to goOnTimedMouthShapeV1; pUserData:%v", pUserData)
 
 	var mouthShapes = make([]*v1.TimedMouthShape, int32(size))
 	for i := 0; i < int(size); i++ {
@@ -165,7 +165,7 @@ func goOnCurTextSegmentV1(pUserData unsafe.Pointer, normalizedText *C.char, orig
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnCurTextSegmentV1", nil)
 	defer span.End()
-	object.Log.Infof("start to goOnCurTextSegmentV1")
+	object.Log.Infof("start to goOnCurTextSegmentV1; pUserData:%v", pUserData)
 
 	if object.ParamMap != nil {
 		object.ParamMap["normalizedText"] = C.GoString(normalizedText)
@@ -183,7 +183,7 @@ func goOnFacialExpressionV1(pUserData unsafe.Pointer, expression *C.FacialExpres
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnFacialExpressionV1", nil)
 	defer span.End()
-	object.Log.Infof("start to goOnFacialExpressionV1")
+	object.Log.Infof("start to goOnFacialExpressionV1; pUserData:%v", pUserData)
 
 	frameSize := uint64(expression.frame_size)
 	frameDim := uint64(expression.frame_dim)
@@ -219,7 +219,7 @@ func getHandlerObjectV1(pUserData unsafe.Pointer) *data.HandlerObjectV1 {
 	}
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
-		log.Println("pUserData: ", pUserData)
+		log.Println(" irregularity handler object;pUserData: ", pUserData)
 		return nil
 	}
 	return object

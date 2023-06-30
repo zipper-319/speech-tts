@@ -29,7 +29,7 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 		log.Println("goOnStart; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnStart")
+	object.Log.Info("start to OnStart; pUserData:", pUserData)
 
 	var facialExpressionFrameDim, bodyMovementFrameDim uint64
 	var facialExpressionFrameDurMs, bodyMovementFrameDurMs float32
@@ -88,7 +88,7 @@ func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 		log.Println("goOnEnd; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnEnd")
+	object.Log.Info("start to goOnEnd; pUserData:%v", pUserData)
 
 	response := v2.TtsRes{
 		ErrorCode: int32(flag),
@@ -107,7 +107,7 @@ func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 		log.Println("goOnDebug; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnDebug")
+	object.Log.Info("start to goOnDebug; pUserData:", pUserData)
 
 	response := v2.TtsRes{
 		Status: 2,
@@ -131,7 +131,7 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 		log.Println("goOnTimedMouthShape; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnTimedMouthShape")
+	object.Log.Info("start to goOnTimedMouthShape;pUserData:", pUserData)
 
 	var mouths = make([]*v2.TimedMouthShape, int32(size))
 	for i := 0; i < int(size); i++ {
@@ -162,7 +162,7 @@ func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, opera
 		log.Println("goOnActionElement; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnActionElement")
+	object.Log.Info("start to goOnActionElement;pUserData:", pUserData)
 
 	coordinateC := *(*C.Coordinate)(coordinate)
 	response := v2.TtsRes{
@@ -192,7 +192,7 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 		log.Println("goOnSynthesizedData; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnSynthesizedData")
+	object.Log.Info("start to goOnSynthesizedData;pUserData:%v", pUserData)
 
 	length := (C.int)(audioData.audio_size)
 	wav := C.GoBytes(unsafe.Pointer(audioData.audio_data), 2*length)
@@ -222,7 +222,7 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 		log.Println("goOnFacialExpression; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnFacialExpression")
+	object.Log.Info("start to goOnFacialExpression;pUserData:%v", pUserData)
 
 	var framedDim uint64
 	if fefd, ok := (object.ParamMap["FacialExpressionFrameDim"]).(int32); ok {
@@ -261,7 +261,7 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 		log.Println("goOnBodyMovement; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnBodyMovement")
+	object.Log.Info("start to goOnBodyMovement;pUserData:%v", pUserData)
 
 	var bodyMovement *v2.BodyMovement
 	bodyMovementDataC := (*C.BodyMovementSegment)(bodyMovementData)
@@ -304,11 +304,12 @@ func sendResp(object *data.HandlerObjectV2, response v2.TtsRes) {
 func getHandlerObject(pUserData unsafe.Pointer) *data.HandlerObjectV2 {
 	handlerObject := pointer.Load(pUserData)
 	if handlerObject == nil {
-		log.Println("don't find to handler object")
+		log.Println("don't find to handler object;pUserData:", pUserData)
 		return nil
 	}
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
+		log.Println("irregularity handler object;pUserData:", pUserData)
 		return nil
 	}
 	return object

@@ -84,10 +84,11 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	}
 
 	object := s.uc.GeneHandlerObjectV2(spanCtx, req.ParameterSpeakerName, logger)
-	PUserData := pointer.Save(object)
-	defer pointer.Unref(PUserData)
+	pUserData := pointer.Save(object)
+	defer pointer.Unref(pUserData)
 	audioLen := 0
-	if err := s.uc.CallTTSServiceV2(req, PUserData); err != nil {
+	logger.Infof("CallTTSServiceV2;PUserData:%v", pUserData)
+	if err := s.uc.CallTTSServiceV2(req, pUserData); err != nil {
 		s.sdkFailTime += 1
 		s.failTexts[req.Text] = struct{}{}
 		if s.sdkFailTime >= 3 && len(s.failTexts) >= 3 { // 连续三次失败，服务重启

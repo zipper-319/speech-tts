@@ -3,6 +3,7 @@ package pointer
 // #include <stdlib.h>
 import "C"
 import (
+	"fmt"
 	"sync"
 	"unsafe"
 )
@@ -16,7 +17,8 @@ func Save(v interface{}) unsafe.Pointer {
 	if v == nil {
 		return nil
 	}
-
+	mutex.Lock()
+	defer mutex.Unlock()
 	// Generate real fake C pointer.
 	// This pointer will not store any data, but will bi used for indexing purposes.
 	// Since Go doest allow to cast dangling pointer to unsafe.Pointer, we do rally allocate one byte.
@@ -25,10 +27,10 @@ func Save(v interface{}) unsafe.Pointer {
 	if ptr == nil {
 		panic("can't allocate 'cgo-pointer hack index pointer': ptr == nil")
 	}
-
-	mutex.Lock()
+	if _, ok := store[ptr]; ok {
+		panic(fmt.Sprintf("ptr had allocated; ptr:%v", ptr))
+	}
 	store[ptr] = v
-	mutex.Unlock()
 
 	return ptr
 }

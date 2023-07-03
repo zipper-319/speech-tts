@@ -2,6 +2,7 @@ package benchmark
 
 import (
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"io"
@@ -37,7 +38,7 @@ func GetGrpcConn(addr string, ctx context.Context) (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
-func TestTTSV1(addr, text, speaker, traceId, robotTraceId string) error {
+func TestTTSV1(addr, text, speaker, traceId, robotTraceId string, num int) error {
 	md := metadata.Pairs(
 		"authorization", "Bearer some-secret-token",
 	)
@@ -49,7 +50,7 @@ func TestTTSV1(addr, text, speaker, traceId, robotTraceId string) error {
 	}
 	ttsV1Client := v1.NewCloudMindsTTSClient(conn)
 	req := &v1.TtsReq{
-		Text:                 text,
+		Text:                 fmt.Sprintf("%s,测试第%d句话", text, num),
 		ParameterSpeakerName: speaker,
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,
@@ -81,7 +82,7 @@ func TestTTSV1(addr, text, speaker, traceId, robotTraceId string) error {
 	return nil
 }
 
-func TestTTSV2(addr, text, speaker, traceId, robotTraceId string) error {
+func TestTTSV2(addr, text, speaker, traceId, robotTraceId string, num int) error {
 	md := metadata.Pairs(
 		"authorization", "Bearer some-secret-token",
 	)
@@ -92,7 +93,7 @@ func TestTTSV2(addr, text, speaker, traceId, robotTraceId string) error {
 	}
 	ttsV2Client := v2.NewCloudMindsTTSClient(conn)
 	req := &v2.TtsReq{
-		Text:                 text,
+		Text:                 fmt.Sprintf("%s,测试第%d句话", text, num),
 		ParameterSpeakerName: speaker,
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,

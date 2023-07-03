@@ -36,7 +36,7 @@ func main() {
 			for j := 0; j < useCaseNum; j++ {
 
 				if testVersion == "v1" {
-					if err := benchmark.TestTTSV1(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j))); err != nil {
+					if err := benchmark.TestTTSV1(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j)), j); err != nil {
 						log.Println("_________")
 						log.Printf("goroutine id:%d; err:%v", i, err)
 						log.Println("_________")
@@ -45,7 +45,7 @@ func main() {
 				}
 
 				if testVersion == "v2" {
-					if err := benchmark.TestTTSV2(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j))); err != nil {
+					if err := benchmark.TestTTSV2(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j)), j); err != nil {
 						log.Println("_________")
 						log.Printf("goroutine id:%d; err:%v", i, err)
 						log.Println("_________")

@@ -101,6 +101,13 @@ type wrappedStream struct {
 	firstTime    time.Time
 	sendTimes    int
 	sendAudioLen int
+	*ttsReq
+}
+
+type ttsReq struct {
+	speakerName string
+	text        string
+	traceId     string
 }
 
 func (w *wrappedStream) Context() context.Context {
@@ -112,19 +119,45 @@ type validator interface {
 }
 
 func (w *wrappedStream) RecvMsg(m interface{}) error {
-	//log.NewHelper(w.Logger).Infof("Receive a message (Type: %T) after %dms", m, time.Since(w.firstTime).Milliseconds())
-	return w.ServerStream.RecvMsg(m)
+	err := w.ServerStream.RecvMsg(m)
+	var ttsReqPram *ttsReq
+	if m != nil {
+		switch req := m.(type) {
+		case *v1.TtsReq:
+			ttsReqPram = &ttsReq{
+				speakerName: req.ParameterSpeakerName,
+				text:        req.Text,
+				traceId:     fmt.Sprintf("%s_%s", req.TraceId, req.RootTraceId),
+			}
+		case *v2.TtsReq:
+			ttsReqPram = &ttsReq{
+				speakerName: req.ParameterSpeakerName,
+				text:        req.Text,
+				traceId:     fmt.Sprintf("%s_%s", req.TraceId, req.RootTraceId),
+			}
+		}
+		w.ttsReq = ttsReqPram
+		log.NewHelper(w.Logger).Infof("Receive a message (Type: %T), ttsReq:%v", m, ttsReqPram)
+	}
+	return err
 }
 
 func (w *wrappedStream) SendMsg(m interface{}) error {
 	w.sendTimes += 1
 	audioLength := 0
+	var status int32
+	var traceId string
+	if w.ttsReq != nil {
+		traceId = w.ttsReq.traceId
+	}
 	if m != nil {
 		if resp, ok := m.(*v1.TtsRes); ok {
 			audioLength = len(resp.Pcm)
 			w.sendAudioLen += audioLength
+			status = int32(resp.Status)
 		}
 		if resp, ok := m.(*v2.TtsRes); ok {
+			status = resp.Status
 			if audio, ok := resp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
 				audioLength = len(audio.SynthesizedAudio.Pcm)
 				w.sendAudioLen += audioLength
@@ -136,8 +169,8 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	span.SetAttributes(attribute.Key("SendMsg times").Int(w.sendTimes))
 	span.SetAttributes(attribute.Key("SendMsg length").Int(audioLength))
 
-	log.NewHelper(w.Logger).Infof("Send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d",
-		w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen)
+	log.NewHelper(w.Logger).Infof("trace:%s;Send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d; status:%d",
+		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen, status)
 	return w.ServerStream.SendMsg(m)
 }
 

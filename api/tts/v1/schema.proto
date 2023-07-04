@@ -117,8 +117,8 @@ message TtsReq {
 }
 
 message TtsRes {
-   	bytes pcm = 1;     							// 具体的音频流(不会有空帧出现)
-   	pcmStatus status = 2;      					// pcm状态(2中间状态，目前只有2)
+	bytes pcm = 1;     							// 具体的音频流(不会有空帧出现)
+	pcmStatus status = 2;      					// pcm状态(2中间状态，目前只有2)
 	ttsErr error = 3;          					// 错误码
 	repeated TimedMouthShape mouths = 4; 		// 嘴型，status=2时输出，
 	string DebugInfo = 5;     					// 调试信息,当有debufinfo时需要输出

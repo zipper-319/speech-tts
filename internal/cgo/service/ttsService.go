@@ -182,11 +182,11 @@ func (t *TTSService) GetSupportedMovement() []*v2.MessageMovement {
 }
 
 func (t *TTSService) GetSupportedExpression() []*v2.MessageExpression {
-	ExpressionList := make([]*v2.MessageExpression, 0, len(t.SpeakerSetting.SupportedEmotion))
-	for _, emotion := range t.SpeakerSetting.SupportedMovementDescriptor {
+	ExpressionList := make([]*v2.MessageExpression, 0, len(t.SpeakerSetting.SupportedExpressionDescriptor))
+	for _, express := range t.SpeakerSetting.SupportedExpressionDescriptor {
 		ExpressionList = append(ExpressionList, &v2.MessageExpression{
-			Name:        emotion.Name,
-			ChineseName: emotion.ChineseName,
+			Name:        express.Name,
+			ChineseName: express.ChineseName,
 		})
 	}
 	return ExpressionList

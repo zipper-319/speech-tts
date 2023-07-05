@@ -34,7 +34,7 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 	var facialExpressionFrameDim, bodyMovementFrameDim uint64
 	var facialExpressionFrameDurMs, bodyMovementFrameDurMs float32
 	var expressControlNameList []string
-	var movementControlNameList []string
+	//var movementControlNameList []string
 	if facialExpressionConfig != nil {
 		frameDimLen := uint64(facialExpressionConfig.frameDim)
 		facialExpressionFrameDim = frameDimLen
@@ -52,15 +52,15 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 	if bodyMovementConfig != nil {
 		bodyMovementFrameDim = uint64(bodyMovementConfig.frameDim)
 		bodyMovementFrameDurMs = float32(bodyMovementConfig.frameDurMs)
-		frameDimLen := bodyMovementFrameDim
 
-		if bodyMovementConfig.control_name != nil && int(frameDimLen) > 0 {
-			movementControlNameList = make([]string, frameDimLen)
-			tmpSlice := (*[1 << 30]*C.char)(unsafe.Pointer(bodyMovementConfig.control_name))[:frameDimLen:frameDimLen]
-			for i, s := range tmpSlice {
-				movementControlNameList[i] = C.GoString(s)
-			}
-		}
+		//frameDimLen := bodyMovementFrameDim
+		//if bodyMovementConfig.control_name != nil && int(frameDimLen) > 0 {
+		//	movementControlNameList = make([]string, frameDimLen)
+		//	tmpSlice := (*[1 << 30]*C.char)(unsafe.Pointer(bodyMovementConfig.control_name))[:frameDimLen:frameDimLen]
+		//	for i, s := range tmpSlice {
+		//		movementControlNameList[i] = C.GoString(s)
+		//	}
+		//}
 	}
 	paramSetting := make(map[string]interface{})
 	paramSetting["FacialExpressionFrameDim"] = int32(facialExpressionFrameDim)
@@ -77,9 +77,8 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 					ControlNameList: expressControlNameList,
 				},
 				BodyMovementConfig: &v2.BodyMovementConfig{
-					FrameDim:        int32(bodyMovementFrameDim),
-					FrameDurMs:      bodyMovementFrameDurMs,
-					ControlNameList: movementControlNameList,
+					FrameDim:   int32(bodyMovementFrameDim),
+					FrameDurMs: bodyMovementFrameDurMs,
 				},
 			},
 		},

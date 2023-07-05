@@ -50,7 +50,7 @@ typedef void (*typOnFacialExpressionV1)(void* pUserData, FacialExpression* expre
 import "C"
 import (
 	"context"
-	"fmt"
+	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	v1 "speech-tts/api/tts/v1"
@@ -236,8 +236,18 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) 
 		traceId,
 	)
 	log.NewHelper(t.Logger).Infof("ActionSynthesizer_SynthesizeAction return id:%d", int(id))
+
 	if id < 0 {
-		return fmt.Errorf("fail to call api of the sdk;id:%d", int(id))
+		switch id {
+		case -1:
+			return errors.New("tts req param is invalid")
+		case -2:
+			return errors.New("fail to call the api of the sdk")
+		case -3:
+			return errors.New("fail to call the api of the sdk")
+		default:
+			return errors.New("fail to call the api of the sdk")
+		}
 	}
 	return nil
 }
@@ -271,7 +281,16 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 
 	log.NewHelper(t.Logger).Infof("ActionSynthesizer_SynthesizeAction_V1 return id:%d", int(id))
 	if id < 0 {
-		return fmt.Errorf("fail to call api of the sdk;id:%d", int(id))
+		switch id {
+		case -1:
+			return errors.New("tts req param is invalid")
+		case -2:
+			return errors.New("fail to call the api of the sdk")
+		case -3:
+			return errors.New("fail to call the api of the sdk")
+		default:
+			return errors.New("fail to call the api of the sdk")
+		}
 	}
 	return nil
 }

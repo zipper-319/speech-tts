@@ -386,7 +386,7 @@ Action基元数据
 | volume_list | [string](#string) | repeated | SupportedVolume |
 | pitch_list | [MessagePitch](#ttsschema-MessagePitch) | repeated | SupportedPitch |
 | emotion_list | [MessageEmotion](#ttsschema-MessageEmotion) | repeated | SupportedEmotion |
-| digital_person_list | [MessageDigitalPerson](#ttsschema-MessageDigitalPerson) | repeated | DigitalPerson 废弃不用 |
+| digital_person_list | [MessageDigitalPerson](#ttsschema-MessageDigitalPerson) | repeated | **Deprecated.** DigitalPerson 废弃不用 |
 | movement_list | [MessageMovement](#ttsschema-MessageMovement) | repeated | SupportedMovement 动作 |
 | expression_list | [MessageExpression](#ttsschema-MessageExpression) | repeated | SupportedExpression 表情 |
 
@@ -418,7 +418,7 @@ Action基元数据
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| speaker_id | [int32](#int32) |  | 发音人id （废弃不用） |
+| speaker_id | [int32](#int32) |  | **Deprecated.** 发音人id （废弃不用） |
 | speaker_name | [string](#string) |  | 发音人名字 |
 | parameter_speaker_name | [string](#string) |  | 发音人英文名字 |
 | is_support_emotion | [bool](#bool) |  | 是否支持情感 |
@@ -492,7 +492,7 @@ Action基元数据
 | pitch | [string](#string) |  | 取值范围请用 GetTtsConfig PitchList.Name |
 | emotions | [string](#string) |  | 如果该发音人支持情感，取值范围请用 GetTtsConfig EmotionList.Name，如果不支持请传&#34;&#34;，否则会报错 |
 | parameter_speaker_name | [string](#string) |  | 取值范围请用 GetTtsConfig函数的返回Speakerlist.parameterSpeakerName |
-| parameter_digital_person | [string](#string) |  | 数字人形象， (废弃不用) ******************* |
+| parameter_digital_person | [string](#string) |  | **Deprecated.** 数字人形象， (废弃不用) ******************* |
 | parameter_flag | [TtsReq.ParameterFlagEntry](#ttsschema-TtsReq-ParameterFlagEntry) | repeated | 额外信息参数，口型key:mouth,字符串&#34;true&#34;或者&#34;false&#34;、动作key:movement,字符串&#34;true&#34;或者&#34;false&#34;、表情key:expression,字符串&#34;true&#34;或者&#34;false&#34; |
 | trace_id | [string](#string) |  |  |
 | root_trace_id | [string](#string) |  |  |

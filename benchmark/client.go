@@ -82,7 +82,7 @@ func TestTTSV1(addr, text, speaker, traceId, robotTraceId string, num int) error
 	return nil
 }
 
-func TestTTSV2(addr, text, speaker, traceId, robotTraceId string, num int) error {
+func TestTTSV2(addr, text, speaker, traceId, robotTraceId, movement, expression string, num int) error {
 	md := metadata.Pairs(
 		"authorization", "Bearer some-secret-token",
 	)
@@ -92,11 +92,22 @@ func TestTTSV2(addr, text, speaker, traceId, robotTraceId string, num int) error
 		return err
 	}
 	ttsV2Client := v2.NewCloudMindsTTSClient(conn)
+	flagSet := make(map[string]string, 3)
+	flagSet["mouth"] = "true"
+	if movement != "" {
+		flagSet["movement"] = "true"
+	}
+	if expression != "" {
+		flagSet["expression"] = "true"
+	}
 	req := &v2.TtsReq{
 		Text:                 fmt.Sprintf("%s,测试第%d句话", text, num),
 		ParameterSpeakerName: speaker,
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,
+		Movement:             movement,
+		Expression:           expression,
+		ParameterFlag:        flagSet,
 	}
 	now := time.Now()
 	response, err := ttsV2Client.Call(ctx, req)
@@ -120,7 +131,7 @@ func TestTTSV2(addr, text, speaker, traceId, robotTraceId string, num int) error
 		log.Printf("receive message(Type %T)", temp)
 
 		if audio, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
-			log.Printf("pcm length:%d, status:", len(audio.SynthesizedAudio.Pcm))
+			log.Printf("pcm length:%d, status:%d", len(audio.SynthesizedAudio.Pcm), temp.Status)
 		}
 	}
 	log.Printf("----------cost:%d\n\n", time.Since(now).Milliseconds())

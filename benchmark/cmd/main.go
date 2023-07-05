@@ -13,6 +13,8 @@ var useCaseNum int
 var addr string
 var speaker string
 var testVersion string
+var movement string
+var expression string
 
 func init() {
 	flag.IntVar(&threadNum, "t", 1, "thread number, eg: -t 1")
@@ -20,6 +22,8 @@ func init() {
 	flag.StringVar(&addr, "a", "127.0.0.1:3012", "addr, eg: -a 127.0.0.1:3012")
 	flag.StringVar(&speaker, "s", "DaXiaoFang", "speaker name, eg: -s DaXiaoFang")
 	flag.StringVar(&testVersion, "v", "v1", "test Version, eg: -v v1")
+	flag.StringVar(&movement, "m", "", "movement, eg: -m SweetGirl")
+	flag.StringVar(&expression, "e", "", "expression, eg: -e FaceGood")
 	log.SetFlags(log.Lshortfile | log.Lmicroseconds | log.Flags())
 }
 
@@ -45,7 +49,8 @@ func main() {
 				}
 
 				if testVersion == "v2" {
-					if err := benchmark.TestTTSV2(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j)), j); err != nil {
+					if err := benchmark.TestTTSV2(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j)),
+						movement, expression, j); err != nil {
 						log.Println("_________")
 						log.Printf("goroutine id:%d; err:%v", i, err)
 						log.Println("_________")

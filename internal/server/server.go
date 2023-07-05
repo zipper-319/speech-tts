@@ -158,9 +158,20 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 		}
 		if resp, ok := m.(*v2.TtsRes); ok {
 			status = resp.Status
-			if audio, ok := resp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
-				audioLength = len(audio.SynthesizedAudio.Pcm)
+			switch result := resp.ResultOneof.(type) {
+			case *v2.TtsRes_SynthesizedAudio:
+				audioLength = len(result.SynthesizedAudio.Pcm)
 				w.sendAudioLen += audioLength
+			case *v2.TtsRes_ActionElement:
+				log.NewHelper(w.Logger).Infof("trace:%s; ActionElement:%v", traceId, result.ActionElement)
+			case *v2.TtsRes_BodyMovement:
+				log.NewHelper(w.Logger).Infof("trace:%s; BodyMovement(FrameSize:%d, StartTimeMs:%f)", traceId, result.BodyMovement.FrameSize, result.BodyMovement.StartTimeMs)
+			case *v2.TtsRes_ConfigText:
+				log.NewHelper(w.Logger).Infof("trace:%s; ConfigText:%v", traceId, result.ConfigText)
+			case *v2.TtsRes_TimeMouthShapes:
+				log.NewHelper(w.Logger).Infof("trace:%s; TimeMouthShapes(StartTimeMs:%f)", traceId, result.TimeMouthShapes.StartTimeMs)
+			case *v2.TtsRes_Expression:
+				log.NewHelper(w.Logger).Infof("trace:%s; Expression(FrameSize:%d, StartTimeMs:%f)", traceId, result.Expression.FrameSize, result.Expression.StartTimeMs)
 			}
 		}
 	}
@@ -227,11 +238,6 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 			}
 			span.End()
 		}()
-
-		//if !valid(tr.RequestHeader().Get("authorization")) {
-		//	code = codes.PermissionDenied
-		//	return status.Errorf(code, "authorization err")
-		//}
 
 		if err = handler(srv, newWrappedStream(ss, logger, ctx)); err != nil {
 			code = codes.Internal

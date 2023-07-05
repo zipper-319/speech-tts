@@ -68,9 +68,7 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	if err := s.uc.CallTTSServiceV1(req, pUserData); err != nil {
 		return err
 	}
-	audioLen := 0
 	for response := range object.BackChan {
-		audioLen += len(response.Pcm)
 		err := conn.Send(&response)
 		if err != nil {
 			span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))
@@ -79,7 +77,6 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 			return err
 		}
 	}
-	span.SetAttributes(attribute.Key("response.audioPcm.len").Int(audioLen))
 
 	return nil
 }

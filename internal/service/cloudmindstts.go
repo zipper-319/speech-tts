@@ -79,32 +79,19 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	if req.Expression != "" && !s.uc.IsLegalExpression(req.Expression) {
 		return errors.New("expression param is invalid")
 	}
-	if req.Movement != "" && !s.uc.IsLegalExpression(req.Movement) {
+	if req.Movement != "" && !s.uc.IsLegalMovement(req.Movement) {
 		return errors.New("movement param is invalid")
 	}
 
 	object := s.uc.GeneHandlerObjectV2(spanCtx, req.ParameterSpeakerName, logger)
 	pUserData := pointer.Save(object)
 	defer pointer.Unref(pUserData)
-	audioLen := 0
-	logger.Infof("CallTTSServiceV2;PUserData:%v", pUserData)
+
+	logger.Infof("CallTTSServiceV2;pUserData:%v", pUserData)
 	if err := s.uc.CallTTSServiceV2(req, pUserData); err != nil {
-		s.sdkFailTime += 1
-		s.failTexts[req.Text] = struct{}{}
-		if s.sdkFailTime >= 3 && len(s.failTexts) >= 3 { // 连续三次失败，服务重启
-			logger.Error("sdk fail three time;fail texts:%v", s.failTexts)
-			panic(err)
-		}
 		return err
 	}
-	s.sdkFailTime = 0
 	for response := range object.BackChan {
-		if response.ResultOneof != nil {
-			if audio, ok := response.ResultOneof.(*pb.TtsRes_SynthesizedAudio); ok {
-				audioLen += len(audio.SynthesizedAudio.Pcm)
-				span.SetAttributes(attribute.Key("audio.IsPunctuation").Int(int(audio.SynthesizedAudio.IsPunctuation)))
-			}
-		}
 		err := conn.Send(&response)
 		if err != nil {
 			span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))
@@ -113,7 +100,6 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 			return err
 		}
 	}
-	span.SetAttributes(attribute.Key("response.audioPcm.len").Int(audioLen))
 
 	return nil
 }

@@ -215,13 +215,11 @@ func getHandlerObjectV1(pUserData unsafe.Pointer) *data.HandlerObjectV1 {
 	handlerObject := pointer.Load(pUserData)
 	if handlerObject == nil {
 		log.Println("don't find to handler object; pUserData", pUserData)
-		panic("don't find to handler object")
 		return nil
 	}
 	object, ok := handlerObject.(*data.HandlerObjectV1)
 	if !ok {
 		log.Println(" irregularity handler object;pUserData: ", pUserData)
-		panic("irregularity handler object")
 		return nil
 	}
 	return object

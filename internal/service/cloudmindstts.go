@@ -9,13 +9,12 @@ import (
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
+	pb "speech-tts/api/tts/v2"
 	"speech-tts/internal/cgo/service"
 	"speech-tts/internal/pkg/pointer"
 	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
 	"strings"
-
-	pb "speech-tts/api/tts/v2"
 )
 
 type CloudMindsTTSService struct {
@@ -84,19 +83,25 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	}
 
 	object := s.uc.GeneHandlerObjectV2(spanCtx, req.ParameterSpeakerName, logger)
-	pUserData := pointer.Save(object)
+	pUserData, err := pointer.Save(object)
+	if err != nil {
+		return err
+	}
 	defer pointer.Unref(pUserData)
 
-	logger.Infof("CallTTSServiceV2;pUserData:%v", pUserData)
-	if err := s.uc.CallTTSServiceV2(req, pUserData); err != nil {
+	id, err := s.uc.CallTTSServiceV2(req, pUserData)
+	logger.Infof("CallTTSServiceV2;pUserData:%v;id:%d", pUserData, id)
+	logger.Infof("id:%s", id)
+	if err != nil {
 		return err
 	}
 	for response := range object.BackChan {
 		err := conn.Send(&response)
 		if err != nil {
 			span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))
-			object.IsInterrupted = true
-			span.SetAttributes(attribute.Key("IsInterrupted").Bool(object.IsInterrupted))
+			object.IsInterrupted.Store(true)
+			span.SetAttributes(attribute.Key("IsInterrupted").Bool(true))
+			s.uc.CancelTTSService(id)
 			return err
 		}
 	}

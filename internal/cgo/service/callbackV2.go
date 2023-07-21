@@ -306,7 +306,8 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 }
 
 func sendResp(object *data.HandlerObjectV2, response v2.TtsRes) {
-	if object != nil && object.BackChan != nil {
+	isInterrupted := object.IsInterrupted.Load()
+	if object != nil && object.BackChan != nil && !isInterrupted {
 		object.BackChan <- response
 	}
 }
@@ -320,6 +321,11 @@ func getHandlerObject(pUserData unsafe.Pointer) *data.HandlerObjectV2 {
 	object, ok := handlerObject.(*data.HandlerObjectV2)
 	if !ok {
 		log.Println("irregularity handler object;pUserData:", pUserData)
+		return nil
+	}
+	isInterrupted := object.IsInterrupted.Load()
+	if isInterrupted {
+		log.Println("HandlerObjectV2;interrupted by cancel")
 		return nil
 	}
 	return object

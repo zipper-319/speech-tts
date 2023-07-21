@@ -3,36 +3,42 @@ package pointer
 // #include <stdlib.h>
 import "C"
 import (
-	"fmt"
+	"github.com/pkg/errors"
 	"sync"
+	"sync/atomic"
+	"time"
 	"unsafe"
 )
 
 var (
 	mutex sync.RWMutex
 	store = map[unsafe.Pointer]interface{}{}
+	id    = int32(time.Now().UnixNano())
 )
 
-func Save(v interface{}) unsafe.Pointer {
+func Save(v interface{}) (unsafe.Pointer, error) {
 	if v == nil {
-		return nil
+		return nil, errors.New("tts object is null")
 	}
-	mutex.Lock()
-	defer mutex.Unlock()
+
 	// Generate real fake C pointer.
 	// This pointer will not store any data, but will bi used for indexing purposes.
 	// Since Go doest allow to cast dangling pointer to unsafe.Pointer, we do rally allocate one byte.
 	// Why we need indexing, because Go doest allow C code to store pointers to Go data.
-	var ptr unsafe.Pointer = C.malloc(C.size_t(1))
-	if ptr == nil {
-		panic("can't allocate 'cgo-pointer hack index pointer': ptr == nil")
-	}
+	//var ptr unsafe.Pointer = C.malloc(C.size_t(1))
+	//if ptr == nil {
+	//	panic("can't allocate 'cgo-pointer hack index pointer': ptr == nil")
+	//}
+	atomic.AddInt32(&id, 1)
+	ptr := unsafe.Pointer(uintptr(id))
+	mutex.Lock()
 	if _, ok := store[ptr]; ok {
-		panic(fmt.Sprintf("ptr had allocated; ptr:%v", ptr))
+		return nil, errors.New("cgo-pointer has allocated")
 	}
 	store[ptr] = v
+	mutex.Unlock()
 
-	return ptr
+	return ptr, nil
 }
 
 func Load(ptr unsafe.Pointer) (v interface{}) {
@@ -54,6 +60,4 @@ func Unref(ptr unsafe.Pointer) {
 	mutex.Lock()
 	delete(store, ptr)
 	mutex.Unlock()
-
-	C.free(ptr)
 }

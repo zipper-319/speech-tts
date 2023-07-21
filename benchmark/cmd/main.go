@@ -1,11 +1,19 @@
 package main
 
 import (
+	"bufio"
+	"context"
 	"flag"
 	"fmt"
+	"google.golang.org/grpc/metadata"
+	"io"
 	"log"
+	"math/rand"
+	"os"
 	"speech-tts/benchmark"
+	"strings"
 	"sync"
+	"time"
 )
 
 var threadNum int
@@ -32,35 +40,74 @@ func main() {
 	flag.Parse()
 	log.Printf("thread number:%d; useCase number:%d, speaker:%s, testVersion:%s", threadNum, useCaseNum, speaker, testVersion)
 
-	text := "成都今天的天气"
+	file, err := os.Open("./testTTS.txt")
+	reader := bufio.NewReader(file)
+	if err != nil {
+		return
+	}
+	ch := make(chan string, 100)
+
 	wg := sync.WaitGroup{}
 	for i := 0; i < threadNum; i++ {
 		wg.Add(1)
 		go func(t int) {
-			for j := 0; j < useCaseNum; j++ {
+			defer wg.Done()
+			num := 0
+			for {
+				text, ok := <-ch
+				if !ok {
+					return
+				}
+				text = strings.TrimSpace(text)
+				if text == "" {
+					continue
+				}
+				num += 1
+				md := metadata.Pairs(
+					"authorization", "Bearer some-secret-token",
+				)
+				ctxBase := metadata.NewOutgoingContext(context.Background(), md)
+				ctx, cancel := context.WithCancel(ctxBase)
 
-				if testVersion == "v1" {
-					if err := benchmark.TestTTSV1(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j)), j); err != nil {
+				go func() {
+					rand.Seed(time.Now().UnixNano())
+					n := rand.Int31n(1000) + 100
+					time.Sleep(time.Millisecond * time.Duration(n))
+					cancel()
+					log.Printf("cancel after %d ms ", n)
+				}()
+
+				if time.Now().Unix()%2 == 0 {
+					if err := benchmark.TestTTSV1(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d", t), fmt.Sprintf("test_robot_thread%d", t), num); err != nil {
 						log.Println("_________")
-						log.Printf("goroutine id:%d; err:%v", i, err)
+						log.Printf("TestTTSV1; goroutine id:%d; err:%v", i, err)
+						log.Println("_________")
+						panic(err)
+					}
+				} else {
+					if err := benchmark.TestTTSV2(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d", t), fmt.Sprintf("test_robot_thread%d", t),
+						movement, expression, num); err != nil {
+						log.Println("_________")
+						log.Printf("TestTTSV2; goroutine id:%d; err:%v", i, err)
 						log.Println("_________")
 						panic(err)
 					}
 				}
-
-				if testVersion == "v2" {
-					if err := benchmark.TestTTSV2(addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, j), fmt.Sprintf(fmt.Sprintf("test_robot_thread%d_%d", t, j)),
-						movement, expression, j); err != nil {
-						log.Println("_________")
-						log.Printf("goroutine id:%d; err:%v", i, err)
-						log.Println("_________")
-						panic(err)
-					}
-				}
-
 			}
-			wg.Done()
 		}(i)
+
 	}
+	for {
+		line, _, err := reader.ReadLine()
+		if err != nil && err != io.EOF {
+			log.Println(err)
+			return
+		}
+		if err == io.EOF {
+			break
+		}
+		ch <- string(line)
+	}
+
 	wg.Wait()
 }

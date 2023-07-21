@@ -51,6 +51,7 @@ import "C"
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	v1 "speech-tts/api/tts/v1"
@@ -204,7 +205,7 @@ func (t *TTSService) GetSupportedExpression() []*v2.MessageExpression {
 //	return digitalPersonList
 //}
 
-func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) error {
+func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) (int, error) {
 	var sdkSettings = C.TtsSetting{}
 
 	sdkSettings.speaker = C.CString(req.ParameterSpeakerName)
@@ -228,31 +229,28 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) 
 	defer C.free(unsafe.Pointer(text))
 	traceId := C.CString(req.RootTraceId + "_" + req.TraceId)
 	defer C.free(unsafe.Pointer(traceId))
-	id := C.ActionSynthesizer_SynthesizeAction(
+	idC := C.ActionSynthesizer_SynthesizeAction(
 		text,
 		&sdkSettings,
 		&actionCallback,
 		pUserData,
 		traceId,
 	)
+	id := int(idC)
 	log.NewHelper(t.Logger).Infof("ActionSynthesizer_SynthesizeAction return id:%d", int(id))
 
 	if id < 0 {
 		switch id {
 		case -1:
-			return errors.New("tts req param is invalid")
-		case -2:
-			return errors.New("fail to call the api of the sdk")
-		case -3:
-			return errors.New("fail to call the api of the sdk")
+			return id, errors.New("tts req param is invalid")
 		default:
-			return errors.New("fail to call the api of the sdk")
+			return id, fmt.Errorf("fail to call the api of the sdk;id(%d)", id)
 		}
 	}
-	return nil
+	return id, nil
 }
 
-func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) error {
+func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) (int, error) {
 	var setting = C.TtsSetting{}
 
 	setting.speaker = C.CString(req.ParameterSpeakerName)
@@ -271,28 +269,24 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 	defer C.free(unsafe.Pointer(text))
 	traceId := C.CString(req.RootTraceId + "_" + req.TraceId)
 	defer C.free(unsafe.Pointer(traceId))
-	id := C.ActionSynthesizer_SynthesizeAction_V1(
+	idC := C.ActionSynthesizer_SynthesizeAction_V1(
 		text,
 		&setting,
 		&ttsCallback,
 		pUserData,
 		traceId,
 	)
-
+	id := int(idC)
 	log.NewHelper(t.Logger).Infof("ActionSynthesizer_SynthesizeAction_V1 return id:%d", int(id))
 	if id < 0 {
 		switch id {
 		case -1:
-			return errors.New("tts req param is invalid")
-		case -2:
-			return errors.New("fail to call the api of the sdk")
-		case -3:
-			return errors.New("fail to call the api of the sdk")
+			return id, errors.New("tts req param is invalid")
 		default:
-			return errors.New("fail to call the api of the sdk")
+			return id, fmt.Errorf("fail to call the api of the sdk;id(%d)", id)
 		}
 	}
-	return nil
+	return id, nil
 }
 
 func (t *TTSService) GeneHandlerObjectV2(ctx context.Context, speaker string, logger *log.Helper) *data.HandlerObjectV2 {
@@ -343,4 +337,8 @@ func paramFormatter(flag map[string]string) uint {
 		}
 	}
 	return res
+}
+
+func (t *TTSService) CancelTTSService(id int) {
+	C.ActionSynthesizer_CancelAction(C.int(id))
 }

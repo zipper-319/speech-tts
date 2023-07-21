@@ -39,10 +39,15 @@ func main() {
 			Text:    text,
 			TraceId: strconv.Itoa(i),
 		}
-		userData := pointer.Save(object)
-		if err := ttsService.CallTTSServiceV1(req, userData); err != nil {
+		userData, err := pointer.Save(object)
+		if err != nil {
+			return
+		}
+		id, err := ttsService.CallTTSServiceV1(req, userData)
+		if err != nil {
 			panic(err)
 		}
+		log.Info(id)
 		log.NewHelper(logger).Info("---------end to CallTTSServiceV1-----------")
 		for response := range object.BackChan {
 			log.NewHelper(logger).Infof("response: status:%d; pcm length:%d;", response.Status, len(response.Pcm))

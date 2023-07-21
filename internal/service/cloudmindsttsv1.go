@@ -62,18 +62,24 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	}
 
 	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, logger)
-	pUserData := pointer.Save(object)
+	pUserData, err := pointer.Save(object)
+	if err != nil {
+		return err
+	}
 	defer pointer.Unref(pUserData)
-	logger.Infof("CallTTSServiceV1;pUserData:%v", pUserData)
-	if err := s.uc.CallTTSServiceV1(req, pUserData); err != nil {
+
+	id, err := s.uc.CallTTSServiceV1(req, pUserData)
+	logger.Infof("CallTTSServiceV1;pUserData:%v;id:%d", pUserData, id)
+	if err != nil {
 		return err
 	}
 	for response := range object.BackChan {
 		err := conn.Send(&response)
 		if err != nil {
 			span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))
-			object.IsInterrupted = true
-			span.SetAttributes(attribute.Key("IsInterrupted").Bool(object.IsInterrupted))
+			object.IsInterrupted.Store(true)
+			span.SetAttributes(attribute.Key("IsInterrupted").Bool(true))
+			s.uc.CancelTTSService(id)
 			return err
 		}
 	}

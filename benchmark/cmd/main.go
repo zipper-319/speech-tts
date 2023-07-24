@@ -78,7 +78,7 @@ func main() {
 				}()
 
 				if time.Now().Unix()%2 == 0 {
-					if err := benchmark.TestTTSV1(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d", t), fmt.Sprintf("test_robot_thread%d", t), num); err != nil {
+					if err := benchmark.TestTTSV1(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, num), fmt.Sprintf("test_robot_thread%d_%d", t, num), num); err != nil {
 						log.Println("_________")
 						log.Printf("TestTTSV1; goroutine id:%d; err:%v", i, err)
 						log.Println("_________")

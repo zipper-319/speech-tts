@@ -38,9 +38,7 @@ func server(logger log.Logger, timeout int64) middleware.Middleware {
 				kind = info.Kind().String()
 				operation = info.Operation()
 			}
-			log.Infof("request:%s", extractArgs(req))
 			reply, err = handler(ctx, req)
-			var result interface{}
 			var version string
 			if se := errors.FromError(err); se != nil {
 				status = int(se.Code)
@@ -63,7 +61,7 @@ func server(logger log.Logger, timeout int64) middleware.Middleware {
 				"status", status,
 				"message", message,
 				"stack", stack,
-				"result", result,
+				"result", reply,
 				"isTimeout", fmt.Sprintf("timeout is %t", isTimeout),
 				"latency", latency,
 			)

@@ -88,10 +88,9 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		return err
 	}
 	defer pointer.Unref(pUserData)
-
+	logger.Infof("CallTTSServiceV2;pUserData:%v", pUserData)
 	id, err := s.uc.CallTTSServiceV2(req, pUserData)
 	logger.Infof("CallTTSServiceV2;pUserData:%v;id:%d", pUserData, id)
-	logger.Infof("id:%s", id)
 	if err != nil {
 		return err
 	}

@@ -5,15 +5,13 @@ import "C"
 import (
 	"github.com/pkg/errors"
 	"sync"
-	"sync/atomic"
-	"time"
 	"unsafe"
 )
 
 var (
 	mutex sync.RWMutex
 	store = map[unsafe.Pointer]interface{}{}
-	id    = int32(time.Now().UnixNano())
+	id    = int32(0)
 )
 
 func Save(v interface{}) (unsafe.Pointer, error) {
@@ -29,14 +27,15 @@ func Save(v interface{}) (unsafe.Pointer, error) {
 	//if ptr == nil {
 	//	panic("can't allocate 'cgo-pointer hack index pointer': ptr == nil")
 	//}
-	atomic.AddInt32(&id, 1)
-	ptr := unsafe.Pointer(uintptr(id))
 	mutex.Lock()
+	defer mutex.Unlock()
+	id += 1
+	ptr := unsafe.Pointer(uintptr(id))
+
 	if _, ok := store[ptr]; ok {
 		return nil, errors.New("cgo-pointer has allocated")
 	}
 	store[ptr] = v
-	mutex.Unlock()
 
 	return ptr, nil
 }

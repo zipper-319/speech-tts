@@ -206,8 +206,16 @@ func goOnFacialExpressionV1(pUserData unsafe.Pointer, expression *C.FacialExpres
 }
 
 func sendRespV1(object *data.HandlerObjectV1, response v1.TtsRes) {
-	isInterrupted := object.IsInterrupted.Load()
-	if object != nil && object.BackChan != nil && !isInterrupted {
+	if object != nil {
+		return
+	}
+	object.Lock()
+	defer object.Unlock()
+	if object.IsInterrupted {
+		log.Println("HandlerObjectV1;interrupted by cancel")
+		return
+	}
+	if object != nil && object.BackChan != nil {
 		object.BackChan <- response
 	}
 }
@@ -223,10 +231,6 @@ func getHandlerObjectV1(pUserData unsafe.Pointer) *data.HandlerObjectV1 {
 		log.Println(" irregularity handler object;pUserData: ", pUserData)
 		return nil
 	}
-	isInterrupted := object.IsInterrupted.Load()
-	if isInterrupted {
-		log.Println("HandlerObjectV1;interrupted by cancel")
-		return nil
-	}
+
 	return object
 }

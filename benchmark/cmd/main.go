@@ -85,7 +85,7 @@ func main() {
 						panic(err)
 					}
 				} else {
-					if err := benchmark.TestTTSV2(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d", t), fmt.Sprintf("test_robot_thread%d", t),
+					if err := benchmark.TestTTSV2(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, num), fmt.Sprintf("test_robot_thread%d_%d", t, num),
 						movement, expression, num); err != nil {
 						log.Println("_________")
 						log.Printf("TestTTSV2; goroutine id:%d; err:%v", i, err)

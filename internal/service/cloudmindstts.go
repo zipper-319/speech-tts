@@ -98,9 +98,11 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		err := conn.Send(&response)
 		if err != nil {
 			span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))
-			object.IsInterrupted.Store(true)
-			span.SetAttributes(attribute.Key("IsInterrupted").Bool(true))
+			object.Lock()
+			object.IsInterrupted = true
+			span.SetAttributes(attribute.Key("IsInterrupted").Bool(object.IsInterrupted))
 			s.uc.CancelTTSService(id)
+			object.Unlock()
 			return err
 		}
 	}

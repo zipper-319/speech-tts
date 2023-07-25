@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
-	"sync/atomic"
+	"sync"
 )
 
 type SpeakerSetting struct {
@@ -45,8 +45,9 @@ type HandlerObject struct {
 	context.Context
 	SpeakerInfo
 	ParamMap      map[string]interface{}
-	IsInterrupted atomic.Bool
+	IsInterrupted bool
 	Log           *log.Helper
+	sync.Mutex
 }
 
 type HandlerObjectV2 struct {

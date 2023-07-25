@@ -90,6 +90,7 @@ func init() {
 }
 
 type TTSService struct {
+	ChanLen           int
 	ResPath           string
 	version           string
 	resServiceVersion string
@@ -122,6 +123,7 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger l
 		C.free(unsafe.Pointer(cname))
 	}
 	return &TTSService{
+		ChanLen:           20,
 		ResPath:           resPath,
 		version:           C.GoString(version),
 		resServiceVersion: C.GoString(resServiceVersion),
@@ -290,7 +292,7 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 }
 
 func (t *TTSService) GeneHandlerObjectV2(ctx context.Context, speaker string, logger *log.Helper) *data.HandlerObjectV2 {
-	backChan := make(chan v2.TtsRes, 10)
+	backChan := make(chan v2.TtsRes, t.ChanLen)
 	paramMap := make(map[string]interface{})
 	return &data.HandlerObjectV2{
 		HandlerObject: data.HandlerObject{

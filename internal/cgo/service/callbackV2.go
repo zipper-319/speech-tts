@@ -84,7 +84,7 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnStart")
+	object.Log.Info("end to goOnStart pUserData:%d", pUserData)
 }
 
 /**
@@ -98,7 +98,7 @@ func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 		log.Println("goOnEnd; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnEnd; pUserData:%v", pUserData)
+	object.Log.Info("start to goOnEnd; pUserData:%d", pUserData)
 
 	response := v2.TtsRes{
 		ErrorCode: int32(flag),
@@ -106,7 +106,7 @@ func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 	}
 	sendResp(object, response)
 	close(object.BackChan)
-	object.Log.Info("end to goOnEnd")
+	object.Log.Info("end to goOnEnd pUserData:%d", pUserData)
 }
 
 //export goOnDebug
@@ -130,7 +130,7 @@ func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 	}
 
 	sendResp(object, response)
-	object.Log.Info("end to goOnDebug")
+	object.Log.Info("end to goOnDebug pUserData:", pUserData)
 }
 
 //export goOnTimedMouthShape
@@ -162,7 +162,7 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 	}
 
 	sendResp(object, response)
-	object.Log.Info("end to goOnTimedMouthShape")
+	object.Log.Info("end to goOnTimedMouthShape pUserData:", pUserData)
 }
 
 //export goOnActionElement
@@ -192,7 +192,7 @@ func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, opera
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnActionElement")
+	object.Log.Info("end to goOnActionElement pUserData:", pUserData)
 }
 
 //export goOnSynthesizedData
@@ -222,7 +222,7 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnSynthesizedData")
+	object.Log.Info("end to goOnSynthesizedData pUserData:", pUserData)
 }
 
 //export goOnFacialExpression
@@ -261,7 +261,7 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnFacialExpression")
+	object.Log.Info("end to goOnFacialExpression pUserData:", pUserData)
 }
 
 //export goOnBodyMovement
@@ -302,7 +302,7 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnBodyMovement")
+	object.Log.Info("end to goOnBodyMovement pUserData:", pUserData)
 }
 
 func sendResp(object *data.HandlerObjectV2, response v2.TtsRes) {

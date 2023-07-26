@@ -29,7 +29,7 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 		log.Println("goOnStart; irregularity type")
 		return
 	}
-	object.Log.Info("start to OnStart; pUserData:", pUserData)
+	object.Log.Infof("start to OnStart; pUserData: %d", pUserData)
 
 	var facialExpressionFrameDim, bodyMovementFrameDim uint64
 	var facialExpressionFrameDurMs, bodyMovementFrameDurMs float32
@@ -84,7 +84,7 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnStart pUserData:%d", pUserData)
+	object.Log.Infof("end to goOnStart pUserData: %d", pUserData)
 }
 
 /**
@@ -98,7 +98,7 @@ func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 		log.Println("goOnEnd; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnEnd; pUserData:%d", pUserData)
+	object.Log.Infof("start to goOnEnd; pUserData: %d", pUserData)
 
 	response := v2.TtsRes{
 		ErrorCode: int32(flag),
@@ -106,7 +106,7 @@ func goOnEnd(pUserData unsafe.Pointer, flag C.int) {
 	}
 	sendResp(object, response)
 	close(object.BackChan)
-	object.Log.Info("end to goOnEnd pUserData:%d", pUserData)
+	object.Log.Infof("end to goOnEnd pUserData: %d", pUserData)
 }
 
 //export goOnDebug
@@ -117,7 +117,7 @@ func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 		log.Println("goOnDebug; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnDebug; pUserData:", pUserData)
+	object.Log.Infof("start to goOnDebug; pUserData: %d", pUserData)
 
 	response := v2.TtsRes{
 		Status: 2,
@@ -130,7 +130,7 @@ func goOnDebug(pUserData unsafe.Pointer, debugtype *C.char, info *C.char) {
 	}
 
 	sendResp(object, response)
-	object.Log.Info("end to goOnDebug pUserData:", pUserData)
+	object.Log.Infof("end to goOnDebug pUserData: %d", pUserData)
 }
 
 //export goOnTimedMouthShape
@@ -141,7 +141,7 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 		log.Println("goOnTimedMouthShape; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnTimedMouthShape;pUserData:", pUserData)
+	object.Log.Infof("start to goOnTimedMouthShape;pUserData: %d", pUserData)
 
 	var mouths = make([]*v2.TimedMouthShape, int32(size))
 	for i := 0; i < int(size); i++ {
@@ -162,7 +162,7 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 	}
 
 	sendResp(object, response)
-	object.Log.Info("end to goOnTimedMouthShape pUserData:", pUserData)
+	object.Log.Infof("end to goOnTimedMouthShape pUserData: %d", pUserData)
 }
 
 //export goOnActionElement
@@ -172,7 +172,7 @@ func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, opera
 		log.Println("goOnActionElement; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnActionElement;pUserData:", pUserData)
+	object.Log.Infof("start to goOnActionElement;pUserData: %d", pUserData)
 
 	coordinateC := *(*C.Coordinate)(coordinate)
 	response := v2.TtsRes{
@@ -192,7 +192,7 @@ func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, opera
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnActionElement pUserData:", pUserData)
+	object.Log.Infof("end to goOnActionElement pUserData: %d", pUserData)
 }
 
 //export goOnSynthesizedData
@@ -202,7 +202,7 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 		log.Println("goOnSynthesizedData; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnSynthesizedData;pUserData:%v", pUserData)
+	object.Log.Infof("start to goOnSynthesizedData;pUserData:%d", pUserData)
 
 	length := (C.int)(audioData.audio_size)
 	wav := C.GoBytes(unsafe.Pointer(audioData.audio_data), 2*length)
@@ -222,7 +222,7 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnSynthesizedData pUserData:", pUserData)
+	object.Log.Infof("end to goOnSynthesizedData pUserData: %d", pUserData)
 }
 
 //export goOnFacialExpression
@@ -232,7 +232,7 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 		log.Println("goOnFacialExpression; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnFacialExpression;pUserData:%v", pUserData)
+	object.Log.Infof("start to goOnFacialExpression;pUserData:%d", pUserData)
 
 	var framedDim uint64
 	if fefd, ok := (object.ParamMap["FacialExpressionFrameDim"]).(int32); ok {
@@ -261,7 +261,7 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnFacialExpression pUserData:", pUserData)
+	object.Log.Infof("end to goOnFacialExpression pUserData: %d", pUserData)
 }
 
 //export goOnBodyMovement
@@ -271,7 +271,7 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 		log.Println("goOnBodyMovement; irregularity type")
 		return
 	}
-	object.Log.Info("start to goOnBodyMovement;pUserData:%v", pUserData)
+	object.Log.Infof("start to goOnBodyMovement;pUserData:%d", pUserData)
 
 	var bodyMovement *v2.BodyMovement
 	bodyMovementDataC := (*C.BodyMovementSegment)(bodyMovementData)
@@ -302,7 +302,7 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 		},
 	}
 	sendResp(object, response)
-	object.Log.Info("end to goOnBodyMovement pUserData:", pUserData)
+	object.Log.Infof("end to goOnBodyMovement pUserData: %d", pUserData)
 }
 
 func sendResp(object *data.HandlerObjectV2, response v2.TtsRes) {

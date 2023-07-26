@@ -78,14 +78,14 @@ func main() {
 				}()
 
 				if time.Now().Unix()%2 == 0 {
-					if err := benchmark.TestTTSV1(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, num), fmt.Sprintf("test_robot_thread%d_%d", t, num), num); err != nil {
+					if err := benchmark.TestTTSV1(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num), num); err != nil {
 						log.Println("_________")
 						log.Printf("TestTTSV1; goroutine id:%d; err:%v", i, err)
 						log.Println("_________")
 						panic(err)
 					}
 				} else {
-					if err := benchmark.TestTTSV2(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%d", t, num), fmt.Sprintf("test_robot_thread%d_%d", t, num),
+					if err := benchmark.TestTTSV2(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
 						movement, expression, num); err != nil {
 						log.Println("_________")
 						log.Printf("TestTTSV2; goroutine id:%d; err:%v", i, err)

@@ -207,16 +207,8 @@ func goOnFacialExpressionV1(pUserData unsafe.Pointer, expression *C.FacialExpres
 }
 
 func sendRespV1(object *data.HandlerObjectV1, response v1.TtsRes) {
-	if object != nil {
-		return
-	}
-	object.Lock()
-	defer object.Unlock()
-	if object.IsInterrupted {
-		log.Println("HandlerObjectV1;interrupted by cancel")
-		return
-	}
-	if object.BackChan != nil {
+
+	if object != nil && object.BackChan != nil {
 		object.BackChan <- response
 	}
 }

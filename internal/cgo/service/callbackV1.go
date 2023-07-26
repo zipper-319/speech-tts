@@ -45,7 +45,7 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnAudioV1", nil)
 	defer span.End()
-	object.Log.Info("start to OnAudioV1; pUserData:", pUserData)
+	object.Log.Infof("start to OnAudioV1; pUserData: %d", pUserData)
 	response := v1.TtsRes{
 		Pcm:    C.GoBytes(unsafe.Pointer(dataAudio), len),
 		Status: v1.PcmStatus_STATUS_MID,
@@ -70,7 +70,7 @@ func goOnAudioV1(pUserData unsafe.Pointer, dataAudio *C.char, len C.int) {
 		object.ParamMap = make(map[string]interface{})
 	}
 	sendRespV1(object, response)
-	object.Log.Info("end to OnAudioV1 pUserData:%d", pUserData)
+	object.Log.Infof("end to OnAudioV1 pUserData:%d", pUserData)
 }
 
 /**
@@ -86,7 +86,7 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnEndV1", nil)
 	defer span.End()
-	object.Log.Info("start to OnEndV1;pUserData:", pUserData)
+	object.Log.Infof("start to OnEndV1;pUserData: %d", pUserData)
 
 	var err v1.TtsErr
 

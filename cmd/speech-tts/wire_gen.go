@@ -18,6 +18,7 @@ import (
 
 import (
 	_ "go.uber.org/automaxprocs"
+	_ "net/http/pprof"
 	_ "speech-tts/internal/pkg/catch"
 )
 
@@ -29,7 +30,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, string2 string, logge
 	if err != nil {
 		return nil, nil, err
 	}
-	ttsService := service.NewTTSService(string2, speakerSetting, logger)
+	v := service.NewNotify(logger)
+	ttsService := service.NewTTSService(string2, speakerSetting, logger, v)
 	cloudMindsTTSService := service2.NewCloudMindsTTSService(logger, ttsService)
 	cloudMindsTTSServiceV1 := service2.NewCloudMindsTTSServiceV1(logger, ttsService)
 	grpcServer := server.NewGRPCServer(confServer, cloudMindsTTSService, cloudMindsTTSServiceV1, logger)

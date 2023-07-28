@@ -39,6 +39,8 @@
     - [VerVersionReq](#ttsschema-VerVersionReq)
     - [VerVersionRsp](#ttsschema-VerVersionRsp)
   
+    - [Identifier](#ttsschema-Identifier)
+  
     - [CloudMindsTTS](#ttsschema-CloudMindsTTS)
   
 - [tts/v1/schema.proto](#tts_v1_schema-proto)
@@ -52,6 +54,7 @@
     - [VerReq](#schema-VerReq)
     - [VerRsp](#schema-VerRsp)
   
+    - [Identifier](#schema-Identifier)
     - [pcmStatus](#schema-pcmStatus)
     - [speakerInfo](#schema-speakerInfo)
     - [ttsErr](#schema-ttsErr)
@@ -199,7 +202,7 @@ Action基元数据
 | ----- | ---- | ----- | ----------- |
 | frame_dim | [int32](#int32) |  | 每帧的维度，即一帧由frameDim个float组成 |
 | frame_dur_ms | [float](#float) |  | 每帧的持续时长 |
-| control_name_list | [string](#string) | repeated | 每帧的名字 |
+| control_name_list | [string](#string) | repeated | 每个维度代表的含义 |
 
 
 
@@ -283,7 +286,7 @@ Action基元数据
 | ----- | ---- | ----- | ----------- |
 | frame_dim | [int32](#int32) |  | 每帧的维度，即一帧由frameDim个float组成 |
 | frame_dur_ms | [float](#float) |  | 每帧的持续时长 |
-| control_name_list | [string](#string) | repeated | 每帧的名字 |
+| control_name_list | [string](#string) | repeated | 每个维度代表的含义 |
 
 
 
@@ -498,6 +501,7 @@ Action基元数据
 | root_trace_id | [string](#string) |  |  |
 | movement | [string](#string) |  | 取值范围请用 GetTtsConfig movement_list |
 | expression | [string](#string) |  | 取值范围请用 GetTtsConfig expression_list |
+| identifier | [Identifier](#ttsschema-Identifier) |  | 客户端身份标识 |
 
 
 
@@ -579,6 +583,21 @@ Action基元数据
 
 
  
+
+
+<a name="ttsschema-Identifier"></a>
+
+### Identifier
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| OTHER | 0 |  |
+| TTSS_kill | 1 |  |
+| MINI_PROGRAM | 2 |  |
+| ABILITY_SHOW_PLATFORM | 3 |  |
+| SCHEDULER | 4 |  |
+
 
  
 
@@ -711,6 +730,7 @@ Action基元数据
 | ParameterSpeakerName | [string](#string) |  | parameterSpeakerName 传字符串类型的发音人，兼容speakerInfo，优先选择这个,如果为空，就选择id |
 | traceId | [string](#string) |  |  |
 | rootTraceId | [string](#string) |  |  |
+| identifier | [Identifier](#schema-Identifier) |  | 客户端身份标识 |
 
 
 
@@ -765,6 +785,21 @@ Action基元数据
 
 
  
+
+
+<a name="schema-Identifier"></a>
+
+### Identifier
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| OTHER | 0 |  |
+| TTSS_kill | 1 |  |
+| MINI_PROGRAM | 2 |  |
+| ABILITY_SHOW_PLATFORM | 3 |  |
+| SCHEDULER | 4 |  |
+
 
 
 <a name="schema-pcmStatus"></a>

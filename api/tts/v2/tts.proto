@@ -21,6 +21,15 @@ service CloudMindsTTS {
     }     // 获取服务端配置信息
 }
 
+enum Identifier{
+    OTHER = 0;
+    TTSS_kill = 1;
+    MINI_PROGRAM = 2;
+    ABILITY_SHOW_PLATFORM = 3;
+    SCHEDULER = 4;
+
+}
+
 message TtsReq {
     string text = 1;                            // 具体需要合成的文本，支持带json
     string speed = 2;                           // 取值范围请用 GetTtsConfig SpeedList
@@ -34,6 +43,7 @@ message TtsReq {
     string root_trace_id = 10;
     string movement   = 11;                     // 取值范围请用 GetTtsConfig movement_list
     string expression = 12;                     // 取值范围请用 GetTtsConfig expression_list
+    Identifier identifier = 13;                 // 客户端身份标识
 }
 
 message TtsRes {

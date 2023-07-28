@@ -40,8 +40,8 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	span.SetAttributes(attribute.Key("text").String(req.Text))
 	defer span.End()
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
-	logger.Infof("call TTSServiceV1;the req——————text:%s;speakerName:%s;Emotions:%s;Pitch:%s",
-		req.Text, req.ParameterSpeakerName, req.Emotions, req.Pitch)
+	logger.Infof("call TTSServiceV1;the req——————text:%s;speakerName:%s;Emotions:%s;Pitch:%s;identifier:%s",
+		req.Text, req.ParameterSpeakerName, req.Emotions, req.Pitch, req.Identifier)
 
 	if req.ParameterSpeakerName == "" {
 		req.ParameterSpeakerName = "DaXiaoFang"

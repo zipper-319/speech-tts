@@ -28,7 +28,7 @@ func goOnStartV1(pUserData unsafe.Pointer) {
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnStartV1", nil)
 	defer span.End()
-	object.Log.Info("end to goOnStartV1;pUserData:", pUserData)
+	object.Log.Infof("end to goOnStartV1;pUserData:%d", pUserData)
 	return
 }
 

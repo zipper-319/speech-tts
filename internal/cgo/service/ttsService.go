@@ -58,10 +58,11 @@ import (
 	v2 "speech-tts/api/tts/v2"
 	"speech-tts/internal/data"
 	"strings"
+	"time"
 	"unsafe"
 )
 
-var ProviderSet = wire.NewSet(NewTTSService)
+var ProviderSet = wire.NewSet(NewTTSService, NewNotify)
 
 var (
 	actionCallback = C.ActionCallback{}
@@ -99,7 +100,20 @@ type TTSService struct {
 	log.Logger
 }
 
-func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger log.Logger) *TTSService {
+func NewNotify(logger log.Logger) chan interface{} {
+	notify := make(chan interface{})
+	go func() {
+		select {
+		case <-notify:
+			log.NewHelper(logger).Info("success to init tts service")
+		case <-time.After(5 * time.Minute):
+			log.NewHelper(logger).Error("fail_to_init_tts_service after 5 minute")
+		}
+	}()
+	return notify
+}
+
+func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger log.Logger, notify chan interface{}) *TTSService {
 	cResPath := C.CString(resPath)
 	defer C.free(unsafe.Pointer(cResPath))
 	C.ActionSynthesizer_Init(cResPath)
@@ -107,6 +121,7 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger l
 	resServiceVersion := C.ActionSynthesizer_GetResServiceVersion()
 	// 发音人初始化
 	speakers := make([]*data.SpeakerInfo, len(speakerSetting.SupportedSpeaker))
+
 	for i, supportedSpeaker := range speakerSetting.SupportedSpeaker {
 		cname := C.CString(supportedSpeaker.Name)
 		m := C.GetSpeakerDescriptor(cname)
@@ -122,6 +137,7 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger l
 		}
 		C.free(unsafe.Pointer(cname))
 	}
+	close(notify)
 	return &TTSService{
 		ChanLen:           20,
 		ResPath:           resPath,

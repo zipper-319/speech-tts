@@ -160,7 +160,7 @@
           "items": {
             "type": "string"
           },
-          "title": "每帧的名字"
+          "title": "每个维度代表的含义"
         }
       }
     },
@@ -257,9 +257,20 @@
           "items": {
             "type": "string"
           },
-          "title": "每帧的名字"
+          "title": "每个维度代表的含义"
         }
       }
+    },
+    "ttsschemaIdentifier": {
+      "type": "string",
+      "enum": [
+        "OTHER",
+        "TTSS_kill",
+        "MINI_PROGRAM",
+        "ABILITY_SHOW_PLATFORM",
+        "SCHEDULER"
+      ],
+      "default": "OTHER"
     },
     "ttsschemaMessageDigitalPerson": {
       "type": "object",

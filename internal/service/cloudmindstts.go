@@ -50,8 +50,8 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	defer span.End()
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
-	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s ",
-		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag, req.Expression, req.Movement)
+	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s, identifier:%s ",
+		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag, req.Expression, req.Movement, req.Identifier)
 
 	if req.Text == "" {
 		return errors.New("text param is null")

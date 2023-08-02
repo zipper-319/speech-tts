@@ -7,6 +7,8 @@ require (
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20230504091536-aed172b8ddd3
 	github.com/go-kratos/kratos/contrib/registry/nacos/v2 v2.0.0-20230530065457-69d73225a921
 	github.com/go-kratos/kratos/v2 v2.6.2
+	github.com/golang-jwt/jwt/v4 v4.4.1
+	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
 	github.com/nacos-group/nacos-sdk-go v1.1.4
@@ -35,12 +37,13 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/subcommands v1.0.1 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -48,6 +51,8 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/smarty/assertions v1.15.0 // indirect
+	github.com/smartystreets/goconvey v1.8.1 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

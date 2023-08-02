@@ -97,14 +97,6 @@ enum pcmStatus {
 	STATUS_END = 3;								// 结束
 }
 
-enum Identifier{
-	OTHER = 0;
-	TTSS_kill = 1;
-	MINI_PROGRAM = 2;
-	ABILITY_SHOW_PLATFORM = 3;
-	SCHEDULER = 4;
-
-}
 
 message TtsReq {
 	string location = 1;						// Cloud 传固定值
@@ -123,7 +115,6 @@ message TtsReq {
 	string ParameterSpeakerName = 12;
 	string traceId = 13;
 	string rootTraceId = 14;
-	Identifier identifier = 15;                 // 客户端身份标识
 }
 
 message TtsRes {

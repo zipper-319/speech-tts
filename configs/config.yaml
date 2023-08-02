@@ -5,6 +5,13 @@ server:
   grpc:
     addr: 0.0.0.0:3012
     timeout: 1s
+  app:
+    path: ./res
+    jwt:
+      key: admin@cloudminds.com
+      expire: 87600
+      is_open: true
+
 data:
   database:
     driver: mysql
@@ -13,8 +20,7 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
-  app:
-    path: ./res
+
   otel:
     addr: 172.16.24.200:32672
     name: speech.tts

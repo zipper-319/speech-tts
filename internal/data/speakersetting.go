@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
+	"speech-tts/internal/conf"
 )
 
 type SpeakerSetting struct {
@@ -57,9 +58,9 @@ type HandlerObjectV1 struct {
 	BackChan chan v1.TtsRes
 }
 
-func NewSpeakerSetting(path string) (*SpeakerSetting, error) {
+func NewSpeakerSetting(s *conf.Server) (*SpeakerSetting, error) {
 	var speakerSetting SpeakerSetting
-	viper.AddConfigPath(path)
+	viper.AddConfigPath(s.App.Path)
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 	err := viper.ReadInConfig()
@@ -116,4 +117,16 @@ func (ss *SpeakerSetting) IsLegalExpression(expression string) bool {
 		}
 	}
 	return false
+}
+
+type Speaker struct {
+	Text                 string
+	Speed                string
+	Volume               string
+	Pitch                string
+	Emotions             string
+	ParameterSpeakerName string
+	ParameterFlag        map[string]string
+	Movement             string
+	Expression           string
 }

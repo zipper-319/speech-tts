@@ -33,19 +33,15 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 
 	var facialExpressionFrameDim, bodyMovementFrameDim uint64
 	var facialExpressionFrameDurMs, bodyMovementFrameDurMs float32
-	var expressControlNameList []string
+	var expressControlNameList string
 	//var movementControlNameList []string
 	if facialExpressionConfig != nil {
 		frameDimLen := uint64(facialExpressionConfig.frameDim)
 		facialExpressionFrameDim = frameDimLen
 		facialExpressionFrameDurMs = float32(facialExpressionConfig.frameDurMs)
 
-		if facialExpressionConfig.control_name != nil && int(facialExpressionConfig.frameDim) > 0 {
-			expressControlNameList = make([]string, frameDimLen)
-			tmpSlice := (*[1 << 30]*C.char)(unsafe.Pointer(facialExpressionConfig.control_name))[:frameDimLen:frameDimLen]
-			for i, s := range tmpSlice {
-				expressControlNameList[i] = C.GoString(s)
-			}
+		if facialExpressionConfig.meta_data != nil && int(facialExpressionConfig.frameDim) > 0 {
+			expressControlNameList = C.GoString(facialExpressionConfig.meta_data)
 		}
 	}
 
@@ -72,9 +68,9 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 			ConfigText: &v2.ConfigAndText{
 				Text: C.GoString(ttsText),
 				FacialExpressionConfig: &v2.FacialExpressionConfig{
-					FrameDim:        int32(facialExpressionFrameDim),
-					FrameDurMs:      facialExpressionFrameDurMs,
-					ControlNameList: expressControlNameList,
+					FrameDim:   int32(facialExpressionFrameDim),
+					FrameDurMs: facialExpressionFrameDurMs,
+					MetaData:   expressControlNameList,
 				},
 				BodyMovementConfig: &v2.BodyMovementConfig{
 					FrameDim:   int32(bodyMovementFrameDim),

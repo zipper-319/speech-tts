@@ -111,8 +111,6 @@ func (m *TtsReq) validate(all bool) error {
 
 	// no validation rules for RootTraceId
 
-	// no validation rules for Identifier
-
 	if len(errors) > 0 {
 		return TtsReqMultiError(errors)
 	}

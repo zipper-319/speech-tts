@@ -56,6 +56,7 @@ import (
 	"github.com/google/wire"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
+	"speech-tts/internal/conf"
 	"speech-tts/internal/data"
 	"strings"
 	"time"
@@ -113,8 +114,8 @@ func NewNotify(logger log.Logger) chan interface{} {
 	return notify
 }
 
-func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger log.Logger, notify chan interface{}) *TTSService {
-	cResPath := C.CString(resPath)
+func NewTTSService(s *conf.Server, speakerSetting *data.SpeakerSetting, logger log.Logger, notify chan interface{}) *TTSService {
+	cResPath := C.CString(s.App.Path)
 	defer C.free(unsafe.Pointer(cResPath))
 	C.ActionSynthesizer_Init(cResPath)
 	version := C.ActionSynthesizer_GetVersion()
@@ -140,7 +141,7 @@ func NewTTSService(resPath string, speakerSetting *data.SpeakerSetting, logger l
 	close(notify)
 	return &TTSService{
 		ChanLen:           20,
-		ResPath:           resPath,
+		ResPath:           s.App.Path,
 		version:           C.GoString(version),
 		resServiceVersion: C.GoString(resServiceVersion),
 		Speakers:          speakers,
@@ -223,7 +224,7 @@ func (t *TTSService) GetSupportedExpression() []*v2.MessageExpression {
 //	return digitalPersonList
 //}
 
-func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) (int, error) {
+func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData unsafe.Pointer, traceId string) (int, error) {
 	var sdkSettings = C.TtsSetting{}
 
 	sdkSettings.speaker = C.CString(req.ParameterSpeakerName)
@@ -237,22 +238,20 @@ func (t *TTSService) CallTTSServiceV2(req *v2.TtsReq, pUserData unsafe.Pointer) 
 	sdkSettings.speakingStyle = C.CString(req.Emotions)
 	defer C.free(unsafe.Pointer(sdkSettings.speakingStyle))
 	sdkSettings.featureSet = C.uint(paramFormatter(req.ParameterFlag))
-	//sdkSettings.digitalPerson = C.CString(req.ParameterDigitalPerson)
-	//defer C.free(unsafe.Pointer(sdkSettings.digitalPerson))
 	sdkSettings.expressionDescriptor = C.CString(req.Expression)
 	defer C.free(unsafe.Pointer(sdkSettings.expressionDescriptor))
 	sdkSettings.movementDescriptor = C.CString(req.Movement)
 	defer C.free(unsafe.Pointer(sdkSettings.movementDescriptor))
 	text := C.CString(req.Text)
 	defer C.free(unsafe.Pointer(text))
-	traceId := C.CString(req.RootTraceId + "_" + req.TraceId)
-	defer C.free(unsafe.Pointer(traceId))
+	traceIdC := C.CString(traceId)
+	defer C.free(unsafe.Pointer(traceIdC))
 	idC := C.ActionSynthesizer_SynthesizeAction(
 		text,
 		&sdkSettings,
 		&actionCallback,
 		pUserData,
-		traceId,
+		traceIdC,
 	)
 	id := int(idC)
 	log.NewHelper(t.Logger).Infof("ActionSynthesizer_SynthesizeAction return id:%d", int(id))

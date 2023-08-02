@@ -26,6 +26,8 @@
     - [MessageExpression](#ttsschema-MessageExpression)
     - [MessageMovement](#ttsschema-MessageMovement)
     - [MessagePitch](#ttsschema-MessagePitch)
+    - [RegisterReq](#ttsschema-RegisterReq)
+    - [RegisterResp](#ttsschema-RegisterResp)
     - [RespGetTtsConfig](#ttsschema-RespGetTtsConfig)
     - [SpeakerList](#ttsschema-SpeakerList)
     - [SpeakerParameter](#ttsschema-SpeakerParameter)
@@ -39,7 +41,7 @@
     - [VerVersionReq](#ttsschema-VerVersionReq)
     - [VerVersionRsp](#ttsschema-VerVersionRsp)
   
-    - [Identifier](#ttsschema-Identifier)
+    - [ClientVersion](#ttsschema-ClientVersion)
   
     - [CloudMindsTTS](#ttsschema-CloudMindsTTS)
   
@@ -54,7 +56,6 @@
     - [VerReq](#schema-VerReq)
     - [VerRsp](#schema-VerRsp)
   
-    - [Identifier](#schema-Identifier)
     - [pcmStatus](#schema-pcmStatus)
     - [speakerInfo](#schema-speakerInfo)
     - [ttsErr](#schema-ttsErr)
@@ -202,7 +203,7 @@ Action基元数据
 | ----- | ---- | ----- | ----------- |
 | frame_dim | [int32](#int32) |  | 每帧的维度，即一帧由frameDim个float组成 |
 | frame_dur_ms | [float](#float) |  | 每帧的持续时长 |
-| control_name_list | [string](#string) | repeated | 每个维度代表的含义 |
+| meta_data | [string](#string) |  | 伴生数据的其他描述性信息(json) |
 
 
 
@@ -286,7 +287,7 @@ Action基元数据
 | ----- | ---- | ----- | ----------- |
 | frame_dim | [int32](#int32) |  | 每帧的维度，即一帧由frameDim个float组成 |
 | frame_dur_ms | [float](#float) |  | 每帧的持续时长 |
-| control_name_list | [string](#string) | repeated | 每个维度代表的含义 |
+| meta_data | [string](#string) |  | 伴生数据的其他描述性信息(json) |
 
 
 
@@ -370,6 +371,37 @@ Action基元数据
 | id | [int32](#int32) |  |  |
 | name | [string](#string) |  | 参数 |
 | chinese_name | [string](#string) |  | 对应中文 |
+
+
+
+
+
+
+<a name="ttsschema-RegisterReq"></a>
+
+### RegisterReq
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| account | [string](#string) |  |  |
+| expire | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="ttsschema-RegisterResp"></a>
+
+### RegisterResp
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| token | [string](#string) |  |  |
 
 
 
@@ -496,12 +528,10 @@ Action基元数据
 | emotions | [string](#string) |  | 如果该发音人支持情感，取值范围请用 GetTtsConfig EmotionList.Name，如果不支持请传&#34;&#34;，否则会报错 |
 | parameter_speaker_name | [string](#string) |  | 取值范围请用 GetTtsConfig函数的返回Speakerlist.parameterSpeakerName |
 | parameter_digital_person | [string](#string) |  | **Deprecated.** 数字人形象， (废弃不用) ******************* |
-| parameter_flag | [TtsReq.ParameterFlagEntry](#ttsschema-TtsReq-ParameterFlagEntry) | repeated | 额外信息参数，口型key:mouth,字符串&#34;true&#34;或者&#34;false&#34;、动作key:movement,字符串&#34;true&#34;或者&#34;false&#34;、表情key:expression,字符串&#34;true&#34;或者&#34;false&#34; |
+| parameter_flag | [TtsReq.ParameterFlagEntry](#ttsschema-TtsReq-ParameterFlagEntry) | repeated | 额外信息参数，口型key:mouth,字符串&#34;true&#34;或者&#34;false&#34;、动作key:movement,value的取值范围参考GetTtsConfig-MessageMovement.name、表情key:expression,value的取值范围参考GetTtsConfig-MessageExpression.name |
 | trace_id | [string](#string) |  |  |
 | root_trace_id | [string](#string) |  |  |
-| movement | [string](#string) |  | 取值范围请用 GetTtsConfig movement_list |
-| expression | [string](#string) |  | 取值范围请用 GetTtsConfig expression_list |
-| identifier | [Identifier](#ttsschema-Identifier) |  | 客户端身份标识 |
+| version | [ClientVersion](#ttsschema-ClientVersion) |  |  |
 
 
 
@@ -585,18 +615,15 @@ Action基元数据
  
 
 
-<a name="ttsschema-Identifier"></a>
+<a name="ttsschema-ClientVersion"></a>
 
-### Identifier
+### ClientVersion
 
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| OTHER | 0 |  |
-| TTSS_kill | 1 |  |
-| MINI_PROGRAM | 2 |  |
-| ABILITY_SHOW_PLATFORM | 3 |  |
-| SCHEDULER | 4 |  |
+| invalid | 0 |  |
+| version | 3 |  |
 
 
  
@@ -614,6 +641,7 @@ Action基元数据
 | Call | [TtsReq](#ttsschema-TtsReq) | [TtsRes](#ttsschema-TtsRes) stream |  |
 | GetVersion | [VerVersionReq](#ttsschema-VerVersionReq) | [VerVersionRsp](#ttsschema-VerVersionRsp) |  |
 | GetTtsConfig | [VerReq](#ttsschema-VerReq) | [RespGetTtsConfig](#ttsschema-RespGetTtsConfig) |  |
+| Register | [RegisterReq](#ttsschema-RegisterReq) | [RegisterResp](#ttsschema-RegisterResp) |  |
 
  
 
@@ -730,7 +758,6 @@ Action基元数据
 | ParameterSpeakerName | [string](#string) |  | parameterSpeakerName 传字符串类型的发音人，兼容speakerInfo，优先选择这个,如果为空，就选择id |
 | traceId | [string](#string) |  |  |
 | rootTraceId | [string](#string) |  |  |
-| identifier | [Identifier](#schema-Identifier) |  | 客户端身份标识 |
 
 
 
@@ -785,21 +812,6 @@ Action基元数据
 
 
  
-
-
-<a name="schema-Identifier"></a>
-
-### Identifier
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| OTHER | 0 |  |
-| TTSS_kill | 1 |  |
-| MINI_PROGRAM | 2 |  |
-| ABILITY_SHOW_PLATFORM | 3 |  |
-| SCHEDULER | 4 |  |
-
 
 
 <a name="schema-pcmStatus"></a>

@@ -16,6 +16,7 @@ import (
 	"runtime/debug"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
+	jwtUtil "speech-tts/internal/pkg/jwt"
 	"speech-tts/internal/pkg/trace"
 	"strings"
 	"time"
@@ -236,6 +237,15 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 			}
 			span.End()
 		}()
+
+		identifier, err := jwtUtil.IsValidity(logger, tr)
+		if err != nil {
+			code = codes.Unauthenticated
+			return err
+		}
+		if identifier != nil {
+			ctx = context.WithValue(ctx, jwtUtil.Identifier{}, identifier)
+		}
 
 		if err = handler(srv, newWrappedStream(ss, logger, ctx)); err != nil {
 			code = codes.Internal

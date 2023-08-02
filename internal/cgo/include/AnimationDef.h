@@ -61,13 +61,13 @@ typedef struct
      */
     unsigned int frameDim;
     /**
-     * 每个维度代表的含义
-     */
-    const char **control_name;
-    /**
      * 每帧的持续时长
      */
     float frameDurMs;
+    /**
+     * 伴生数据的其他描述性信息(json)
+     */
+    const char *meta_data;
 }AccompanyDataConfig;
 
 /**

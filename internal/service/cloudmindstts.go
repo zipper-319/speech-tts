@@ -11,6 +11,9 @@ import (
 	"go.opentelemetry.io/otel/codes"
 	pb "speech-tts/api/tts/v2"
 	"speech-tts/internal/cgo/service"
+	"speech-tts/internal/conf"
+	"speech-tts/internal/data"
+	jwtUtil "speech-tts/internal/pkg/jwt"
 	"speech-tts/internal/pkg/pointer"
 	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
@@ -23,20 +26,24 @@ type CloudMindsTTSService struct {
 	uc          *service.TTSService
 	sdkFailTime int
 	failTexts   map[string]struct{}
+	path        string
+	jwtKey      string
 }
 
-func NewCloudMindsTTSService(logger log.Logger, uc *service.TTSService) *CloudMindsTTSService {
+func NewCloudMindsTTSService(logger log.Logger, uc *service.TTSService, s *conf.Server) *CloudMindsTTSService {
 	failTexts := make(map[string]struct{})
 	return &CloudMindsTTSService{
 		log:       logger,
 		uc:        uc,
 		failTexts: failTexts,
+		path:      s.App.Path,
+		jwtKey:    s.App.GetJwt().GetKey(),
 	}
 }
 
 func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallServer) error {
-
-	spanCtx, span := trace.NewTraceSpan(conn.Context(), "TTSService v2 call", nil)
+	ctx := conn.Context()
+	spanCtx, span := trace.NewTraceSpan(ctx, "TTSService v2 call", nil)
 
 	if req.TraceId == "" {
 		uuidNum, _ := uuid.NewRandom()
@@ -48,10 +55,17 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	span.SetAttributes(attribute.Key("rootTraceId").String(req.RootTraceId))
 	span.SetAttributes(attribute.Key("text").String(req.Text))
 	defer span.End()
+	var identifier string
+	if tokenInfo, ok := ctx.Value(jwtUtil.Identifier{}).(*jwtUtil.IdentityClaims); ok {
+		identifier = tokenInfo.Account
+	}
+
+	movement := req.ParameterFlag["movement"]
+	expression := req.ParameterFlag["expression"]
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
-	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s, identifier:%s ",
-		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag, req.Expression, req.Movement, req.Identifier)
+	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s,clientVersion:%d, identifier:%s",
+		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag, expression, movement, req.Version, identifier)
 
 	if req.Text == "" {
 		return errors.New("text param is null")
@@ -75,10 +89,10 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	if req.Pitch != "" && !s.uc.IsLegalPitch(req.Pitch) {
 		return errors.New("pitch param is invalid")
 	}
-	if req.Expression != "" && !s.uc.IsLegalExpression(req.Expression) {
+	if expression != "" && !s.uc.IsLegalExpression(expression) {
 		return errors.New("expression param is invalid")
 	}
-	if req.Movement != "" && !s.uc.IsLegalMovement(req.Movement) {
+	if movement != "" && !s.uc.IsLegalMovement(movement) {
 		return errors.New("movement param is invalid")
 	}
 
@@ -89,7 +103,17 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	}
 	defer pointer.Unref(pUserData)
 	logger.Infof("CallTTSServiceV2;pUserData:%v", pUserData)
-	id, err := s.uc.CallTTSServiceV2(req, pUserData)
+	id, err := s.uc.CallTTSServiceV2(&data.Speaker{
+		Text:                 req.Text,
+		Speed:                req.Speed,
+		Volume:               req.Volume,
+		Pitch:                req.Pitch,
+		Emotions:             req.Emotions,
+		ParameterSpeakerName: req.ParameterSpeakerName,
+		ParameterFlag:        req.ParameterFlag,
+		Movement:             movement,
+		Expression:           expression,
+	}, pUserData, fmt.Sprintf("%s_%s", req.RootTraceId, req.TraceId))
 	logger.Infof("CallTTSServiceV2;pUserData:%v;id:%d", pUserData, id)
 	if err != nil {
 		return err
@@ -103,10 +127,8 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 				isInterrupted = true
 				span.SetAttributes(attribute.Key("IsInterrupted").Bool(true))
 				s.uc.CancelTTSService(id)
-
 			}
 		}
-
 	}
 
 	return nil
@@ -152,4 +174,12 @@ func (s *CloudMindsTTSService) GetTtsConfig(ctx context.Context, req *pb.VerReq)
 		MovementList:   s.uc.GetSupportedMovement(),
 		ExpressionList: s.uc.GetSupportedExpression(),
 	}, nil
+}
+
+func (s *CloudMindsTTSService) Login(ctx context.Context, req *pb.RegisterReq) (*pb.RegisterResp, error) {
+	token, err := jwtUtil.GetToken(req.GetAccount(), int(req.Expire), s.jwtKey)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RegisterResp{Token: token}, nil
 }

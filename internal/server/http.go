@@ -7,6 +7,7 @@ import (
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
 	"speech-tts/internal/conf"
+	jwtUtil "speech-tts/internal/pkg/jwt"
 	"speech-tts/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -22,6 +23,7 @@ func NewHTTPServer(c *conf.Server, tts *service.CloudMindsTTSService, ttsV1 *ser
 			tracing.Server(),
 			metrics.Server(),
 			server(logger, c.Grpc.Timeout.Seconds*1000),
+			jwtUtil.Server(logger, c.App.GetJwt().GetKey()),
 			validate.Validator(),
 		),
 	}

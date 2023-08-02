@@ -21,16 +21,19 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationCloudMindsTTSGetTtsConfig = "/ttsschema.CloudMindsTTS/GetTtsConfig"
 const OperationCloudMindsTTSGetVersion = "/ttsschema.CloudMindsTTS/GetVersion"
+const OperationCloudMindsTTSRegister = "/ttsschema.CloudMindsTTS/Register"
 
 type CloudMindsTTSHTTPServer interface {
 	GetTtsConfig(context.Context, *VerReq) (*RespGetTtsConfig, error)
 	GetVersion(context.Context, *VerVersionReq) (*VerVersionRsp, error)
+	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 }
 
 func RegisterCloudMindsTTSHTTPServer(s *http.Server, srv CloudMindsTTSHTTPServer) {
 	r := s.Route("/")
 	r.GET("/speech/tts/getVersion", _CloudMindsTTS_GetVersion0_HTTP_Handler(srv))
 	r.GET("/speech/tts/getConfig", _CloudMindsTTS_GetTtsConfig0_HTTP_Handler(srv))
+	r.POST("/speech/tts/register", _CloudMindsTTS_Register0_HTTP_Handler(srv))
 }
 
 func _CloudMindsTTS_GetVersion0_HTTP_Handler(srv CloudMindsTTSHTTPServer) func(ctx http.Context) error {
@@ -71,9 +74,29 @@ func _CloudMindsTTS_GetTtsConfig0_HTTP_Handler(srv CloudMindsTTSHTTPServer) func
 	}
 }
 
+func _CloudMindsTTS_Register0_HTTP_Handler(srv CloudMindsTTSHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RegisterReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCloudMindsTTSRegister)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Register(ctx, req.(*RegisterReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RegisterResp)
+		return ctx.Result(200, reply)
+	}
+}
+
 type CloudMindsTTSHTTPClient interface {
 	GetTtsConfig(ctx context.Context, req *VerReq, opts ...http.CallOption) (rsp *RespGetTtsConfig, err error)
 	GetVersion(ctx context.Context, req *VerVersionReq, opts ...http.CallOption) (rsp *VerVersionRsp, err error)
+	Register(ctx context.Context, req *RegisterReq, opts ...http.CallOption) (rsp *RegisterResp, err error)
 }
 
 type CloudMindsTTSHTTPClientImpl struct {
@@ -104,6 +127,19 @@ func (c *CloudMindsTTSHTTPClientImpl) GetVersion(ctx context.Context, in *VerVer
 	opts = append(opts, http.Operation(OperationCloudMindsTTSGetVersion))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CloudMindsTTSHTTPClientImpl) Register(ctx context.Context, in *RegisterReq, opts ...http.CallOption) (*RegisterResp, error) {
+	var out RegisterResp
+	pattern := "/speech/tts/register"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCloudMindsTTSRegister))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

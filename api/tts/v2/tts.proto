@@ -19,16 +19,20 @@ service CloudMindsTTS {
             get: "/speech/tts/getConfig",
         };
     }     // 获取服务端配置信息
+
+    rpc Register(RegisterReq) returns (RegisterResp){
+        option (google.api.http) = {
+            post: "/speech/tts/register",
+            body: "*"
+        }; // 注册 登录
+    }
 }
 
-enum Identifier{
-    OTHER = 0;
-    TTSS_kill = 1;
-    MINI_PROGRAM = 2;
-    ABILITY_SHOW_PLATFORM = 3;
-    SCHEDULER = 4;
-
+enum ClientVersion{
+    invalid = 0;
+    version = 3;
 }
+
 
 message TtsReq {
     string text = 1;                            // 具体需要合成的文本，支持带json
@@ -38,12 +42,10 @@ message TtsReq {
     string emotions = 5;                        // 如果该发音人支持情感，取值范围请用 GetTtsConfig EmotionList.Name，如果不支持请传""，否则会报错
     string parameter_speaker_name = 6;          // 取值范围请用 GetTtsConfig函数的返回Speakerlist.parameterSpeakerName
     string parameter_digital_person = 7 [deprecated = true];        // **********数字人形象，  (废弃不用)  *******************
-    map<string, string> parameter_flag = 8;     // 额外信息参数，口型key:mouth,字符串"true"或者"false"、动作key:movement,字符串"true"或者"false"、表情key:expression,字符串"true"或者"false"
+    map<string, string> parameter_flag = 8;     // 额外信息参数，口型key:mouth,字符串"true"或者"false"、动作key:movement,value的取值范围参考GetTtsConfig-MessageMovement.name、表情key:expression,value的取值范围参考GetTtsConfig-MessageExpression.name
     string trace_id = 9;
     string root_trace_id = 10;
-    string movement   = 11;                     // 取值范围请用 GetTtsConfig movement_list
-    string expression = 12;                     // 取值范围请用 GetTtsConfig expression_list
-    Identifier identifier = 13;                 // 客户端身份标识
+    ClientVersion version = 100;
 }
 
 message TtsRes {
@@ -95,14 +97,14 @@ message ConfigAndText {
 message FacialExpressionConfig {
     int32 frame_dim = 1;                                // 每帧的维度，即一帧由frameDim个float组成
     float frame_dur_ms = 2;                             // 每帧的持续时长
-    repeated string control_name_list = 3;              // 每个维度代表的含义
+    string meta_data = 3;                               // 伴生数据的其他描述性信息(json)
 }
 
 //
 message BodyMovementConfig {
     int32 frame_dim = 1;                                // 每帧的维度，即一帧由frameDim个float组成
     float frame_dur_ms = 2;                             // 每帧的持续时长
-    repeated string control_name_list = 3;              // 每个维度代表的含义
+    string meta_data = 3;                               // 伴生数据的其他描述性信息(json)
 }
 
 // 口型
@@ -198,4 +200,13 @@ message MessageMovement{
 message MessageExpression{
     string name = 1;                                    // 用于传参
     string chinese_name = 2;                            // 对应中文
+}
+
+message  RegisterReq {
+    string account = 1;
+    int32  expire = 2;
+}
+
+message RegisterResp{
+    string token = 1;
 }

@@ -22,8 +22,18 @@ message Server {
     string addr = 2;
     google.protobuf.Duration timeout = 3;
   }
+  message App {
+    string path = 1;
+    message Jwt{
+      string key = 1;
+      int32 expire = 2;
+      bool   is_open = 3;
+    }
+    Jwt jwt =2;
+  }
   HTTP http = 1;
   GRPC grpc = 2;
+  App   app = 3;
 }
 
 message Data {
@@ -37,9 +47,7 @@ message Data {
     google.protobuf.Duration read_timeout = 3;
     google.protobuf.Duration write_timeout = 4;
   }
-  message App {
-    string path = 1;
-  }
+
   message Otel {
     string addr = 1;
     string name = 2;
@@ -58,9 +66,8 @@ message Data {
   }
   Database database = 1;
   Redis redis = 2;
-  App   app = 3;
-  Otel  otel = 4;
-  Nacos nacos = 5;
+  Otel  otel = 3;
+  Nacos nacos = 4;
 }
 
 message Log {

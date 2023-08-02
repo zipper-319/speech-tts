@@ -81,7 +81,7 @@ func main() {
 	myLogger.SetLogger()
 	trace.InitTracer(bc.Data.Otel.Addr, bc.Data.Otel.Name)
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Data.App.Path, myLogger.GetLogger())
+	app, cleanup, err := wireApp(bc.Server, bc.Data, myLogger.GetLogger())
 	if err != nil {
 		panic(err)
 	}

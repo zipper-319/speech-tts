@@ -10,6 +10,7 @@ import (
 	"go.opentelemetry.io/otel/codes"
 	pb "speech-tts/api/tts/v1"
 	"speech-tts/internal/cgo/service"
+	jwtUtil "speech-tts/internal/pkg/jwt"
 	"speech-tts/internal/pkg/pointer"
 	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
@@ -30,8 +31,8 @@ func NewCloudMindsTTSServiceV1(logger log.Logger, uc *service.TTSService) *Cloud
 }
 
 func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallServer) error {
-
-	spanCtx, span := trace.NewTraceSpan(conn.Context(), "TTSService v1 call", nil)
+	ctx := conn.Context()
+	spanCtx, span := trace.NewTraceSpan(ctx, "TTSService v1 call", nil)
 	defer span.End()
 
 	span.SetAttributes(attribute.Key("speakerName").String(req.ParameterSpeakerName))
@@ -39,9 +40,14 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	span.SetAttributes(attribute.Key("rootTraceId").String(req.RootTraceId))
 	span.SetAttributes(attribute.Key("text").String(req.Text))
 	defer span.End()
+	var identifier string
+	if tokenInfo, ok := ctx.Value(jwtUtil.Identifier{}).(*jwtUtil.IdentityClaims); ok {
+		identifier = tokenInfo.Account
+	}
+
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
 	logger.Infof("call TTSServiceV1;the req——————text:%s;speakerName:%s;Emotions:%s;Pitch:%s;identifier:%s",
-		req.Text, req.ParameterSpeakerName, req.Emotions, req.Pitch, req.Identifier)
+		req.Text, req.ParameterSpeakerName, req.Emotions, req.Pitch, identifier)
 
 	if req.ParameterSpeakerName == "" {
 		req.ParameterSpeakerName = "DaXiaoFang"

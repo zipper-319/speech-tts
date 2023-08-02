@@ -2,7 +2,6 @@ package benchmark
 
 import (
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
 	"io"
 	"log"
@@ -46,7 +45,7 @@ func TestTTSV1(ctx context.Context, addr, text, speaker, traceId, robotTraceId s
 	}
 	ttsV1Client := v1.NewCloudMindsTTSClient(conn)
 	req := &v1.TtsReq{
-		Text:                 fmt.Sprintf("%s,测试第%d句话", text, num),
+		Text:                 text,
 		ParameterSpeakerName: speaker,
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,
@@ -107,19 +106,18 @@ func TestTTSV2(ctx context.Context, addr, text, speaker, traceId, robotTraceId, 
 	flagSet := make(map[string]string, 3)
 	flagSet["mouth"] = "true"
 	if movement != "" {
-		flagSet["movement"] = "true"
+		flagSet["movement"] = movement
 	}
 	if expression != "" {
-		flagSet["expression"] = "true"
+		flagSet["expression"] = expression
 	}
 	req := &v2.TtsReq{
-		Text:                 fmt.Sprintf("%s,测试第%d句话", text, num),
+		Text:                 text,
 		ParameterSpeakerName: speaker,
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,
-		Movement:             movement,
-		Expression:           expression,
 		ParameterFlag:        flagSet,
+		Version:              v2.ClientVersion_version,
 	}
 
 	response, err := ttsV2Client.Call(ctx, req)

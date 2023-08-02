@@ -59,6 +59,38 @@
           "CloudMindsTTS"
         ]
       }
+    },
+    "/speech/tts/register": {
+      "post": {
+        "operationId": "CloudMindsTTS_Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ttsschemaRegisterResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ttsschemaRegisterReq"
+            }
+          }
+        ],
+        "tags": [
+          "CloudMindsTTS"
+        ]
+      }
     }
   },
   "definitions": {
@@ -155,14 +187,19 @@
           "format": "float",
           "title": "每帧的持续时长"
         },
-        "control_name_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "每个维度代表的含义"
+        "meta_data": {
+          "type": "string",
+          "title": "伴生数据的其他描述性信息(json)"
         }
       }
+    },
+    "ttsschemaClientVersion": {
+      "type": "string",
+      "enum": [
+        "invalid",
+        "version"
+      ],
+      "default": "invalid"
     },
     "ttsschemaConfigAndText": {
       "type": "object",
@@ -252,25 +289,11 @@
           "format": "float",
           "title": "每帧的持续时长"
         },
-        "control_name_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "每个维度代表的含义"
+        "meta_data": {
+          "type": "string",
+          "title": "伴生数据的其他描述性信息(json)"
         }
       }
-    },
-    "ttsschemaIdentifier": {
-      "type": "string",
-      "enum": [
-        "OTHER",
-        "TTSS_kill",
-        "MINI_PROGRAM",
-        "ABILITY_SHOW_PLATFORM",
-        "SCHEDULER"
-      ],
-      "default": "OTHER"
     },
     "ttsschemaMessageDigitalPerson": {
       "type": "object",
@@ -346,6 +369,26 @@
         "chinese_name": {
           "type": "string",
           "title": "对应中文"
+        }
+      }
+    },
+    "ttsschemaRegisterReq": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "expire": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ttsschemaRegisterResp": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },

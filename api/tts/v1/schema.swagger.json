@@ -95,17 +95,6 @@
         }
       }
     },
-    "schemaIdentifier": {
-      "type": "string",
-      "enum": [
-        "OTHER",
-        "TTSS_kill",
-        "MINI_PROGRAM",
-        "ABILITY_SHOW_PLATFORM",
-        "SCHEDULER"
-      ],
-      "default": "OTHER"
-    },
     "schemaSpeakerList": {
       "type": "object",
       "properties": {
@@ -207,10 +196,6 @@
         },
         "rootTraceId": {
           "type": "string"
-        },
-        "identifier": {
-          "$ref": "#/definitions/schemaIdentifier",
-          "title": "客户端身份标识"
         }
       }
     },

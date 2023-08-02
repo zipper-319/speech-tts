@@ -25,6 +25,7 @@ type CloudMindsTTSClient interface {
 	Call(ctx context.Context, in *TtsReq, opts ...grpc.CallOption) (CloudMindsTTS_CallClient, error)
 	GetVersion(ctx context.Context, in *VerVersionReq, opts ...grpc.CallOption) (*VerVersionRsp, error)
 	GetTtsConfig(ctx context.Context, in *VerReq, opts ...grpc.CallOption) (*RespGetTtsConfig, error)
+	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 }
 
 type cloudMindsTTSClient struct {
@@ -85,6 +86,15 @@ func (c *cloudMindsTTSClient) GetTtsConfig(ctx context.Context, in *VerReq, opts
 	return out, nil
 }
 
+func (c *cloudMindsTTSClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	out := new(RegisterResp)
+	err := c.cc.Invoke(ctx, "/ttsschema.CloudMindsTTS/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CloudMindsTTSServer is the server API for CloudMindsTTS service.
 // All implementations must embed UnimplementedCloudMindsTTSServer
 // for forward compatibility
@@ -92,6 +102,7 @@ type CloudMindsTTSServer interface {
 	Call(*TtsReq, CloudMindsTTS_CallServer) error
 	GetVersion(context.Context, *VerVersionReq) (*VerVersionRsp, error)
 	GetTtsConfig(context.Context, *VerReq) (*RespGetTtsConfig, error)
+	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	mustEmbedUnimplementedCloudMindsTTSServer()
 }
 
@@ -107,6 +118,9 @@ func (UnimplementedCloudMindsTTSServer) GetVersion(context.Context, *VerVersionR
 }
 func (UnimplementedCloudMindsTTSServer) GetTtsConfig(context.Context, *VerReq) (*RespGetTtsConfig, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTtsConfig not implemented")
+}
+func (UnimplementedCloudMindsTTSServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedCloudMindsTTSServer) mustEmbedUnimplementedCloudMindsTTSServer() {}
 
@@ -178,6 +192,24 @@ func _CloudMindsTTS_GetTtsConfig_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CloudMindsTTS_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CloudMindsTTSServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ttsschema.CloudMindsTTS/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CloudMindsTTSServer).Register(ctx, req.(*RegisterReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CloudMindsTTS_ServiceDesc is the grpc.ServiceDesc for CloudMindsTTS service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -192,6 +224,10 @@ var CloudMindsTTS_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTtsConfig",
 			Handler:    _CloudMindsTTS_GetTtsConfig_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _CloudMindsTTS_Register_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

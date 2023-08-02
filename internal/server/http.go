@@ -23,7 +23,7 @@ func NewHTTPServer(c *conf.Server, tts *service.CloudMindsTTSService, ttsV1 *ser
 			tracing.Server(),
 			metrics.Server(),
 			server(logger, c.Grpc.Timeout.Seconds*1000),
-			jwtUtil.Server(logger, c.App.GetJwt().GetKey()),
+			jwtUtil.Server(logger, c.App.GetJwt().GetKey(), c.App.GetJwt().GetIsOpen()),
 			validate.Validator(),
 		),
 	}

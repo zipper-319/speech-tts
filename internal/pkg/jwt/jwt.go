@@ -81,7 +81,7 @@ func WithTokenHeader(header map[string]interface{}) Option {
 }
 
 func Server(logger log.Logger, jwtKey string, isOpen bool, opts ...Option) middleware.Middleware {
-	log.NewHelper(logger).Infof("jwtKey:%s, isOpenJwt:%t", jwtKey, isOpenJwt)
+	log.NewHelper(logger).Infof("jwtKey:%s, isOpenJwt:%t", jwtKey, isOpen)
 	if jwtKey == "" {
 		panic(ErrMissingKey)
 	}

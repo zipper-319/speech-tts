@@ -176,7 +176,7 @@ func (s *CloudMindsTTSService) GetTtsConfig(ctx context.Context, req *pb.VerReq)
 	}, nil
 }
 
-func (s *CloudMindsTTSService) Login(ctx context.Context, req *pb.RegisterReq) (*pb.RegisterResp, error) {
+func (s *CloudMindsTTSService) Register(ctx context.Context, req *pb.RegisterReq) (*pb.RegisterResp, error) {
 	token, err := jwtUtil.GetToken(req.GetAccount(), int(req.Expire), s.jwtKey)
 	if err != nil {
 		return nil, err

@@ -76,7 +76,7 @@ func getNacosService(config *conf.Data) error {
 	//}
 
 	result, err := client.GetService(vo.GetServiceParam{
-		ServiceName: "speech-tts.http",
+		ServiceName: "speech-tts.grpc",
 		GroupName:   config.Nacos.Group,
 	})
 	for _, host := range result.Hosts {

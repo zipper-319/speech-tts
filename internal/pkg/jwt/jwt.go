@@ -156,9 +156,6 @@ func Server(logger log.Logger, jwtKey string, isOpen bool, opts ...Option) middl
 }
 
 func IsValidity(logger log.Logger, header transport.Transporter) (*IdentityClaims, error) {
-	if !isOpenJwt {
-		return nil, nil
-	}
 
 	for _, urlPath := range NotVerify {
 		if strings.Contains(header.Operation(), urlPath) {
@@ -167,6 +164,9 @@ func IsValidity(logger log.Logger, header transport.Transporter) (*IdentityClaim
 	}
 	jwtToken := header.RequestHeader().Get(authorizationKey)
 	log.NewHelper(logger).Infof("jwtToken:%s; operation:%s", jwtToken, header.Operation())
+	if !isOpenJwt && jwtToken == "" {
+		return nil, nil
+	}
 	if jwtToken == "" {
 		return nil, ErrMissingJwtToken
 	}

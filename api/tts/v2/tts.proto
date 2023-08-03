@@ -30,7 +30,7 @@ service CloudMindsTTS {
 
 enum ClientVersion{
     invalid = 0;
-    version = 38844024;
+    version = 0x7af243b;
 }
 
 

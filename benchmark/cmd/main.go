@@ -63,7 +63,7 @@ func main() {
 				if text == "" {
 					continue
 				}
-				if testVersion != "" {
+				if testVersion == "" {
 
 					if time.Now().Unix()%2 == 0 {
 						currentTestVersion = "v1"
@@ -75,7 +75,7 @@ func main() {
 				}
 				num += 1
 				md := metadata.Pairs(
-					"Authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lSWQiOjAsIkFjY291bnQiOiJ6aXBwZXIiLCJSb2xlIjoiIiwiYXVkIjpbInppcHBlciJdLCJleHAiOjE2OTEzMTU4MjksImlhdCI6MTY5MDk1NTgyOSwianRpIjoiNmFjYzJhNzEtMzBmOS0xMWVlLTk0M2YtZmMzNDk3YTg2NjBmIn0.BMEhv-zybM00rvsaCjTtxgJBsaBx9D1tmrEsvB1b-v4",
+					"Authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lSWQiOjAsIkFjY291bnQiOiJIQVJJWF9BSV9TSE9XX1BMQVRGT1JNIiwiUm9sZSI6IiIsImF1ZCI6WyJIQVJJWF9BSV9TSE9XX1BMQVRGT1JNIl0sImV4cCI6MTg0NjU2NDcwMCwiaWF0IjoxNjkxMDQ0NzAwLCJqdGkiOiI1NWY0N2U5Ni0zMWM4LTExZWUtOGZmNi00YWFlYTEwZTg5MWMifQ.Aj0dadEH1aXSIvz6RWGtmFXSbzY-QQS_-9jEDpB4IYU",
 				)
 				ctxBase := metadata.NewOutgoingContext(context.Background(), md)
 				ctx, cancel := context.WithCancel(ctxBase)

@@ -108,12 +108,12 @@ func TestTTSV2(ctx context.Context, addr, text, speaker, traceId, robotTraceId, 
 	if movement != "" {
 		flagSet["movement"] = movement
 	} else {
-		flagSet["movement"] = "true"
+		flagSet["movement"] = "false"
 	}
 	if expression != "" {
 		flagSet["expression"] = expression
 	} else {
-		flagSet["expression"] = "true"
+		flagSet["expression"] = "false"
 	}
 	req := &v2.TtsReq{
 		Text:                 text,

@@ -349,8 +349,6 @@ func paramFormatter(flag map[string]string) uint {
 		v, exists := flag[s]
 		if exists && strings.ToLower(v) == "true" {
 			res += 1 << i
-		} else {
-			res += 0 << i
 		}
 	}
 	return res

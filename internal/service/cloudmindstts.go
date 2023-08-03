@@ -61,7 +61,13 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	}
 
 	movement := req.ParameterFlag["movement"]
+	if movement == "true" || movement == "false" {
+		movement = ""
+	}
 	expression := req.ParameterFlag["expression"]
+	if expression == "true" || expression == "false" {
+		expression = ""
+	}
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
 	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s,clientVersion:%d, identifier:%s",
@@ -89,10 +95,10 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	if req.Pitch != "" && !s.uc.IsLegalPitch(req.Pitch) {
 		return errors.New("pitch param is invalid")
 	}
-	if expression != "" && expression != "true" && !s.uc.IsLegalExpression(expression) {
+	if expression != "" && !s.uc.IsLegalExpression(expression) {
 		return errors.New("expression param is invalid")
 	}
-	if movement != "" && movement != "true" && !s.uc.IsLegalMovement(movement) {
+	if movement != "" && !s.uc.IsLegalMovement(movement) {
 		return errors.New("movement param is invalid")
 	}
 

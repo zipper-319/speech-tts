@@ -60,14 +60,8 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		identifier = tokenInfo.Account
 	}
 
-	movement := req.ParameterFlag["movement"]
-	if movement == "true" || movement == "false" {
-		movement = ""
-	}
-	expression := req.ParameterFlag["expression"]
-	if expression == "true" || expression == "false" {
-		expression = ""
-	}
+	movement := req.ParameterFlag["movementPara"]
+	expression := req.ParameterFlag["expressionPara"]
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
 	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s,clientVersion:%d, identifier:%s",

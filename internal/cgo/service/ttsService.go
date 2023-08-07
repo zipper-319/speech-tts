@@ -157,7 +157,8 @@ func (t *TTSService) GetSDKVersion() string {
 
 // GetResServiceVersion 获取sdk的热修复版本
 func (t *TTSService) GetResServiceVersion() string {
-	return t.resServiceVersion
+	version := C.ActionSynthesizer_GetResServiceVersion()
+	return C.GoString(version)
 }
 
 func (t *TTSService) GetSpeakers() []*data.SpeakerInfo {

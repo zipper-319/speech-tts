@@ -106,12 +106,14 @@ func TestTTSV2(ctx context.Context, addr, text, speaker, traceId, robotTraceId, 
 	flagSet := make(map[string]string, 3)
 	flagSet["mouth"] = "true"
 	if movement != "" {
-		flagSet["movement"] = movement
+		flagSet["movement"] = "true"
+		flagSet["movementPara"] = movement
 	} else {
 		flagSet["movement"] = "false"
 	}
 	if expression != "" {
-		flagSet["expression"] = expression
+		flagSet["expressionPara"] = expression
+		flagSet["expression"] = "true"
 	} else {
 		flagSet["expression"] = "false"
 	}

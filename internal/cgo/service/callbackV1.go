@@ -86,7 +86,7 @@ func goOnEndV1(pUserData unsafe.Pointer, flag C.int) {
 	}
 	_, span := trace.NewTraceSpan(object.Context, "goOnEndV1", nil)
 	defer span.End()
-	object.Log.Infof("start to OnEndV1;pUserData: %d", pUserData)
+	object.Log.Infof("start to OnEndV1;pUserData: %d, flag:%d", pUserData, int(flag))
 
 	var err v1.TtsErr
 

@@ -80,21 +80,21 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		}
 	}
 
-	if !s.uc.IsLegalSpeaker(req.ParameterSpeakerName) {
-		return errors.New("ParameterSpeakerName param is invalid")
-	}
-	if req.Emotions != "" && !s.uc.IsLegalEmotion(req.Emotions) {
-		return errors.New("emotion param is invalid")
-	}
-	if req.Pitch != "" && !s.uc.IsLegalPitch(req.Pitch) {
-		return errors.New("pitch param is invalid")
-	}
-	if expression != "" && !s.uc.IsLegalExpression(expression) {
-		return errors.New("expression param is invalid")
-	}
-	if movement != "" && !s.uc.IsLegalMovement(movement) {
-		return errors.New("movement param is invalid")
-	}
+	//if !s.uc.IsLegalSpeaker(req.ParameterSpeakerName) {
+	//	return errors.New("ParameterSpeakerName param is invalid")
+	//}
+	//if req.Emotions != "" && !s.uc.IsLegalEmotion(req.Emotions) {
+	//	return errors.New("emotion param is invalid")
+	//}
+	//if req.Pitch != "" && !s.uc.IsLegalPitch(req.Pitch) {
+	//	return errors.New("pitch param is invalid")
+	//}
+	//if expression != "" && !s.uc.IsLegalExpression(expression) {
+	//	return errors.New("expression param is invalid")
+	//}
+	//if movement != "" && !s.uc.IsLegalMovement(movement) {
+	//	return errors.New("movement param is invalid")
+	//}
 
 	object := s.uc.GeneHandlerObjectV2(spanCtx, req.ParameterSpeakerName, logger)
 	pUserData, err := pointer.Save(object)
@@ -122,7 +122,7 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	for response := range object.BackChan {
 		if !isInterrupted {
 			if err := conn.Send(&response); err != nil {
-				log.Errorf("send err:%v", err)
+				logger.Errorf("send err:%v", err)
 				span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))
 				isInterrupted = true
 				span.SetAttributes(attribute.Key("IsInterrupted").Bool(true))

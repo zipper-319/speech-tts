@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"go.opentelemetry.io/otel/attribute"
@@ -57,15 +56,15 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 			req.ParameterSpeakerName = temp[0]
 		}
 	}
-	if !s.uc.IsLegalSpeaker(req.ParameterSpeakerName) {
-		return errors.New("ParameterSpeakerName param is invalid")
-	}
-	if req.Emotions != "" && !s.uc.IsLegalEmotion(req.Emotions) {
-		return errors.New("emotion param is invalid")
-	}
-	if req.Pitch != "" && !s.uc.IsLegalPitch(req.Pitch) {
-		return errors.New("pitch param is invalid")
-	}
+	//if !s.uc.IsLegalSpeaker(req.ParameterSpeakerName) {
+	//	return errors.New("ParameterSpeakerName param is invalid")
+	//}
+	//if req.Emotions != "" && !s.uc.IsLegalEmotion(req.Emotions) {
+	//	return errors.New("emotion param is invalid")
+	//}
+	//if req.Pitch != "" && !s.uc.IsLegalPitch(req.Pitch) {
+	//	return errors.New("pitch param is invalid")
+	//}
 
 	object := s.uc.GeneHandlerObjectV1(spanCtx, req.ParameterSpeakerName, logger)
 	pUserData, err := pointer.Save(object)
@@ -84,7 +83,7 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 	for response := range object.BackChan {
 		if !isInterrupted {
 			if err := conn.Send(&response); err != nil {
-				log.Errorf("send err:%v", err)
+				logger.Errorf("send err:%v", err)
 				span.SetStatus(codes.Error, fmt.Sprintf("Err send:%v", err))
 				isInterrupted = true
 				span.SetAttributes(attribute.Key("IsInterrupted").Bool(true))

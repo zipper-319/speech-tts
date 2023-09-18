@@ -154,6 +154,10 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 			audioLength = len(resp.Pcm)
 			w.sendAudioLen += audioLength
 			status = int32(resp.Status)
+			if resp.Status == v1.PcmStatus_STATUS_END {
+				log.NewHelper(w.Logger).Infof("traceId:%s;TtsRes status is 3, resp:{%+v}", traceId, resp)
+			}
+
 		}
 		if resp, ok := m.(*v2.TtsRes); ok {
 			status = resp.Status

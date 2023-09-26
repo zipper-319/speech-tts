@@ -49,7 +49,7 @@ config:
 api:
 	protoc --proto_path=./api \
 	       --proto_path=./third_party \
-	       --doc_out=markdown,api.md:./api/tts   \
+	       --doc_out=html,api.html:./api/tts   \
 	       --go_out=paths=source_relative:./api \
  	       --go-http_out=paths=source_relative:./api \
  	       --go-grpc_out=paths=source_relative:./api \

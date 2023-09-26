@@ -129,4 +129,5 @@ type Speaker struct {
 	ParameterFlag        map[string]string
 	Movement             string
 	Expression           string
+	Language             string
 }

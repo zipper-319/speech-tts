@@ -49,6 +49,7 @@ func TestTTSV1(ctx context.Context, addr, text, speaker, traceId, robotTraceId s
 		ParameterSpeakerName: speaker,
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,
+		Language:             "123",
 	}
 
 	response, err := ttsV1Client.Call(ctx, req)
@@ -124,6 +125,7 @@ func TestTTSV2(ctx context.Context, addr, text, speaker, traceId, robotTraceId, 
 		RootTraceId:          robotTraceId,
 		ParameterFlag:        flagSet,
 		Version:              v2.ClientVersion_version,
+		Language:             "zh",
 	}
 
 	response, err := ttsV2Client.Call(ctx, req)

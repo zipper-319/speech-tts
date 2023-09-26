@@ -76,6 +76,8 @@ func (m *TtsReq) validate(all bool) error {
 
 	// no validation rules for RootTraceId
 
+	// no validation rules for Language
+
 	// no validation rules for Version
 
 	if len(errors) > 0 {
@@ -2715,8 +2717,6 @@ func (m *MessagePitch) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
-
 	// no validation rules for Name
 
 	// no validation rules for ChineseName
@@ -2819,8 +2819,6 @@ func (m *MessageEmotion) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Id
 
 	// no validation rules for Name
 
@@ -2925,8 +2923,6 @@ func (m *MessageDigitalPerson) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Id
 
 	// no validation rules for Name
 

@@ -247,6 +247,8 @@ func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData unsafe.Pointe
 	defer C.free(unsafe.Pointer(text))
 	traceIdC := C.CString(traceId)
 	defer C.free(unsafe.Pointer(traceIdC))
+	defer C.free(unsafe.Pointer(sdkSettings.languageTip))
+	sdkSettings.languageTip = C.CString(req.Language)
 	idC := C.ActionSynthesizer_SynthesizeAction(
 		text,
 		&sdkSettings,
@@ -280,6 +282,8 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 	setting.pitch = C.CString(req.Pitch)
 	defer C.free(unsafe.Pointer(setting.pitch))
 	setting.speakingStyle = C.CString(req.Emotions)
+	defer C.free(unsafe.Pointer(setting.languageTip))
+	setting.languageTip = C.CString(req.Language)
 	defer C.free(unsafe.Pointer(setting.speakingStyle))
 	setting.featureSet = C.uint(3)
 

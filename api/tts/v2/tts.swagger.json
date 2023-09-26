@@ -18,6 +18,7 @@
   "paths": {
     "/speech/tts/getConfig": {
       "get": {
+        "summary": "获取服务端配置信息",
         "operationId": "CloudMindsTTS_GetTtsConfig",
         "responses": {
           "200": {
@@ -40,6 +41,7 @@
     },
     "/speech/tts/getVersion": {
       "get": {
+        "summary": "获取服务版本信息",
         "operationId": "CloudMindsTTS_GetVersion",
         "responses": {
           "200": {
@@ -199,7 +201,8 @@
         "invalid",
         "version"
       ],
-      "default": "invalid"
+      "default": "invalid",
+      "title": "- invalid: 无效的版本号\n - version: 当前客户端的版本号"
     },
     "ttsschemaConfigAndText": {
       "type": "object",
@@ -244,10 +247,12 @@
       "type": "object",
       "properties": {
         "debug_type": {
-          "type": "string"
+          "type": "string",
+          "title": "调试类型"
         },
         "info": {
-          "type": "string"
+          "type": "string",
+          "title": "调试信息"
         }
       },
       "title": "调试信息"
@@ -298,10 +303,6 @@
     "ttsschemaMessageDigitalPerson": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
         "name": {
           "type": "string",
           "title": "参数"
@@ -315,10 +316,6 @@
     "ttsschemaMessageEmotion": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
         "name": {
           "type": "string",
           "title": "参数"
@@ -358,10 +355,6 @@
     "ttsschemaMessagePitch": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
         "name": {
           "type": "string",
           "title": "参数"
@@ -432,7 +425,7 @@
           "items": {
             "$ref": "#/definitions/ttsschemaMessageDigitalPerson"
           },
-          "title": "DigitalPerson 废弃不用"
+          "title": "MessageDigitalPerson 废弃不用"
         },
         "movement_list": {
           "type": "array",
@@ -592,7 +585,8 @@
       "type": "object",
       "properties": {
         "version": {
-          "type": "string"
+          "type": "string",
+          "title": "版本号"
         }
       }
     }

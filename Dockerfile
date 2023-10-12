@@ -12,11 +12,9 @@ RUN apt update \
     && ln -fs /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo ${TZ} > /etc/timezone \
     && dpkg-reconfigure --frontend noninteractive tzdata \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && apt install -d libcurl3 -y
 
-
-RUN apt update &&\
-    apt install -d libcurl3 -y
 
 EXPOSE 4012
 EXPOSE 3012

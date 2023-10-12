@@ -3,7 +3,7 @@
 PROJECT_NAME="speech-tts"
 COMMIT=$(git describe --tags --always)
 FILE=$(date +%F).log
-VERSION="v4.2.4"
+VERSION="v4.2.5"
 
 
 PID=$(ps x| grep $PROJECT_NAME | grep -v grep | awk '{print $1}')

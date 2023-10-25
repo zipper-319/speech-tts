@@ -10,7 +10,7 @@ import (
 
 var (
 	mutex sync.RWMutex
-	store = map[unsafe.Pointer]interface{}{}
+	store = map[int32]interface{}{}
 	id    = int32(0)
 )
 
@@ -32,10 +32,10 @@ func Save(v interface{}) (unsafe.Pointer, error) {
 	id += 1
 	ptr := unsafe.Pointer(uintptr(id))
 
-	if _, ok := store[ptr]; ok {
+	if _, ok := store[id]; ok {
 		return nil, errors.New("cgo-pointer has allocated")
 	}
-	store[ptr] = v
+	store[id] = v
 
 	return ptr, nil
 }
@@ -46,7 +46,7 @@ func Load(ptr unsafe.Pointer) (v interface{}) {
 	}
 
 	mutex.RLock()
-	v = store[ptr]
+	v = store[int32(uintptr(ptr))]
 	mutex.RUnlock()
 	return
 }
@@ -57,6 +57,6 @@ func Unref(ptr unsafe.Pointer) {
 	}
 
 	mutex.Lock()
-	delete(store, ptr)
+	delete(store, int32(uintptr(ptr)))
 	mutex.Unlock()
 }

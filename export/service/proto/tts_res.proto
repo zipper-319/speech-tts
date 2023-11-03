@@ -37,6 +37,19 @@ service TtsData {
             get: "/api/ttsData/v1/resource/geneToken"
         };
     }
+
+    rpc GetAllResource(google.protobuf.Empty) returns (GetAllResourceResult) {
+        option (google.api.http) = {
+            get: "/api/ttsData/v1/resource/get-all"
+        };
+    }
+
+
+    rpc GetSpeakerModel(google.protobuf.Empty) returns (GetSpeakerModelResult) {}
+
+    rpc RegisterResService(RegisterResServiceRequest) returns (google.protobuf.Empty) {}
+
+    rpc UnRegisterResService(UnRegisterResServiceRequest) returns (google.protobuf.Empty) {}
 }
 
 message GetTtsDataRequest {
@@ -58,6 +71,7 @@ enum ResType {
     RegExp = 2;
     Rhythm = 3;
     Participle = 4;
+    Model = 15;
 }
 
 enum LanguageType {
@@ -92,4 +106,33 @@ message GeneTokenRequest {
 
 message GeneTokenResponse {
     string token = 1;
+}
+
+message RegisterResServiceRequest{
+    string service_name = 1;
+    string callback_url =  2;
+}
+
+message UnRegisterResServiceRequest{
+    string service_name = 1;
+    string callback_url =  2;
+}
+
+message GetAllResourceResult{
+    message Resource{
+        string key = 1;
+        string value = 2;
+        ResType   res_type  = 3;
+        LanguageType language = 4;
+    }
+    repeated   Resource resources = 1;
+}
+
+message GetSpeakerModelResult{
+    message SpeakerModel{
+        string model_url = 1;
+        string speaker_name = 2;
+        string speaker_owner = 3;
+    }
+    repeated   SpeakerModel speaker_models = 1;
 }

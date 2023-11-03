@@ -20,11 +20,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TtsData_GetTtsData_FullMethodName    = "/tts_data.v2.TtsData/GetTtsData"
-	TtsData_AddTtsData_FullMethodName    = "/tts_data.v2.TtsData/AddTtsData"
-	TtsData_DelTtsData_FullMethodName    = "/tts_data.v2.TtsData/DelTtsData"
-	TtsData_UpdateTtsData_FullMethodName = "/tts_data.v2.TtsData/UpdateTtsData"
-	TtsData_GeneToken_FullMethodName     = "/tts_data.v2.TtsData/GeneToken"
+	TtsData_GetTtsData_FullMethodName           = "/tts_data.v2.TtsData/GetTtsData"
+	TtsData_AddTtsData_FullMethodName           = "/tts_data.v2.TtsData/AddTtsData"
+	TtsData_DelTtsData_FullMethodName           = "/tts_data.v2.TtsData/DelTtsData"
+	TtsData_UpdateTtsData_FullMethodName        = "/tts_data.v2.TtsData/UpdateTtsData"
+	TtsData_GeneToken_FullMethodName            = "/tts_data.v2.TtsData/GeneToken"
+	TtsData_GetAllResource_FullMethodName       = "/tts_data.v2.TtsData/GetAllResource"
+	TtsData_GetSpeakerModel_FullMethodName      = "/tts_data.v2.TtsData/GetSpeakerModel"
+	TtsData_RegisterResService_FullMethodName   = "/tts_data.v2.TtsData/RegisterResService"
+	TtsData_UnRegisterResService_FullMethodName = "/tts_data.v2.TtsData/UnRegisterResService"
 )
 
 // TtsDataClient is the client API for TtsData service.
@@ -36,6 +40,10 @@ type TtsDataClient interface {
 	DelTtsData(ctx context.Context, in *DelTtsDataRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdateTtsData(ctx context.Context, in *UpdateTtsDataRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GeneToken(ctx context.Context, in *GeneTokenRequest, opts ...grpc.CallOption) (*GeneTokenResponse, error)
+	GetAllResource(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllResourceResult, error)
+	GetSpeakerModel(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetSpeakerModelResult, error)
+	RegisterResService(ctx context.Context, in *RegisterResServiceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UnRegisterResService(ctx context.Context, in *UnRegisterResServiceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type ttsDataClient struct {
@@ -91,6 +99,42 @@ func (c *ttsDataClient) GeneToken(ctx context.Context, in *GeneTokenRequest, opt
 	return out, nil
 }
 
+func (c *ttsDataClient) GetAllResource(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllResourceResult, error) {
+	out := new(GetAllResourceResult)
+	err := c.cc.Invoke(ctx, TtsData_GetAllResource_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ttsDataClient) GetSpeakerModel(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetSpeakerModelResult, error) {
+	out := new(GetSpeakerModelResult)
+	err := c.cc.Invoke(ctx, TtsData_GetSpeakerModel_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ttsDataClient) RegisterResService(ctx context.Context, in *RegisterResServiceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TtsData_RegisterResService_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ttsDataClient) UnRegisterResService(ctx context.Context, in *UnRegisterResServiceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TtsData_UnRegisterResService_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TtsDataServer is the server API for TtsData service.
 // All implementations must embed UnimplementedTtsDataServer
 // for forward compatibility
@@ -100,6 +144,10 @@ type TtsDataServer interface {
 	DelTtsData(context.Context, *DelTtsDataRequest) (*emptypb.Empty, error)
 	UpdateTtsData(context.Context, *UpdateTtsDataRequest) (*emptypb.Empty, error)
 	GeneToken(context.Context, *GeneTokenRequest) (*GeneTokenResponse, error)
+	GetAllResource(context.Context, *emptypb.Empty) (*GetAllResourceResult, error)
+	GetSpeakerModel(context.Context, *emptypb.Empty) (*GetSpeakerModelResult, error)
+	RegisterResService(context.Context, *RegisterResServiceRequest) (*emptypb.Empty, error)
+	UnRegisterResService(context.Context, *UnRegisterResServiceRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedTtsDataServer()
 }
 
@@ -121,6 +169,18 @@ func (UnimplementedTtsDataServer) UpdateTtsData(context.Context, *UpdateTtsDataR
 }
 func (UnimplementedTtsDataServer) GeneToken(context.Context, *GeneTokenRequest) (*GeneTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GeneToken not implemented")
+}
+func (UnimplementedTtsDataServer) GetAllResource(context.Context, *emptypb.Empty) (*GetAllResourceResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllResource not implemented")
+}
+func (UnimplementedTtsDataServer) GetSpeakerModel(context.Context, *emptypb.Empty) (*GetSpeakerModelResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSpeakerModel not implemented")
+}
+func (UnimplementedTtsDataServer) RegisterResService(context.Context, *RegisterResServiceRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterResService not implemented")
+}
+func (UnimplementedTtsDataServer) UnRegisterResService(context.Context, *UnRegisterResServiceRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnRegisterResService not implemented")
 }
 func (UnimplementedTtsDataServer) mustEmbedUnimplementedTtsDataServer() {}
 
@@ -225,6 +285,78 @@ func _TtsData_GeneToken_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TtsData_GetAllResource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TtsDataServer).GetAllResource(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TtsData_GetAllResource_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TtsDataServer).GetAllResource(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TtsData_GetSpeakerModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TtsDataServer).GetSpeakerModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TtsData_GetSpeakerModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TtsDataServer).GetSpeakerModel(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TtsData_RegisterResService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterResServiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TtsDataServer).RegisterResService(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TtsData_RegisterResService_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TtsDataServer).RegisterResService(ctx, req.(*RegisterResServiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TtsData_UnRegisterResService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnRegisterResServiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TtsDataServer).UnRegisterResService(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TtsData_UnRegisterResService_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TtsDataServer).UnRegisterResService(ctx, req.(*UnRegisterResServiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TtsData_ServiceDesc is the grpc.ServiceDesc for TtsData service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -251,6 +383,22 @@ var TtsData_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GeneToken",
 			Handler:    _TtsData_GeneToken_Handler,
+		},
+		{
+			MethodName: "GetAllResource",
+			Handler:    _TtsData_GetAllResource_Handler,
+		},
+		{
+			MethodName: "GetSpeakerModel",
+			Handler:    _TtsData_GetSpeakerModel_Handler,
+		},
+		{
+			MethodName: "RegisterResService",
+			Handler:    _TtsData_RegisterResService_Handler,
+		},
+		{
+			MethodName: "UnRegisterResService",
+			Handler:    _TtsData_UnRegisterResService_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

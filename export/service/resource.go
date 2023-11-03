@@ -18,6 +18,8 @@ var lck sync.Mutex
 
 const AddrDefault = "127.0.0.1:8080"
 
+type CallbackFn func(ttsData.ResType, ttsData.LanguageType, string)
+
 func GetGrpcConn(ctx context.Context) (*grpc.ClientConn, error) {
 	addr := os.Getenv("dataServiceEnv")
 	if addr == "" {
@@ -51,8 +53,58 @@ func GetTTSResAndSave(ctx context.Context, resType ttsData.ResType, languageType
 		Resource: resType,
 		Language: languageType,
 	})
+
+	return SaveResource(resp, resType, languageType)
+}
+
+func RegisterResService(ctx context.Context, serviceName, callbackUrl string) error {
+	conn, err := GetGrpcConn(ctx)
+	if err != nil {
+		log.Errorf("register res service error:%v", err)
+		return err
+	}
+	client := ttsData.NewTtsDataClient(conn)
+	_, err = client.RegisterResService(ctx, &ttsData.RegisterResServiceRequest{
+		ServiceName: serviceName,
+		CallbackUrl: callbackUrl,
+	})
+	return err
+}
+
+func InitTTSResource(ctx context.Context, fn CallbackFn) error {
+	conn, err := GetGrpcConn(ctx)
+	if err != nil {
+		return err
+	}
+	client := ttsData.NewTtsDataClient(conn)
+
+	for v, _ := range ttsData.ResType_name {
+		for lang, _ := range ttsData.LanguageType_name {
+			resType := ttsData.ResType(v)
+			languageType := ttsData.LanguageType(lang)
+			resp, err := client.GetTtsData(ctx, &ttsData.GetTtsDataRequest{
+				Resource: resType,
+				Language: languageType,
+			})
+			if err != nil {
+				log.Errorf("get tts resource; resourceType:%s,language:%s, error:%v", resType, languageType, err)
+				continue
+			}
+			fileName, err := SaveResource(resp, resType, languageType)
+			if err != nil {
+				log.Errorf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, languageType, err)
+				continue
+			}
+			fn(resType, languageType, fileName)
+		}
+	}
+	return nil
+}
+
+func SaveResource(resp *ttsData.GetTtsDataResponse, resType ttsData.ResType, languageType ttsData.LanguageType) (string, error) {
 	fileName := fmt.Sprintf("%s_%s.txt", resType.String(), languageType.String())
 	os.Rename(fileName, fileName+".bak"+time.Now().Format("20060102150405"))
+
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return "", err
@@ -64,9 +116,5 @@ func GetTTSResAndSave(ctx context.Context, resType ttsData.ResType, languageType
 		n, err = f.WriteString(fmt.Sprintf("%s:%s\n", v.Key, v.Value))
 		log.Infof("write string:%d,%v", n, err)
 	}
-	return fileName, err
-}
-
-func RegisterResService(ctx context.Context, serviceName, callbackUrl string) {
-
+	return fileName, nil
 }

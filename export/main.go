@@ -31,6 +31,7 @@ var serviceName = "speech-tts"
 
 //export ResService_Init
 func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int {
+	ctx := context.Background()
 	go func() {
 		r := gin.Default()
 		r.POST("/resource/update", ReLoadTTSResource(cb, pUserData))
@@ -39,8 +40,13 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 		}
 	}()
 
+	if err := service.InitTTSResource(ctx, Callback(cb, pUserData)); err != nil {
+		log.Error(err)
+	}
 	// 注册
-	service.RegisterResService(context.Background(), serviceName, util.GetHostIp()+port)
+	if err := service.RegisterResService(ctx, serviceName, util.GetHostIp()+port); err != nil {
+		log.Error(err)
+	}
 
 	return C.int(0)
 }
@@ -65,7 +71,15 @@ func ReLoadTTSResource(cb *C.ResService_Callback, pUserData unsafe.Pointer) gin.
 		if err != nil {
 			log.Error(err)
 		}
-		C.bridge_event_cb(cb, C.int(int(req.ResType)+int(req.Language)), fileName, pUserData)
+		if int(req.ResType) < 3 {
+			C.bridge_event_cb(cb, C.int(2*int(req.ResType)+int(req.Language)), fileName, pUserData)
+		}
 		return
+	}
+}
+
+func Callback(cb *C.ResService_Callback, pUserData unsafe.Pointer) service.CallbackFn {
+	return func(resType ttsData.ResType, languageType ttsData.LanguageType, fileName string) {
+		C.bridge_event_cb(cb, C.int(2*int(resType)+int(languageType)), fileName, pUserData)
 	}
 }

@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package tts_data.v2;
+
+option go_package = "api/ttsData/v2;ttsData";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+
+service TtsData {
+    rpc GetTtsData(GetTtsDataRequest) returns (GetTtsDataResponse) {
+        option (google.api.http) = {
+            get: "/api/ttsData/v1/resource/get"
+        };
+    }
+    rpc AddTtsData(AddTtsDataRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/api/ttsData/v1/resource/add",
+            body: "*"
+        };
+    }
+    rpc DelTtsData(DelTtsDataRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/api/ttsData/v1/resource/del",
+            body: "*"
+        };
+    }
+    rpc UpdateTtsData(UpdateTtsDataRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/api/ttsData/v1/resource/update",
+            body: "*"
+        };
+    }
+    rpc GeneToken(GeneTokenRequest) returns (GeneTokenResponse) {
+        option (google.api.http) = {
+            get: "/api/ttsData/v1/resource/geneToken"
+        };
+    }
+}
+
+message GetTtsDataRequest {
+    ResType   resource  = 1;
+    LanguageType language = 2;
+}
+
+message GetTtsDataResponse {
+    message TTSData {
+        string     key  = 1;
+        string     value = 2;
+    }
+    repeated TTSData data = 1;
+}
+
+enum ResType {
+    Pronounce = 0;
+    RegStr = 1;
+    RegExp = 2;
+    Rhythm = 3;
+    Participle = 4;
+}
+
+enum LanguageType {
+    Chinese = 0;
+    English = 1;
+}
+
+message DelTtsDataRequest {
+    ResType   resource  = 1 ;
+    LanguageType language = 2;
+    string     key  = 3;
+}
+
+message UpdateTtsDataRequest {
+    ResType   resource  = 1;
+    LanguageType language = 2;
+    string     key  = 3;
+    string     value = 4;
+}
+
+
+message AddTtsDataRequest {
+    ResType   resource  = 1;
+    LanguageType language = 2;
+    string     key  = 3;
+    string     value = 4;
+}
+
+message GeneTokenRequest {
+    string identifier = 1;
+}
+
+message GeneTokenResponse {
+    string token = 1;
+}

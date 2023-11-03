@@ -32,15 +32,16 @@ var serviceName = "speech-tts"
 //export ResService_Init
 func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int {
 	ctx := context.Background()
+	fn := Callback(cb, pUserData)
 	go func() {
 		r := gin.Default()
-		r.POST("/resource/update", ReLoadTTSResource(cb, pUserData))
+		r.POST("/resource/update", ReLoadTTSResource(fn))
 		if err := r.Run(port); err != nil {
 			log.Error(err)
 		}
 	}()
 
-	if err := service.InitTTSResource(ctx, Callback(cb, pUserData)); err != nil {
+	if err := service.InitTTSResource(ctx, fn); err != nil {
 		log.Error(err)
 	}
 	// 注册
@@ -60,7 +61,7 @@ type UpdateResourceReq struct {
 	Language ttsData.LanguageType
 }
 
-func ReLoadTTSResource(cb *C.ResService_Callback, pUserData unsafe.Pointer) gin.HandlerFunc {
+func ReLoadTTSResource(callback service.CallbackFn) gin.HandlerFunc {
 	return func(g *gin.Context) {
 		var req UpdateResourceReq
 		if err := g.BindJSON(&req); err != nil {
@@ -72,7 +73,7 @@ func ReLoadTTSResource(cb *C.ResService_Callback, pUserData unsafe.Pointer) gin.
 			log.Error(err)
 		}
 		if int(req.ResType) < 3 {
-			C.bridge_event_cb(cb, C.int(2*int(req.ResType)+int(req.Language)), fileName, pUserData)
+			callback(req.ResType, req.Language, fileName)
 		}
 		return
 	}

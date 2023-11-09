@@ -5,6 +5,7 @@ COMMIT := $(shell git describe --tags --always)
 FILE = $(date +%F).log
 VERSION = v4.2.5
 DSUrl = 172.16.23.15:31637
+DSAddr = 10.12.32.96:9001
 pwd := $(shell pwd)
 
 
@@ -65,7 +66,7 @@ build:
 	go mod download
 	go mod verify
 	mkdir -p bin/
-	export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
+	export dataServiceAddr=$(DSAddr) && export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
 	go build  -ldflags "-s -w -X main.Commit=$(COMMIT) -X main.Version=$(VERSION)  -X main.Name=$(PROJECT_NAME)" -o ./bin/$(PROJECT_NAME)  $(pwd)/cmd/$(PROJECT_NAME)/...
 
 buildso:

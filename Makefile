@@ -68,7 +68,8 @@ build:
 	export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
 	go build  -ldflags "-s -w -X main.Commit=$(COMMIT) -X main.Version=$(VERSION)  -X main.Name=$(PROJECT_NAME)" -o ./bin/$(PROJECT_NAME)  $(pwd)/cmd/$(PROJECT_NAME)/...
 
-
+buildso:
+	go build -buildmode=c-shared -o export/libs/libttsgo.so  export/main.go
 
 start: build
 	export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \

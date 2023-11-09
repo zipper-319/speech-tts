@@ -21,7 +21,7 @@ const AddrDefault = "127.0.0.1:8080"
 type CallbackFn func(ttsData.ResType, ttsData.LanguageType, string)
 
 func GetGrpcConn(ctx context.Context) (*grpc.ClientConn, error) {
-	addr := os.Getenv("dataServiceEnv")
+	addr := os.Getenv("dataServiceAddr")
 	if addr == "" {
 		addr = AddrDefault
 	}
@@ -65,6 +65,20 @@ func RegisterResService(ctx context.Context, serviceName, callbackUrl string) er
 	}
 	client := ttsData.NewTtsDataClient(conn)
 	_, err = client.RegisterResService(ctx, &ttsData.RegisterResServiceRequest{
+		ServiceName: serviceName,
+		CallbackUrl: callbackUrl,
+	})
+	return err
+}
+
+func UnRegisterResService(ctx context.Context, serviceName, callbackUrl string) error {
+	conn, err := GetGrpcConn(ctx)
+	if err != nil {
+		log.Errorf("register res service error:%v", err)
+		return err
+	}
+	client := ttsData.NewTtsDataClient(conn)
+	_, err = client.UnRegisterResService(ctx, &ttsData.UnRegisterResServiceRequest{
 		ServiceName: serviceName,
 		CallbackUrl: callbackUrl,
 	})

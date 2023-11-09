@@ -52,6 +52,13 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 	return C.int(0)
 }
 
+//export EndInit
+func EndInit() {
+	if err := service.UnRegisterResService(context.Background(), serviceName, util.GetHostIp()+port); err != nil {
+		log.Error(err)
+	}
+}
+
 func main() {
 
 }
@@ -81,6 +88,8 @@ func ReLoadTTSResource(callback service.CallbackFn) gin.HandlerFunc {
 
 func Callback(cb *C.ResService_Callback, pUserData unsafe.Pointer) service.CallbackFn {
 	return func(resType ttsData.ResType, languageType ttsData.LanguageType, fileName string) {
-		C.bridge_event_cb(cb, C.int(2*int(resType)+int(languageType)), fileName, pUserData)
+		fileNameC := C.CString(fileName)
+		defer C.free(unsafe.Pointer(fileNameC))
+		C.bridge_event_cb(cb, C.int(2*int(resType)+int(languageType)), fileNameC, pUserData)
 	}
 }

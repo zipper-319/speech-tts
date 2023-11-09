@@ -43,20 +43,24 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 
 	if err := service.InitTTSResource(ctx, fn); err != nil {
 		log.Error(err)
+		return C.int(-1)
 	}
 	// 注册
 	if err := service.RegisterResService(ctx, serviceName, util.GetHostIp()+port); err != nil {
 		log.Error(err)
+		return C.int(-1)
 	}
 
 	return C.int(0)
 }
 
 //export EndInit
-func EndInit() {
+func EndInit() C.int {
 	if err := service.UnRegisterResService(context.Background(), serviceName, util.GetHostIp()+port); err != nil {
 		log.Error(err)
+		return C.int(-1)
 	}
+	return C.int(0)
 }
 
 func main() {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"os"
 	ttsData "speech-tts/export/service/proto"
 	"sync"
@@ -34,7 +35,7 @@ func GetGrpcConn(ctx context.Context) (*grpc.ClientConn, error) {
 	if atomic.LoadPointer(&globalClientConn) != nil {
 		return (*grpc.ClientConn)(globalClientConn), nil
 	}
-	conn, err := grpc.DialContext(ctx, addr, grpc.WithInsecure())
+	conn, err := grpc.DialContext(ctx, addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}

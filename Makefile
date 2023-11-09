@@ -5,7 +5,7 @@ COMMIT := $(shell git describe --tags --always)
 FILE = $(date +%F).log
 VERSION = v4.2.5
 DSUrl = 172.16.23.15:31637
-DSAddr = 10.12.32.96:9001
+DSAddr = 10.12.32.198:9001
 pwd := $(shell pwd)
 
 

@@ -17,8 +17,8 @@ import (
 var globalClientConn unsafe.Pointer
 var lck sync.Mutex
 
-const AddrDefault = "127.0.0.1:8080"
-const ResPath = "res"
+const AddrDefault = "10.12.32.198:9001"
+const ResPath = "./res"
 
 type CallbackFn func(ttsData.ResType, ttsData.LanguageType, string)
 
@@ -115,8 +115,38 @@ func InitTTSResource(ctx context.Context, fn CallbackFn) error {
 	return nil
 }
 
+func InitTTSRes(ctx context.Context) error {
+	conn, err := GetGrpcConn(ctx)
+	if err != nil {
+		return err
+	}
+	client := ttsData.NewTtsDataClient(conn)
+
+	for v, _ := range ttsData.ResType_name {
+		for lang, _ := range ttsData.LanguageType_name {
+			resType := ttsData.ResType(v)
+			languageType := ttsData.LanguageType(lang)
+			resp, err := client.GetTtsData(ctx, &ttsData.GetTtsDataRequest{
+				Resource: resType,
+				Language: languageType,
+			})
+			if err != nil {
+				log.Errorf("get tts resource; resourceType:%s,language:%s, error:%v", resType, languageType, err)
+				continue
+			}
+			fileName, err := SaveResource(resp, resType, languageType)
+			if err != nil {
+				log.Errorf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, languageType, err)
+				continue
+			}
+			log.Info(resType, languageType, fileName)
+		}
+	}
+	return nil
+}
+
 func SaveResource(resp *ttsData.GetTtsDataResponse, resType ttsData.ResType, languageType ttsData.LanguageType) (string, error) {
-	fileName := fmt.Sprintf("%s_%s.txt", resType.String(), languageType.String())
+	fileName := fmt.Sprintf("%s/%s_%s.txt", ResPath, resType.String(), languageType.String())
 	os.Rename(fileName, fileName+".bak"+time.Now().Format("20060102150405"))
 
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)

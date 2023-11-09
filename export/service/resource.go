@@ -157,7 +157,7 @@ func SaveResource(resp *ttsData.GetTtsDataResponse, resType ttsData.ResType, lan
 
 	for _, v := range resp.Data {
 		var n int
-		n, err = f.WriteString(fmt.Sprintf("%s:%s\n", v.Key, v.Value))
+		n, err = f.WriteString(fmt.Sprintf("%s@@%s\n", v.Key, v.Value))
 		log.Infof("write string:%d,%v", n, err)
 	}
 	return fileName, nil

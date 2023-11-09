@@ -70,6 +70,7 @@ build:
 
 buildso:
 	go build -buildmode=c-shared -o export/libs/libttsgo.so  export/main.go
+	cp export/libs/libttsgo.so internal/cgo/libs
 
 start: build
 	export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \

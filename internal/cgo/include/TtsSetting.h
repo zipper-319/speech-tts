@@ -214,6 +214,10 @@ typedef struct{
     * 对于v1接口，置为NULL; 对于v2接口, 且动作使能时，指定动作描述符
     */
     const char* movementDescriptor;
+    /**
+    * 语种提示，提示合成请求的文本的语种（https://zh.wikipedia.org/zh-hans/ISO_639-1 http://www.lingoes.net/zh/translator/langcode.htm ，当前只支持中文——zh(含变种)，英文——en）
+    */
+    const char* languageTip;
 }TtsSetting;
 
 

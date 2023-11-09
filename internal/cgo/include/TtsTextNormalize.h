@@ -36,6 +36,15 @@ enum {
 };
 
 /**
+ * 语言提示
+ */
+enum {
+    TIP_TYPE_OTHER   = 0,
+    TIP_TYPE_CHINESE = 1,
+    TIP_TYPE_ENGLISH = 2,
+};
+
+/**
 * TTS文本规整初始化，设置TTS文本规整的资源路径.
 * @param dir res目录的路径
 */
@@ -49,6 +58,7 @@ void TtsTextNormalizeInit(const char* dir);
 * <p>(TYPE_CM)--在线自研，(TYPE_GOOGLE)--在线谷歌，
 * <p>(TYPE_OFFLINE | TYPE_CM)--离线自研，(TYPE_OFFLINE | TYPE_GOOGLE)--离线谷歌，
 * @param language 当前TtsEngine所处理的语言
+* @param langTip 当前TtsEngine所处理的语言提示
 * @param offBase 偏移的基础量
 * @param cutType 分句模式，0-普通模式（句号类分句+逗号类分句+顿号双空格），1-VITS模式二期（句号类双空格+逗号类双空格+顿号双空格），
 * 2-停顿分句模式（句号类分句+逗号类分句+双空格分句），3-VITS模式一期（句号类分句+逗号类双空格+顿号双空格）
@@ -57,7 +67,7 @@ void TtsTextNormalizeInit(const char* dir);
 * @param ttsTextInfo TTS文本规整信息
 * @return int 0-正常
 */
-int TtsTextNormalize(const char* text, unsigned int ttsType, const char* language, int offBase, int cutType,
+int TtsTextNormalize(const char* text, unsigned int ttsType, const char* language, int langTip, int offBase, int cutType,
         int cutLenCh, int cutLenEn, TtsTextInfo& ttsTextInfo);
 
 /**

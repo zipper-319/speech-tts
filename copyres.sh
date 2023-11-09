@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source=/devepu/jenkins1/workspace/CmTts/jni/NATIVE/tts/TTS_SDK_*
+source=~/project/tts_test/CmTts/jni/NATIVE/tts/TTS_SDK_*
 dstLibs=`pwd`/internal/cgo/libs
 includePath=`pwd`/internal/cgo/include
 

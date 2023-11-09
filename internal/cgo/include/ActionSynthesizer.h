@@ -155,7 +155,7 @@ void ActionSynthesizer_Deinit();
 */
 int ActionSynthesizer_SynthesizeAction(const char* actionDescriptor, TtsSetting* setting, ActionCallback* cb, void* pUserData, const char* traceId);
 /**
-* 终止指定的Action合成，函数返回时该请求已被终止
+* 终止指定的Action合成（非阻塞版，函数返回时该请求可能尚未终止）
 * @param id 要终止的Action合成请求的id
 */
 void ActionSynthesizer_CancelAction(int id);

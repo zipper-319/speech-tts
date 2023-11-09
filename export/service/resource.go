@@ -17,6 +17,7 @@ var globalClientConn unsafe.Pointer
 var lck sync.Mutex
 
 const AddrDefault = "127.0.0.1:8080"
+const ResPath = "res"
 
 type CallbackFn func(ttsData.ResType, ttsData.LanguageType, string)
 
@@ -33,7 +34,7 @@ func GetGrpcConn(ctx context.Context) (*grpc.ClientConn, error) {
 	if atomic.LoadPointer(&globalClientConn) != nil {
 		return (*grpc.ClientConn)(globalClientConn), nil
 	}
-	conn, err := grpc.DialContext(ctx, addr)
+	conn, err := grpc.DialContext(ctx, addr, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}

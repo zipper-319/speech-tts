@@ -33,9 +33,7 @@ func GetGrpcConn(ctx context.Context) (*grpc.ClientConn, error) {
 	if atomic.LoadPointer(&globalClientConn) != nil {
 		return (*grpc.ClientConn)(globalClientConn), nil
 	}
-	conn, err := grpc.DialContext(ctx, addr,
-		grpc.WithInsecure(),
-	)
+	conn, err := grpc.DialContext(ctx, addr)
 	if err != nil {
 		return nil, err
 	}

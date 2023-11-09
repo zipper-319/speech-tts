@@ -63,6 +63,11 @@ func EndInit() C.int {
 	return C.int(0)
 }
 
+// export ResService_GetVersion
+func ResService_GetVersion()*C.char {
+  return C.CString("testSO")
+}
+
 func main() {
 
 }

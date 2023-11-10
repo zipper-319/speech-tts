@@ -46,7 +46,7 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 		return C.int(-1)
 	}
 	// 注册
-	if err := resource.RegisterResService(ctx, serviceName, fmt.Sprintf("http:%s:%s", util.GetHostIp(),port)); err != nil {
+	if err := resource.RegisterResService(ctx, serviceName, fmt.Sprintf("http://%s:%s", util.GetHostIp(),port)); err != nil {
 		log.Error(err)
 		return C.int(-1)
 	}

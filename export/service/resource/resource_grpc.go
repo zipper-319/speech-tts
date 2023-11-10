@@ -42,7 +42,9 @@ func GetTTSResByGrpc(ctx context.Context, resType ttsData.ResType, languageType 
 		Resource: resType,
 		Language: languageType,
 	})
-
+	if err != nil {
+		return nil, err
+	}
 	return resp.Data, nil
 }
 

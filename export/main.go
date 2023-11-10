@@ -95,7 +95,7 @@ func ReLoadTTSResource(callback resource.CallbackFn) gin.HandlerFunc {
 			speakerName := req.DataMap["speaker_name"]
 			speakerOwner := req.DataMap["speaker_owner"]
 			modelUrl := req.DataMap["model_url"]
-			dstPath , err := resource.SaveSpeakerModel(modelUrl, speakerOwner, speakerName)
+			dstPath, err := resource.SaveSpeakerModel(modelUrl, speakerOwner, speakerName)
 			if err != nil {
 				log.Error(err)
 				return

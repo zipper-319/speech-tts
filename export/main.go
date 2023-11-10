@@ -73,7 +73,7 @@ func main() {
 }
 
 type UpdateResourceReq struct {
-	ResType  ttsData.ResType
+	ResType  ttsData.ResType ``
 	Language ttsData.LanguageType
 	DataMap  map[string]string
 }
@@ -81,16 +81,18 @@ type UpdateResourceReq struct {
 func ReLoadTTSResource(callback resource.CallbackFn) gin.HandlerFunc {
 	return func(g *gin.Context) {
 		var req UpdateResourceReq
-		if err := g.BindJSON(&req); err != nil {
+		if err := g.ShouldBindJSON(&req); err != nil {
 			log.Error(err)
 			return
 		}
+		log.Infof("reload resource, resType:%d, language:%d", req.ResType, req.Language)
 
 		if int(req.ResType) < int(ttsData.ResType_Model) {
 			fileName, err := resource.SaveResource(resource.TransForm(req.DataMap), req.ResType, req.Language)
 			if err != nil {
 				log.Error(err)
 			}
+			log.Infof("reload resource success, fileName:%s", fileName)
 			callback(req.ResType, req.Language, fileName)
 		} else if req.ResType == ttsData.ResType_Model {
 			speakerName := req.DataMap["speaker_name"]
@@ -101,8 +103,10 @@ func ReLoadTTSResource(callback resource.CallbackFn) gin.HandlerFunc {
 				log.Error(err)
 				return
 			}
+			log.Infof("save speaker model success,speakerName:%s,speakerOwner:%s,modelUrl:%s, path: %s", speakerName, speakerOwner, modelUrl, dstPath)
 			callback(ttsData.ResType_Model, ttsData.LanguageType_Chinese, dstPath)
 		}
+		g.JSON(200, "success")
 	}
 }
 

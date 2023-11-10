@@ -17,6 +17,7 @@ static void bridge_event_cb(ResService_Callback* cb, int resType, char* resPath,
 import "C"
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/log"
 	ttsData "speech-tts/export/service/proto"
@@ -25,7 +26,7 @@ import (
 	"unsafe"
 )
 
-const port = ":8080"
+const port = "8080"
 const serviceName = "speech-tts"
 
 //export ResService_Init
@@ -45,7 +46,7 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 		return C.int(-1)
 	}
 	// 注册
-	if err := resource.RegisterResService(ctx, serviceName, util.GetHostIp()+port); err != nil {
+	if err := resource.RegisterResService(ctx, serviceName, fmt.Sprintf("http:%s:%s", util.GetHostIp(),port)); err != nil {
 		log.Error(err)
 		return C.int(-1)
 	}

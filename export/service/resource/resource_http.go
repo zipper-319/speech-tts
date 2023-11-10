@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/idoubi/goz"
 	ttsData "speech-tts/export/service/proto"
 )
@@ -63,6 +64,7 @@ func RegisterResServiceByHttp(serviceName, callbackUrl string) error {
 			CallbackUrl: callbackUrl,
 		},
 	})
+	log.Infof("register res service by http, serviceName: %s, callbackUrl: %s", serviceName, callbackUrl)
 	return err
 }
 
@@ -80,6 +82,7 @@ func UnregisterResServiceByHttp(serviceName, callbackUrl string) error {
 			CallbackUrl: callbackUrl,
 		},
 	})
+	log.Infof("register res service by http, serviceName: %s, callbackUrl: %s", serviceName, callbackUrl)
 	return err
 }
 

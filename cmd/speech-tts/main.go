@@ -12,7 +12,6 @@ import (
 	"os"
 	"speech-tts/internal/conf"
 	"speech-tts/internal/pkg/log"
-	"speech-tts/internal/pkg/nacos"
 	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
 	"syscall"
@@ -55,7 +54,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, config *conf.Da
 			gs,
 			hs,
 		),
-		kratos.Registrar(nacos.NewRegister(config)),
+		//kratos.Registrar(nacos.NewRegister(config)),
 	)
 }
 

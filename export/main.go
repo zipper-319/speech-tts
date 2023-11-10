@@ -19,15 +19,14 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/log"
-	"speech-tts/export/service"
 	ttsData "speech-tts/export/service/proto"
+	"speech-tts/export/service/resource"
 	"speech-tts/internal/pkg/util"
 	"unsafe"
 )
 
 const port = ":8080"
-
-var serviceName = "speech-tts"
+const serviceName = "speech-tts"
 
 //export ResService_Init
 func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int {
@@ -41,12 +40,12 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 		}
 	}()
 
-	if err := service.InitTTSResource(ctx, fn); err != nil {
+	if err := resource.InitTTSResource(ctx, fn); err != nil {
 		log.Error(err)
 		return C.int(-1)
 	}
 	// 注册
-	if err := service.RegisterResService(ctx, serviceName, util.GetHostIp()+port); err != nil {
+	if err := resource.RegisterResService(ctx, serviceName, util.GetHostIp()+port); err != nil {
 		log.Error(err)
 		return C.int(-1)
 	}
@@ -56,7 +55,7 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 
 //export EndInit
 func EndInit() C.int {
-	if err := service.UnRegisterResService(context.Background(), serviceName, util.GetHostIp()+port); err != nil {
+	if err := resource.UnRegisterResService(context.Background(), serviceName, util.GetHostIp()+port); err != nil {
 		log.Error(err)
 		return C.int(-1)
 	}
@@ -64,8 +63,8 @@ func EndInit() C.int {
 }
 
 //export ResService_GetVersion
-func ResService_GetVersion()*C.char {
-  return C.CString("testSO")
+func ResService_GetVersion() *C.char {
+	return C.CString("testSO")
 }
 
 func main() {
@@ -75,27 +74,38 @@ func main() {
 type UpdateResourceReq struct {
 	ResType  ttsData.ResType
 	Language ttsData.LanguageType
+	DataMap  map[string]string
 }
 
-func ReLoadTTSResource(callback service.CallbackFn) gin.HandlerFunc {
+func ReLoadTTSResource(callback resource.CallbackFn) gin.HandlerFunc {
 	return func(g *gin.Context) {
 		var req UpdateResourceReq
 		if err := g.BindJSON(&req); err != nil {
 			log.Error(err)
 			return
 		}
-		fileName, err := service.GetTTSResAndSave(context.Background(), req.ResType, req.Language)
-		if err != nil {
-			log.Error(err)
-		}
-		if int(req.ResType) < 3 {
+
+		if int(req.ResType) < int(ttsData.ResType_Model) {
+			fileName, err := resource.SaveResource(resource.TransForm(req.DataMap), req.ResType, req.Language)
+			if err != nil {
+				log.Error(err)
+			}
 			callback(req.ResType, req.Language, fileName)
+		} else if req.ResType == ttsData.ResType_Model {
+			speakerName := req.DataMap["speaker_name"]
+			speakerOwner := req.DataMap["speaker_owner"]
+			modelUrl := req.DataMap["model_url"]
+			dstPath , err := resource.SaveSpeakerModel(modelUrl, speakerOwner, speakerName)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			callback(ttsData.ResType_Model, ttsData.LanguageType_Chinese, dstPath)
 		}
-		return
 	}
 }
 
-func Callback(cb *C.ResService_Callback, pUserData unsafe.Pointer) service.CallbackFn {
+func Callback(cb *C.ResService_Callback, pUserData unsafe.Pointer) resource.CallbackFn {
 	return func(resType ttsData.ResType, languageType ttsData.LanguageType, fileName string) {
 		fileNameC := C.CString(fileName)
 		defer C.free(unsafe.Pointer(fileNameC))

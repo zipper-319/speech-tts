@@ -66,7 +66,7 @@ build:
 	go mod download
 	go mod verify
 	mkdir -p bin/
-	export dataServiceAddr=$(DSAddr) && export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
+	export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
 	go build  -ldflags "-s -w -X main.Commit=$(COMMIT) -X main.Version=$(VERSION)  -X main.Name=$(PROJECT_NAME)" -o ./bin/$(PROJECT_NAME)  $(pwd)/cmd/$(PROJECT_NAME)/...
 
 buildso:
@@ -74,7 +74,7 @@ buildso:
 	cp export/libs/libttsgo.so internal/cgo/libs
 
 start: build
-	export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
+	export dataServiceAddr=$(DSAddr) && export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
 	ulimit -c unlimited && bin/$(PROJECT_NAME)
 
 

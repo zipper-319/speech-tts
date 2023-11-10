@@ -94,7 +94,6 @@ func main() {
 						log.Println("_________")
 						log.Printf("TestTTSV1; goroutine id:%d; err:%v", i, err)
 						log.Println("_________")
-						panic(err)
 					}
 
 				} else {
@@ -104,7 +103,6 @@ func main() {
 						log.Println("_________")
 						log.Printf("TestTTSV2; goroutine id:%d; err:%v", i, err)
 						log.Println("_________")
-						panic(err)
 					}
 
 				}

@@ -74,7 +74,7 @@ buildso:
 	cp export/libs/libttsgo.so internal/cgo/libs
 
 start: build
-	export dataServiceAddr=$(DSAddr) && export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
+	export IsOpenGrpc=true && export dataServiceAddr=$(DSAddr) && export dataServiceEnv=$(DSUrl) && export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(pwd)/internal/cgo/libs  && \
 	ulimit -c unlimited && bin/$(PROJECT_NAME)
 
 

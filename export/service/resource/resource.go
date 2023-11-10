@@ -49,6 +49,7 @@ func init() {
 }
 
 func RegisterResService(ctx context.Context, serviceName, callbackUrl string) error {
+	log.Infof("RegisterResService: serviceName: %s, callbackUrl: %s; IsOpenGrpc:%t", serviceName, callbackUrl, IsOpenGrpc)
 	if IsOpenGrpc {
 		return RegisterResServiceByGrpc(ctx, serviceName, callbackUrl)
 	} else {
@@ -86,6 +87,7 @@ func InitTTSResource(ctx context.Context, fn CallbackFn) error {
 				log.Errorf("GetSpeakerModel error:%v", err)
 				continue
 			}
+			log.Info("GetSpeakerModel success")
 
 		} else {
 			for lang, _ := range ttsData.LanguageType_name {
@@ -159,7 +161,7 @@ func TransForm(dataMap map[string]string) []*ttsData.GetTtsDataResponse_TTSData 
 	return result
 }
 
-func SaveSpeakerModel(modelUrl, speakerOwner, speakerName string ) (string, error){
+func SaveSpeakerModel(modelUrl, speakerOwner, speakerName string) (string, error) {
 	tmpFile := fmt.Sprintf("%s/%s_%s.zip", TmpPath, speakerOwner, speakerName)
 	if err := util.DownloadFile(modelUrl, tmpFile); err != nil {
 		return "", err

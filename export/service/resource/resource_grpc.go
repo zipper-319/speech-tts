@@ -83,5 +83,8 @@ func GetSpeakerModelByGrpc(ctx context.Context) ([]*ttsData.GetSpeakerModelResul
 	}
 	client := ttsData.NewTtsDataClient(conn)
 	resp, err := client.GetSpeakerModel(ctx, &emptypb.Empty{})
+	if err != nil {
+		return nil, err
+	}
 	return resp.SpeakerModels, nil
 }

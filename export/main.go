@@ -4,7 +4,7 @@ package main
 #include <stdlib.h>
 
 // -resType 0--pron_res_cn 1--pron_res_en 2--norm_res
-// +resType 0--pron_res_cn 1--pron_res_en 2--string_res_cn 3--string_res_en 4--norm_res_cn 5--norm_res_en
+// +resType 0--pron_res_cn 1--pron_res_en 2--string_res_cn 3--string_res_en 4--norm_res_cn 5--norm_res_en  16 Rhythm 18 Participle 30模型文件
 typedef struct
 {
     void (*reloadRes)(void* pUserData, int resType, char* resPath);

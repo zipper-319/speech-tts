@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"github.com/go-kratos/kratos/v2/log"
 	"io"
 	"net/http"
 	"os"
@@ -10,7 +11,7 @@ import (
 )
 
 func DownloadFile(url, fileName string) error {
-	fmt.Println("Starting download...")
+	log.Debug("Starting download...")
 	wg := sync.WaitGroup{}
 	parts := 4
 
@@ -41,7 +42,7 @@ func DownloadFile(url, fileName string) error {
 	}
 	wg.Wait()
 
-	fmt.Println("Download complete!")
+	log.Debug("Download complete!")
 	return nil
 }
 

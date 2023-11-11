@@ -45,11 +45,25 @@ service TtsData {
     }
 
 
-    rpc GetSpeakerModel(google.protobuf.Empty) returns (GetSpeakerModelResult) {}
+    rpc GetSpeakerModel(google.protobuf.Empty) returns (GetSpeakerModelResult) {
+        option (google.api.http) = {
+            get: "/api/ttsData/v1/resource/get-speaker-model"
+        };
+    }
 
-    rpc RegisterResService(RegisterResServiceRequest) returns (google.protobuf.Empty) {}
+    rpc RegisterResService(RegisterResServiceRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/api/ttsData/v1/resource/register"
+            body: "*"
+        };
+    }
 
-    rpc UnRegisterResService(UnRegisterResServiceRequest) returns (google.protobuf.Empty) {}
+    rpc UnRegisterResService(UnRegisterResServiceRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/api/ttsData/v1/resource/unregister"
+            body: "*"
+        };
+    }
 }
 
 message GetTtsDataRequest {
@@ -62,15 +76,15 @@ message GetTtsDataResponse {
         string     key  = 1;
         string     value = 2;
     }
-    repeated TTSData data = 1;
+    repeated TTSData data_list = 1;
 }
 
 enum ResType {
     Pronounce = 0;
     RegStr = 1;
     RegExp = 2;
-    Rhythm = 3;
-    Participle = 4;
+    Rhythm = 8;
+    Participle = 9;
     Model = 15;
 }
 

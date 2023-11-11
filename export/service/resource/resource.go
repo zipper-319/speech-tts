@@ -90,15 +90,25 @@ func InitTTSResource(ctx context.Context, fn CallbackFn) error {
 			log.Info("GetSpeakerModel success")
 
 		} else {
-			for lang, _ := range ttsData.LanguageType_name {
-				languageType := ttsData.LanguageType(lang)
-				fileName, err := GetTTSResAndSave(ctx, resType, languageType)
+			if int(v) >= int(ttsData.ResType_Rhythm) {
+				fileName, err := GetTTSResAndSave(ctx, resType, ttsData.LanguageType_Chinese)
 				if err != nil {
-					log.Errorf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, languageType, err)
+					log.Errorf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, ttsData.LanguageType_Chinese, err)
 					continue
 				}
-				fn(resType, languageType, fileName)
+				fn(resType, ttsData.LanguageType_Chinese, fileName)
+			} else {
+				for lang, _ := range ttsData.LanguageType_name {
+					languageType := ttsData.LanguageType(lang)
+					fileName, err := GetTTSResAndSave(ctx, resType, languageType)
+					if err != nil {
+						log.Errorf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, languageType, err)
+						continue
+					}
+					fn(resType, languageType, fileName)
+				}
 			}
+
 		}
 
 	}

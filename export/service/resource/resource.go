@@ -16,7 +16,8 @@ const (
 	GrpcPortDefault = "9001"
 	ResPath         = "./res"
 	ResourceSplit   = "@@"
-	TmpPath         = "./tmp"
+	PronounceSplit  = ":"
+	TmpPath = "./tmp"
 )
 
 type CallbackFn func(ttsData.ResType, ttsData.LanguageType, string)
@@ -119,6 +120,10 @@ func SaveResource(dataList []*ttsData.GetTtsDataResponse_TTSData, resType ttsDat
 	fileName := fmt.Sprintf("%s/%s_%s.txt", ResPath, resType.String(), languageType.String())
 
 	os.Rename(fileName, fileName+".bak"+time.Now().Format("20060102150405"))
+	split :=  ResourceSplit
+	if resType == ttsData.ResType_Pronounce {
+		split = PronounceSplit
+	}
 
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -127,8 +132,7 @@ func SaveResource(dataList []*ttsData.GetTtsDataResponse_TTSData, resType ttsDat
 	defer f.Close()
 	var n int
 	for _, v := range dataList {
-
-		i, _ := f.WriteString(fmt.Sprintf("%s%s%s\n", v.Key, ResourceSplit, v.Value))
+		i, _ := f.WriteString(fmt.Sprintf("%s%s%s\n", v.Key, split, v.Value))
 		n += i
 	}
 	log.Infof("write file:%s, length:%d", fileName, n)

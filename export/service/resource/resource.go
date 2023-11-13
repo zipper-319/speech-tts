@@ -51,12 +51,15 @@ func init() {
 		IsOpenGrpc = true
 	}
 	ResVersionMap = make(map[string]string, len(ttsData.ResType_name)*2)
-	content, err := os.ReadFile(ResVersionFileName)
-	if err != nil {
-		panic(err)
-	}
-	if len(content) > 0 {
-		json.Unmarshal(content, &ResVersionMap)
+	_, err := os.Stat(ResVersionFileName)
+	if err == nil {
+		content, err := os.ReadFile(ResVersionFileName)
+		if err != nil {
+			panic(err)
+		}
+		if len(content) > 0 {
+			json.Unmarshal(content, &ResVersionMap)
+		}
 	}
 	log.Infof("resource version map: %v", ResVersionMap)
 

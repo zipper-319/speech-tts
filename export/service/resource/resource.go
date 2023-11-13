@@ -17,7 +17,8 @@ const (
 	AddrDefault        = "10.12.32.198"
 	HttpPortDefault    = "8001"
 	GrpcPortDefault    = "9001"
-	ResPath            = "./res/read_and_speak/speak"
+	SpeakModelPath     = "./res/read_and_speak/speak"
+	ResPath            = "./res"
 	ResourceSplit      = "@@"
 	PronounceSplit     = ":"
 	TmpPath            = "./tmp"
@@ -209,7 +210,7 @@ func SaveSpeakerModel(modelUrl, speakerOwner, speakerName string) (string, error
 	if err := util.DownloadFile(modelUrl, tmpFile); err != nil {
 		return "", err
 	}
-	dstPath := fmt.Sprintf("%s/%s/%s", ResPath, speakerOwner, speakerName)
+	dstPath := fmt.Sprintf("%s/%s/%s", SpeakModelPath, speakerOwner, speakerName)
 	if err := util.DeCompressToPath(tmpFile, dstPath); err != nil {
 		return "", err
 	}

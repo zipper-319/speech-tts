@@ -141,6 +141,7 @@ func SaveResource(dataList []*ttsData.GetTtsDataResponse_TTSData, resType ttsDat
 	dataListByte, _ := json.Marshal(dataList)
 	d := md5.Sum(dataListByte)
 	version := hex.EncodeToString(d[:])
+	log.Infof("SaveResource fileName:%s,version:%s, oldVersion:%s", fileName, version, ResVersionMap[fileName])
 	if ResVersionMap[fileName] == version {
 		return fileName, nil
 	}

@@ -45,7 +45,7 @@ func GetTTSResByGrpc(ctx context.Context, resType ttsData.ResType, languageType 
 	if err != nil {
 		return nil, err
 	}
-	return resp.Data, nil
+	return resp.DataList, nil
 }
 
 func RegisterResServiceByGrpc(ctx context.Context, serviceName, callbackUrl string) error {

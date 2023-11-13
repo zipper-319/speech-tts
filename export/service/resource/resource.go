@@ -14,10 +14,10 @@ const (
 	AddrDefault     = "10.12.32.198"
 	HttpPortDefault = "8001"
 	GrpcPortDefault = "9001"
-	ResPath         = "./res"
+	ResPath         = "./res/read_and_speak/speak"
 	ResourceSplit   = "@@"
 	PronounceSplit  = ":"
-	TmpPath = "./tmp"
+	TmpPath         = "./tmp"
 )
 
 type CallbackFn func(ttsData.ResType, ttsData.LanguageType, string)
@@ -120,7 +120,7 @@ func SaveResource(dataList []*ttsData.GetTtsDataResponse_TTSData, resType ttsDat
 	fileName := fmt.Sprintf("%s/%s_%s.txt", ResPath, resType.String(), languageType.String())
 
 	os.Rename(fileName, fileName+".bak"+time.Now().Format("20060102150405"))
-	split :=  ResourceSplit
+	split := ResourceSplit
 	if resType == ttsData.ResType_Pronounce {
 		split = PronounceSplit
 	}
@@ -176,6 +176,9 @@ func TransForm(dataMap map[string]string) []*ttsData.GetTtsDataResponse_TTSData 
 }
 
 func SaveSpeakerModel(modelUrl, speakerOwner, speakerName string) (string, error) {
+	if err := os.MkdirAll(TmpPath, 0777); err != nil {
+		return "",err
+	}
 	tmpFile := fmt.Sprintf("%s/%s_%s.zip", TmpPath, speakerOwner, speakerName)
 	if err := util.DownloadFile(modelUrl, tmpFile); err != nil {
 		return "", err

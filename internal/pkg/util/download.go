@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"io"
 	"net/http"
@@ -52,7 +51,7 @@ func Download(url string, start int64, end int64, index int, fileName string, wg
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 
@@ -62,29 +61,29 @@ func Download(url string, start int64, end int64, index int, fileName string, wg
 
 	resp, err := client.Do(request)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 	defer resp.Body.Close()
 
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 	defer file.Close()
 
 	_, err = file.Seek(start, io.SeekStart)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 
-	fmt.Printf("Part %d finished\n", index)
+	log.Debugf("Part %d finished\n", index)
 }

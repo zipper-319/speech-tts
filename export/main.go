@@ -17,6 +17,9 @@ static void bridge_event_cb(ResService_Callback* cb, int resType, char* resPath,
 import "C"
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/log"
@@ -50,7 +53,7 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 		log.Error(err)
 		return C.int(-1)
 	}
-
+	resource.SaveResVersion()
 	return C.int(0)
 }
 
@@ -65,7 +68,10 @@ func EndInit() C.int {
 
 //export ResService_GetVersion
 func ResService_GetVersion() *C.char {
-	return C.CString("testSO")
+	v, _ := json.Marshal(resource.ResVersionMap)
+	d := md5.Sum(v)
+	version := hex.EncodeToString(d[:])
+	return C.CString(version)
 }
 
 func main() {
@@ -106,6 +112,7 @@ func ReLoadTTSResource(callback resource.CallbackFn) gin.HandlerFunc {
 			log.Infof("save speaker model success,speakerName:%s,speakerOwner:%s,modelUrl:%s, path: %s", speakerName, speakerOwner, modelUrl, dstPath)
 			callback(ttsData.ResType_Model, ttsData.LanguageType_Chinese, dstPath)
 		}
+		resource.SaveResVersion()
 		g.JSON(200, "success")
 	}
 }

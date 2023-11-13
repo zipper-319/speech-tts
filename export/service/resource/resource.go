@@ -2,6 +2,9 @@ package resource
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"os"
@@ -11,14 +14,17 @@ import (
 )
 
 const (
-	AddrDefault     = "10.12.32.198"
-	HttpPortDefault = "8001"
-	GrpcPortDefault = "9001"
-	ResPath         = "./res/read_and_speak/speak"
-	ResourceSplit   = "@@"
-	PronounceSplit  = ":"
-	TmpPath         = "./tmp"
+	AddrDefault        = "10.12.32.198"
+	HttpPortDefault    = "8001"
+	GrpcPortDefault    = "9001"
+	ResPath            = "./res/read_and_speak/speak"
+	ResourceSplit      = "@@"
+	PronounceSplit     = ":"
+	TmpPath            = "./tmp"
+	ResVersionFileName = "./res/res_version.json"
 )
+
+var ResVersionMap map[string]string
 
 type CallbackFn func(ttsData.ResType, ttsData.LanguageType, string)
 
@@ -44,6 +50,16 @@ func init() {
 	if os.Getenv("IsOpenGrpc") != "" {
 		IsOpenGrpc = true
 	}
+	ResVersionMap = make(map[string]string, len(ttsData.ResType_name)*2)
+	content, err := os.ReadFile(ResVersionFileName)
+	if err != nil {
+		panic(err)
+	}
+	if len(content) > 0 {
+		json.Unmarshal(content, &ResVersionMap)
+	}
+	log.Infof("resource version map: %v", ResVersionMap)
+
 	HttpUrl = fmt.Sprintf("%s:%s", addr, httpPort)
 	GrpcUrl = fmt.Sprintf("%s:%s", addr, grpcPort)
 	log.Info("dataServiceAddr:", addr, " dataServiceHttpPort:", httpPort, " dataServiceGrpcPort:", grpcPort)
@@ -118,6 +134,13 @@ func InitTTSResource(ctx context.Context, fn CallbackFn) error {
 
 func SaveResource(dataList []*ttsData.GetTtsDataResponse_TTSData, resType ttsData.ResType, languageType ttsData.LanguageType) (string, error) {
 	fileName := fmt.Sprintf("%s/%s_%s.txt", ResPath, resType.String(), languageType.String())
+	dataListByte, _ := json.Marshal(dataList)
+	d := md5.Sum(dataListByte)
+	version := hex.EncodeToString(d[:])
+	if ResVersionMap[fileName] == version {
+		return fileName, nil
+	}
+	ResVersionMap[fileName] = version
 
 	os.Rename(fileName, fileName+".bak"+time.Now().Format("20060102150405"))
 	split := ResourceSplit
@@ -177,7 +200,7 @@ func TransForm(dataMap map[string]string) []*ttsData.GetTtsDataResponse_TTSData 
 
 func SaveSpeakerModel(modelUrl, speakerOwner, speakerName string) (string, error) {
 	if err := os.MkdirAll(TmpPath, 0777); err != nil {
-		return "",err
+		return "", err
 	}
 	tmpFile := fmt.Sprintf("%s/%s_%s.zip", TmpPath, speakerOwner, speakerName)
 	if err := util.DownloadFile(modelUrl, tmpFile); err != nil {
@@ -188,4 +211,14 @@ func SaveSpeakerModel(modelUrl, speakerOwner, speakerName string) (string, error
 		return "", err
 	}
 	return dstPath, nil
+}
+
+func SaveResVersion() error {
+	v, _ := json.Marshal(ResVersionMap)
+	f, err := os.OpenFile(ResVersionFileName, os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		return err
+	}
+	_, err = f.WriteString(string(v))
+	return err
 }

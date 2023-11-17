@@ -130,4 +130,5 @@ type Speaker struct {
 	Movement             string
 	Expression           string
 	Language             string
+	Userspace            string
 }

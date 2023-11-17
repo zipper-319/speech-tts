@@ -59,6 +59,7 @@ message TtsReq {
     string trace_id = 9;                        //  trace_id
     string root_trace_id = 10;                  //  机器人请求ID
     string language = 11;                       //  语种提示
+    string userspace = 12;                      //  指定租户
     ClientVersion version = 100;                //  标识客户端版本号
 }
 

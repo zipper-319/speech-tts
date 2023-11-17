@@ -64,11 +64,15 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	expression := req.ParameterFlag["expressionPara"]
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
-	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s,clientVersion:%d, identifier:%s",
-		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag, expression, movement, req.Version, identifier)
+	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s,clientVersion:%d, identifier:%s, userspace:%s",
+		req.Text, req.ParameterSpeakerName, req.Emotions, req.ParameterDigitalPerson, req.ParameterFlag, expression, movement, req.Version, identifier, req.Userspace)
 
 	if req.Text == "" {
 		return errors.New("text param is null")
+	}
+
+	if req.Userspace == "" {
+		req.Userspace = utils.DefaultUser
 	}
 
 	if req.ParameterSpeakerName == "" {
@@ -114,6 +118,7 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		Movement:             movement,
 		Expression:           expression,
 		Language:             req.Language,
+		Userspace:            req.Userspace,
 	}, pUserData, fmt.Sprintf("%s_%s", req.RootTraceId, req.TraceId))
 	logger.Infof("CallTTSServiceV2;pUserData:%v;id:%d", pUserData, id)
 	if err != nil {

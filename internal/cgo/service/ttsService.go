@@ -126,7 +126,7 @@ func NewTTSService(s *conf.Server, speakerSetting *data.SpeakerSetting, logger l
 
 	for i, supportedSpeaker := range speakerSetting.SupportedSpeaker {
 		cname := C.CString(supportedSpeaker.Name)
-		userSpace := C.String(utils.DefaultUser)
+		userSpace := C.CString(utils.DefaultUser)
 		m := C.GetSpeakerDescriptor(userSpace, cname)
 		isEmotion := m.flags&C.SUPPORT_EMOTION != 0
 		isMixedVoice := m.flags&C.SUPPORT_MIXED_VOICE != 0
@@ -173,7 +173,7 @@ func (t *TTSService) GetUserSpeakers(userspace string) ([]string, error) {
 	defer C.free(unsafe.Pointer(cUserspace))
 	var speakerNum C.int
 
-	if ok := C.GetUserSpaceSupportedSpeaker(cUserspace, (***C.Char)(unsafe.Pointer(&C.speakerList)), &speakerNum); ok != 0 {
+	if ok := C.GetUserSpaceSupportedSpeaker(cUserspace, (***C.char)(unsafe.Pointer(&C.speakerList)), &speakerNum); ok != 0 {
 		return nil, errors.New("fail to get user space supported speaker")
 	}
 	speakers := make([]string, speakerNum)

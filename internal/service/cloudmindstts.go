@@ -184,3 +184,13 @@ func (s *CloudMindsTTSService) Register(ctx context.Context, req *pb.RegisterReq
 	}
 	return &pb.RegisterResp{Token: token}, nil
 }
+
+func (s *CloudMindsTTSService) GetUserSpeakers(ctx context.Context, req *pb.GetUserSpeakersRequest) (*pb.GetUserSpeakersResponse, error) {
+	speakerList, err := s.uc.GetUserSpeakers(req.User)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetUserSpeakersResponse{
+		Speakers: speakerList,
+	}, nil
+}

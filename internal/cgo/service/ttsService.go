@@ -45,7 +45,7 @@ typedef void (*typOnTimedMouthShapeV1)(void* pUserData, TimedMouthShape* mouth, 
 typedef void (*typOnCurTextSegmentV1)(void* pUserData, const char* normalizedText, const char* originalText);
 typedef void (*typOnFacialExpressionV1)(void* pUserData, FacialExpression* expression);
 
-
+char** speakerList = NULL;
 */
 import "C"
 import (
@@ -58,6 +58,7 @@ import (
 	v2 "speech-tts/api/tts/v2"
 	"speech-tts/internal/conf"
 	"speech-tts/internal/data"
+	"speech-tts/internal/utils"
 	"strings"
 	"time"
 	"unsafe"
@@ -125,7 +126,8 @@ func NewTTSService(s *conf.Server, speakerSetting *data.SpeakerSetting, logger l
 
 	for i, supportedSpeaker := range speakerSetting.SupportedSpeaker {
 		cname := C.CString(supportedSpeaker.Name)
-		m := C.GetSpeakerDescriptor(cname)
+		userSpace := C.String(utils.DefaultUser)
+		m := C.GetSpeakerDescriptor(userSpace, cname)
 		isEmotion := m.flags&C.SUPPORT_EMOTION != 0
 		isMixedVoice := m.flags&C.SUPPORT_MIXED_VOICE != 0
 		log.NewHelper(logger).Infof("----ChineseName:%s------cname:%s------flags:%d, isEmotion:%t, isMixedVoice:%t, language:%s",
@@ -137,6 +139,7 @@ func NewTTSService(s *conf.Server, speakerSetting *data.SpeakerSetting, logger l
 			IsSupportMixedVoice:  isMixedVoice,
 		}
 		C.free(unsafe.Pointer(cname))
+		C.free(unsafe.Pointer(userSpace))
 	}
 	close(notify)
 	return &TTSService{
@@ -163,6 +166,25 @@ func (t *TTSService) GetResServiceVersion() string {
 
 func (t *TTSService) GetSpeakers() []*data.SpeakerInfo {
 	return t.Speakers
+}
+
+func (t *TTSService) GetUserSpeakers(userspace string) ([]string, error) {
+	cUserspace := C.CString(userspace)
+	defer C.free(unsafe.Pointer(cUserspace))
+	var speakerNum C.int
+
+	if ok := C.GetUserSpaceSupportedSpeaker(cUserspace, (***C.Char)(unsafe.Pointer(&C.speakerList)), &speakerNum); ok != 0 {
+		return nil, errors.New("fail to get user space supported speaker")
+	}
+	speakers := make([]string, speakerNum)
+	if C.speakerList != nil && speakerNum > 0 {
+		tmpSlice := (*[1<<30]*C.char)(unsafe.Pointer(C.speakerList))[:int(speakerNum):int(speakerNum)]
+		for i, v := range tmpSlice {
+			speakers[i] = C.GoString(v)
+		}
+	}
+	return speakers, nil
+
 }
 
 func (t *TTSService) GetSpeakerSetting() *data.SpeakerSetting {

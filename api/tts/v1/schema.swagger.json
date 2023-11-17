@@ -75,23 +75,19 @@
           "items": {
             "type": "number",
             "format": "float"
-          },
-          "title": "具体的表情数据, frame_size*frame_dim"
+          }
         },
         "frame_size": {
           "type": "integer",
-          "format": "int32",
-          "title": "表情帧数"
+          "format": "int32"
         },
         "frame_dim": {
           "type": "integer",
-          "format": "int32",
-          "title": "一帧的维度，即多少个float"
+          "format": "int32"
         },
         "frame_time": {
           "type": "number",
-          "format": "float",
-          "title": "一帧的持续时间"
+          "format": "float"
         }
       }
     },
@@ -102,8 +98,7 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/schemaSpeakerParameter"
-          },
-          "title": "发音人列表"
+          }
         }
       }
     },
@@ -112,16 +107,13 @@
       "properties": {
         "speakerId": {
           "type": "integer",
-          "format": "int32",
-          "title": "发音人id"
+          "format": "int32"
         },
         "speakerName": {
-          "type": "string",
-          "title": "发音人名字"
+          "type": "string"
         },
         "parameterSpeakerName": {
-          "type": "string",
-          "title": "发音人英文名字"
+          "type": "string"
         }
       }
     },
@@ -130,13 +122,11 @@
       "properties": {
         "durationUs": {
           "type": "string",
-          "format": "uint64",
-          "title": "时间"
+          "format": "uint64"
         },
         "mouth": {
           "type": "integer",
-          "format": "int32",
-          "title": "嘴型 enum MouthShape"
+          "format": "int32"
         }
       }
     },
@@ -144,44 +134,34 @@
       "type": "object",
       "properties": {
         "location": {
-          "type": "string",
-          "title": "Cloud 传固定值"
+          "type": "string"
         },
         "type": {
-          "type": "string",
-          "title": "CloudMinds  传固定值"
+          "type": "string"
         },
         "speaker": {
-          "$ref": "#/definitions/schemaspeakerInfo",
-          "title": "具体发音人的id 发音人具体参考"
+          "$ref": "#/definitions/schemaspeakerInfo"
         },
         "speed": {
-          "type": "string",
-          "title": "1 2 3 4 5 发音速度 默认3"
+          "type": "string"
         },
         "volume": {
-          "type": "string",
-          "title": "1 2 3 4 5 发音音量 默认3"
+          "type": "string"
         },
         "pitch": {
-          "type": "string",
-          "title": "low medium high  音调 默认 medium"
+          "type": "string"
         },
         "streamEnable": {
-          "type": "boolean",
-          "title": "是否流式合成  默认 false"
+          "type": "boolean"
         },
         "text": {
-          "type": "string",
-          "title": "具体需要合成的文本"
+          "type": "string"
         },
         "textPreHandle": {
-          "type": "boolean",
-          "title": "是否需要文本预处理"
+          "type": "boolean"
         },
         "voiceTuning": {
-          "type": "string",
-          "title": "voiceTuning开关,传 \"on\"或者\"off\""
+          "type": "string"
         },
         "Emotions": {
           "type": "string",
@@ -207,43 +187,34 @@
       "properties": {
         "pcm": {
           "type": "string",
-          "format": "byte",
-          "title": "具体的音频流(不会有空帧出现)"
+          "format": "byte"
         },
         "status": {
-          "$ref": "#/definitions/schemapcmStatus",
-          "title": "pcm状态(2中间状态，目前只有2)"
+          "$ref": "#/definitions/schemapcmStatus"
         },
         "error": {
-          "$ref": "#/definitions/schemattsErr",
-          "title": "错误码"
+          "$ref": "#/definitions/schemattsErr"
         },
         "mouths": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/schemaTimedMouthShape"
-          },
-          "title": "嘴型，status=2时输出，"
+          }
         },
         "DebugInfo": {
-          "type": "string",
-          "title": "调试信息,当有debufinfo时需要输出"
+          "type": "string"
         },
         "Version": {
-          "type": "string",
-          "title": "每次调用都要返回version信息"
+          "type": "string"
         },
         "NormalizedText": {
-          "type": "string",
-          "title": "当前正在合成的正则后的文本片段"
+          "type": "string"
         },
         "originalText": {
-          "type": "string",
-          "title": "当前正在合成的正则前的文本片段(端侧需要的)"
+          "type": "string"
         },
         "expression": {
-          "$ref": "#/definitions/schemaExpression",
-          "title": "表情的具体数据"
+          "$ref": "#/definitions/schemaExpression"
         }
       }
     },
@@ -263,8 +234,7 @@
         "STATUS_MID",
         "STATUS_END"
       ],
-      "default": "STATUS_DEF",
-      "title": "- STATUS_DEF: keep\n - STATUS_START: 开始\n - STATUS_MID: 中间状态\n - STATUS_END: 结束"
+      "default": "STATUS_DEF"
     },
     "schemaspeakerInfo": {
       "type": "string",
@@ -285,8 +255,7 @@
         "DaXiaoBo_Emotions_Female_Adult",
         "DaXiaoWu_Chinese_Mandarin_Female_Adult"
       ],
-      "default": "DaXiaoFang_Chinese_Mandarin_Female_Adult",
-      "title": "- DaXiaoFang_Chinese_Mandarin_Female_Adult: 达小芳（温柔女声）\n - DaXiaoQi_Chinese_Mandarin_Female_Adult: 达小琪（甜美女声）\n - DaDaQiang_Chinese_Mandarin_Male_Adult: 达大强（磁性男声）\n - DaDaGang_Chinese_Mandarin_Male_Adult: 达大刚（标准男声）\n - DaTongTong_Chinese_Mandarin_Female_Child: 达彤彤（儿童女声）\n - DaMingMing_Chinese_Mandarin_Male_Child: 达明明（儿童男声）\n - DaXiaoChuan_Chinese_Sichuan_Female_Adult: 达小川（四川女声）\n - DaXiaoYue_Chinese_Yueyu_Female_Adult: 达小粤（粤语女声）\n - DaXiaoBei_Chinese_Dongbei_Female_Adult: 达小北（东北女声）\n - DaXiaoTai_Chinese_Taiwan_Female_Adult: 达小台（台湾女声）\n - DaDaXiang_Chinese_Hunan_Male_Adult: 达大湘（湖南男声）\n - DaXiaoHu_Chinese_ShangHai_Female_Adult: 达小沪（上海女声）\n - DaXiaoguan_English_Female_Adult: 达小罐（英文女声）\n - DaXiaoBo_Emotions_Female_Adult: 达小波（情感发音人）\n - DaXiaoWu_Chinese_Mandarin_Female_Adult: 达小舞（电音女声)"
+      "default": "DaXiaoFang_Chinese_Mandarin_Female_Adult"
     },
     "schemattsErr": {
       "type": "string",
@@ -307,8 +276,7 @@
         "TTS_ERR_TEXT_NORMALIZE",
         "TTS_ERR_INVALID_VOICE_TUNING"
       ],
-      "default": "TTS_ERR_INIT",
-      "title": "- TTS_ERR_INIT: keep\n - TTS_ERR_OK: tts服务正常返回\n - TTS_ERR_INVALID_RATE: rate值错误\n - TTS_ERR_TEXT_LENGTH_OVERFLOW: 请求文本过长\n - TTS_ERR_INVALID_SPEED: 无效的speed[1,5],默认3\n - TTS_ERR_INVALID_VOLUME: 无效的volume[1,5],默认3\n - TTS_ERR_INVALID_PITCH: 无效的pitch[low,medium,high],默认medium\n - TTS_ERR_INVALID_SPEAKER: 无效的发音人\n - TTS_ERR_INVALID_TYPE: 无效的type,只支持CloudMinds\n - TTS_ERR_SYN_CANCELLED: 音频合成cancelled\n - TTS_ERR_SYN_FAILURE: 音频合成异常：cuda oom\n - TTS_ERR_NO_FREE_MOUDLE: 没有可用的decoder\n - TTS_ERR_MODULE_INPUT_TEXT: 模型输入文本出错\n - TTS_ERR_TEXT_NORMALIZE: 文本序列化出错\n - TTS_ERR_INVALID_VOICE_TUNING: 无效的后置开关值[on,off]"
+      "default": "TTS_ERR_INIT"
     }
   }
 }

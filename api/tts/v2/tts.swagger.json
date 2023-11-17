@@ -16,6 +16,43 @@
     "application/json"
   ],
   "paths": {
+    "/speech/tts/get-user-speakers": {
+      "get": {
+        "summary": "获取指定用户发音人信息",
+        "operationId": "CloudMindsTTS_GetUserSpeakers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ttsschemaGetUserSpeakersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "trace_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "CloudMindsTTS"
+        ]
+      }
+    },
     "/speech/tts/getConfig": {
       "get": {
         "summary": "获取服务端配置信息",
@@ -128,26 +165,21 @@
       "properties": {
         "action_type": {
           "type": "integer",
-          "format": "int32",
-          "title": "actionType 基元类型，-100\u003caction_type\u003c100"
+          "format": "int32"
         },
         "url": {
-          "type": "string",
-          "title": "基元数据的url"
+          "type": "string"
         },
         "operation_type": {
           "type": "integer",
-          "format": "int32",
-          "title": "action操作类型，-100\u003coperation_type\u003c100"
+          "format": "int32"
         },
         "coordinate": {
-          "$ref": "#/definitions/ttsschemaCoordinate",
-          "title": "该数据的坐标信息"
+          "$ref": "#/definitions/ttsschemaCoordinate"
         },
         "render_duration": {
           "type": "integer",
-          "format": "int32",
-          "title": "render_duration 渲染时长（该值不应大于文件时长）单位ms，-1代表持续到指定文件结束，-2代表由coordinate的len_utf8部分决定时长"
+          "format": "int32"
         }
       },
       "title": "Action基元数据"
@@ -160,18 +192,15 @@
           "items": {
             "type": "number",
             "format": "float"
-          },
-          "title": "具体动作数据，frame_dim*frame_size个float,frame_dim见BodyMovementConfig"
+          }
         },
         "frame_size": {
           "type": "integer",
-          "format": "int32",
-          "title": "动作帧数"
+          "format": "int32"
         },
         "start_time_ms": {
           "type": "number",
-          "format": "float",
-          "title": "起始时间，单位ms"
+          "format": "float"
         }
       },
       "title": "动作"
@@ -181,17 +210,14 @@
       "properties": {
         "frame_dim": {
           "type": "integer",
-          "format": "int32",
-          "title": "每帧的维度，即一帧由frameDim个float组成"
+          "format": "int32"
         },
         "frame_dur_ms": {
           "type": "number",
-          "format": "float",
-          "title": "每帧的持续时长"
+          "format": "float"
         },
         "meta_data": {
-          "type": "string",
-          "title": "伴生数据的其他描述性信息(json)"
+          "type": "string"
         }
       }
     },
@@ -201,23 +227,19 @@
         "invalid",
         "version"
       ],
-      "default": "invalid",
-      "title": "- invalid: 无效的版本号\n - version: 当前客户端的版本号"
+      "default": "invalid"
     },
     "ttsschemaConfigAndText": {
       "type": "object",
       "properties": {
         "text": {
-          "type": "string",
-          "title": "文本信息"
+          "type": "string"
         },
         "facial_expression_config": {
-          "$ref": "#/definitions/ttsschemaFacialExpressionConfig",
-          "title": "表情配置"
+          "$ref": "#/definitions/ttsschemaFacialExpressionConfig"
         },
         "body_movement_config": {
-          "$ref": "#/definitions/ttsschemaBodyMovementConfig",
-          "title": "动作配置"
+          "$ref": "#/definitions/ttsschemaBodyMovementConfig"
         }
       },
       "title": "音频流"
@@ -227,18 +249,15 @@
       "properties": {
         "off": {
           "type": "integer",
-          "format": "int32",
-          "title": "文本起点"
+          "format": "int32"
         },
         "len": {
           "type": "integer",
-          "format": "int32",
-          "title": "文本长度"
+          "format": "int32"
         },
         "order": {
           "type": "integer",
-          "format": "int32",
-          "title": "当len_utf8 = 0时，order与off_utf8一起描述一个的时间点。具体地，当off_utf8相同时，order相同则认为同时，order不同时，0优先，1次之，依次类推\n 当len_utf8 \u003e 0时，order无意义"
+          "format": "int32"
         }
       },
       "title": "坐标信息"
@@ -247,12 +266,10 @@
       "type": "object",
       "properties": {
         "debug_type": {
-          "type": "string",
-          "title": "调试类型"
+          "type": "string"
         },
         "info": {
-          "type": "string",
-          "title": "调试信息"
+          "type": "string"
         }
       },
       "title": "调试信息"
@@ -265,18 +282,15 @@
           "items": {
             "type": "number",
             "format": "float"
-          },
-          "title": "具体的表情数据, frame_size*frame_dim,frame_dim见FacialExpressionConfig"
+          }
         },
         "frame_size": {
           "type": "integer",
-          "format": "int32",
-          "title": "表情帧数"
+          "format": "int32"
         },
         "start_time_ms": {
           "type": "number",
-          "format": "float",
-          "title": "起始时间，单位ms"
+          "format": "float"
         }
       },
       "title": "表情"
@@ -286,17 +300,25 @@
       "properties": {
         "frame_dim": {
           "type": "integer",
-          "format": "int32",
-          "title": "每帧的维度，即一帧由frameDim个float组成"
+          "format": "int32"
         },
         "frame_dur_ms": {
           "type": "number",
-          "format": "float",
-          "title": "每帧的持续时长"
+          "format": "float"
         },
         "meta_data": {
-          "type": "string",
-          "title": "伴生数据的其他描述性信息(json)"
+          "type": "string"
+        }
+      }
+    },
+    "ttsschemaGetUserSpeakersResponse": {
+      "type": "object",
+      "properties": {
+        "speakers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -304,12 +326,10 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "title": "参数"
+          "type": "string"
         },
         "chinese_name": {
-          "type": "string",
-          "title": "对应中文"
+          "type": "string"
         }
       }
     },
@@ -317,12 +337,10 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "title": "参数"
+          "type": "string"
         },
         "chinese_name": {
-          "type": "string",
-          "title": "对应中文"
+          "type": "string"
         }
       }
     },
@@ -330,12 +348,10 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "title": "用于传参"
+          "type": "string"
         },
         "chinese_name": {
-          "type": "string",
-          "title": "对应中文"
+          "type": "string"
         }
       }
     },
@@ -343,12 +359,10 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "title": "用于传参"
+          "type": "string"
         },
         "chinese_name": {
-          "type": "string",
-          "title": "对应中文"
+          "type": "string"
         }
       }
     },
@@ -356,12 +370,10 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "title": "参数"
+          "type": "string"
         },
         "chinese_name": {
-          "type": "string",
-          "title": "对应中文"
+          "type": "string"
         }
       }
     },
@@ -389,57 +401,49 @@
       "type": "object",
       "properties": {
         "speaker_list": {
-          "$ref": "#/definitions/ttsschemaSpeakerList",
-          "title": "发音人列表"
+          "$ref": "#/definitions/ttsschemaSpeakerList"
         },
         "speed_list": {
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "title": "SupportedSpeed"
+          }
         },
         "volume_list": {
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "title": "SupportedVolume"
+          }
         },
         "pitch_list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ttsschemaMessagePitch"
-          },
-          "title": "SupportedPitch"
+          }
         },
         "emotion_list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ttsschemaMessageEmotion"
-          },
-          "title": "SupportedEmotion"
+          }
         },
         "digital_person_list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ttsschemaMessageDigitalPerson"
-          },
-          "title": "MessageDigitalPerson 废弃不用"
+          }
         },
         "movement_list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ttsschemaMessageMovement"
-          },
-          "title": "SupportedMovement  动作"
+          }
         },
         "expression_list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ttsschemaMessageExpression"
-          },
-          "title": "SupportedExpression 表情"
+          }
         }
       }
     },
@@ -450,8 +454,7 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/ttsschemaSpeakerParameter"
-          },
-          "title": "发音人列表"
+          }
         }
       }
     },
@@ -460,24 +463,19 @@
       "properties": {
         "speaker_id": {
           "type": "integer",
-          "format": "int32",
-          "title": "发音人id （废弃不用）"
+          "format": "int32"
         },
         "speaker_name": {
-          "type": "string",
-          "title": "发音人名字"
+          "type": "string"
         },
         "parameter_speaker_name": {
-          "type": "string",
-          "title": "发音人英文名字"
+          "type": "string"
         },
         "is_support_emotion": {
-          "type": "boolean",
-          "title": "是否支持情感"
+          "type": "boolean"
         },
         "is_support_mixed_voice": {
-          "type": "boolean",
-          "title": "是否支持混合发音"
+          "type": "boolean"
         }
       }
     },
@@ -486,17 +484,14 @@
       "properties": {
         "pcm": {
           "type": "string",
-          "format": "byte",
-          "title": "pcm"
+          "format": "byte"
         },
         "coordinate": {
-          "$ref": "#/definitions/ttsschemaCoordinate",
-          "title": "坐标信息"
+          "$ref": "#/definitions/ttsschemaCoordinate"
         },
         "is_punctuation": {
           "type": "integer",
-          "format": "int32",
-          "title": "是否标点1是标点"
+          "format": "int32"
         }
       },
       "title": "音频流"
@@ -506,13 +501,11 @@
       "properties": {
         "duration_us": {
           "type": "string",
-          "format": "uint64",
-          "title": "时间"
+          "format": "uint64"
         },
         "mouth": {
           "type": "integer",
-          "format": "int32",
-          "title": "嘴型 enum MouthShape"
+          "format": "int32"
         }
       }
     },
@@ -523,13 +516,11 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/ttsschemaTimedMouthShape"
-          },
-          "title": "口型数据"
+          }
         },
         "start_time_ms": {
           "type": "number",
-          "format": "float",
-          "title": "该段口型的起始时间，单位ms"
+          "format": "float"
         }
       },
       "title": "口型"
@@ -539,45 +530,35 @@
       "properties": {
         "error_code": {
           "type": "integer",
-          "format": "int32",
-          "title": "错误码，非0为错误，0为正确"
+          "format": "int32"
         },
         "status": {
           "type": "integer",
-          "format": "int32",
-          "title": "合成状态，1.开始，2.中间，3，结束"
+          "format": "int32"
         },
         "error_msg": {
-          "type": "string",
-          "title": "错误信息正确为空，不正确具体字符串"
+          "type": "string"
         },
         "synthesized_audio": {
-          "$ref": "#/definitions/ttsschemaSynthesizedAudio",
-          "title": "音频"
+          "$ref": "#/definitions/ttsschemaSynthesizedAudio"
         },
         "debug_info": {
-          "$ref": "#/definitions/ttsschemaDebugInfo",
-          "title": "调试信息,当有debug_info时需要输出"
+          "$ref": "#/definitions/ttsschemaDebugInfo"
         },
         "action_element": {
-          "$ref": "#/definitions/ttsschemaActionElement",
-          "title": "基元数据"
+          "$ref": "#/definitions/ttsschemaActionElement"
         },
         "config_text": {
-          "$ref": "#/definitions/ttsschemaConfigAndText",
-          "title": "文本配置信息start时会返回"
+          "$ref": "#/definitions/ttsschemaConfigAndText"
         },
         "time_mouth_shapes": {
-          "$ref": "#/definitions/ttsschemaTimedMouthShapes",
-          "title": "口型数据"
+          "$ref": "#/definitions/ttsschemaTimedMouthShapes"
         },
         "expression": {
-          "$ref": "#/definitions/ttsschemaExpression",
-          "title": "表情数据"
+          "$ref": "#/definitions/ttsschemaExpression"
         },
         "body_movement": {
-          "$ref": "#/definitions/ttsschemaBodyMovement",
-          "title": "动作数据"
+          "$ref": "#/definitions/ttsschemaBodyMovement"
         }
       }
     },
@@ -585,8 +566,7 @@
       "type": "object",
       "properties": {
         "version": {
-          "type": "string",
-          "title": "版本号"
+          "type": "string"
         }
       }
     }

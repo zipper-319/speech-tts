@@ -6,6 +6,7 @@ option go_package = "speech-tts/api/tts/v2;v2";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
 
 service CloudMindsTTS {
     // 合成音频流的流式接口
@@ -21,6 +22,13 @@ service CloudMindsTTS {
         // 获取服务端配置信息
         option (google.api.http) = {
             get: "/speech/tts/getConfig",
+        };
+    }
+
+    //获取指定用户发音人信息
+    rpc GetUserSpeakers(GetUserSpeakersRequest) returns (GetUserSpeakersResponse){
+        option (google.api.http) = {
+            get: "/speech/tts/get-user-speakers",
         };
     }
 
@@ -215,4 +223,13 @@ message  RegisterReq {
 
 message RegisterResp{
     string token = 1;
+}
+
+message GetUserSpeakersRequest{
+    string trace_id = 1;
+    string user = 2;
+}
+
+message GetUserSpeakersResponse{
+    repeated string  speakers = 1;
 }

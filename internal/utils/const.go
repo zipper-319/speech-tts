@@ -54,3 +54,5 @@ var SpeakerMap = map[string]string{
 	"daxiaobao_chinese_mandarin_female_child":  "DaXiaoBao",
 	"doctorzhao_chinese_mandarin_male_adult":   "DoctorZhao",
 }
+
+const DefaultUser = "cloudminds"

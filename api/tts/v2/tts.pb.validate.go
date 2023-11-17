@@ -184,18 +184,9 @@ func (m *TtsRes) validate(all bool) error {
 
 	// no validation rules for ErrorMsg
 
-	switch v := m.ResultOneof.(type) {
+	switch m.ResultOneof.(type) {
+
 	case *TtsRes_SynthesizedAudio:
-		if v == nil {
-			err := TtsResValidationError{
-				field:  "ResultOneof",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
 
 		if all {
 			switch v := interface{}(m.GetSynthesizedAudio()).(type) {
@@ -227,16 +218,6 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_DebugInfo:
-		if v == nil {
-			err := TtsResValidationError{
-				field:  "ResultOneof",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
 
 		if all {
 			switch v := interface{}(m.GetDebugInfo()).(type) {
@@ -268,16 +249,6 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_ActionElement:
-		if v == nil {
-			err := TtsResValidationError{
-				field:  "ResultOneof",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
 
 		if all {
 			switch v := interface{}(m.GetActionElement()).(type) {
@@ -309,16 +280,6 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_ConfigText:
-		if v == nil {
-			err := TtsResValidationError{
-				field:  "ResultOneof",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
 
 		if all {
 			switch v := interface{}(m.GetConfigText()).(type) {
@@ -350,16 +311,6 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_TimeMouthShapes:
-		if v == nil {
-			err := TtsResValidationError{
-				field:  "ResultOneof",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
 
 		if all {
 			switch v := interface{}(m.GetTimeMouthShapes()).(type) {
@@ -391,16 +342,6 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_Expression:
-		if v == nil {
-			err := TtsResValidationError{
-				field:  "ResultOneof",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
 
 		if all {
 			switch v := interface{}(m.GetExpression()).(type) {
@@ -432,16 +373,6 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_BodyMovement:
-		if v == nil {
-			err := TtsResValidationError{
-				field:  "ResultOneof",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
 
 		if all {
 			switch v := interface{}(m.GetBodyMovement()).(type) {
@@ -472,8 +403,6 @@ func (m *TtsRes) validate(all bool) error {
 			}
 		}
 
-	default:
-		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -3421,3 +3350,211 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RegisterRespValidationError{}
+
+// Validate checks the field values on GetUserSpeakersRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserSpeakersRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserSpeakersRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserSpeakersRequestMultiError, or nil if none found.
+func (m *GetUserSpeakersRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserSpeakersRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TraceId
+
+	// no validation rules for User
+
+	if len(errors) > 0 {
+		return GetUserSpeakersRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserSpeakersRequestMultiError is an error wrapping multiple validation
+// errors returned by GetUserSpeakersRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetUserSpeakersRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserSpeakersRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserSpeakersRequestMultiError) AllErrors() []error { return m }
+
+// GetUserSpeakersRequestValidationError is the validation error returned by
+// GetUserSpeakersRequest.Validate if the designated constraints aren't met.
+type GetUserSpeakersRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserSpeakersRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserSpeakersRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserSpeakersRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserSpeakersRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserSpeakersRequestValidationError) ErrorName() string {
+	return "GetUserSpeakersRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserSpeakersRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserSpeakersRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserSpeakersRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserSpeakersRequestValidationError{}
+
+// Validate checks the field values on GetUserSpeakersResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserSpeakersResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserSpeakersResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserSpeakersResponseMultiError, or nil if none found.
+func (m *GetUserSpeakersResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserSpeakersResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetUserSpeakersResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserSpeakersResponseMultiError is an error wrapping multiple validation
+// errors returned by GetUserSpeakersResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetUserSpeakersResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserSpeakersResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserSpeakersResponseMultiError) AllErrors() []error { return m }
+
+// GetUserSpeakersResponseValidationError is the validation error returned by
+// GetUserSpeakersResponse.Validate if the designated constraints aren't met.
+type GetUserSpeakersResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserSpeakersResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserSpeakersResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserSpeakersResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserSpeakersResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserSpeakersResponseValidationError) ErrorName() string {
+	return "GetUserSpeakersResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserSpeakersResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserSpeakersResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserSpeakersResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserSpeakersResponseValidationError{}

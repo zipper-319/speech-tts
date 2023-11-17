@@ -1,6 +1,8 @@
 #ifndef TTS_SETTING_H
 #define TTS_SETTING_H
 
+extern const char* DefaultUserSpace;//value: "cloudminds"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -107,12 +109,12 @@ typedef struct{
     /**
     * 发音人中文最大长度
     */
-    const int CHINESE_WORDS_LIMIT;
+    int CHINESE_WORDS_LIMIT;
 
     /**
     * 发音人英文最大长度
     */
-    const int ENGLISH_WORDS_LIMIT;
+    int ENGLISH_WORDS_LIMIT;
 
 }SpeakerDescriptor;
 
@@ -218,6 +220,10 @@ typedef struct{
     * 语种提示，提示合成请求的文本的语种（https://zh.wikipedia.org/zh-hans/ISO_639-1 http://www.lingoes.net/zh/translator/langcode.htm ，当前只支持中文——zh(含变种)，英文——en）
     */
     const char* languageTip;
+    /**
+    * 指定speaker所属的用户空间，即要访问的该用户空间下的speaker，为空时默认为cloudminds
+    */
+    const char* userSpace;
 }TtsSetting;
 
 
@@ -237,7 +243,23 @@ int GetSupportedSpeaker(const char*** supportedSpeakers, unsigned int *element_n
 */
 int GetSupportedParameter(unsigned int type, const char*** supportedValues, unsigned int *element_num);
 
-const SpeakerDescriptor* GetSpeakerDescriptor(const char* speakerName);
+/**
+* 获取特定用户空间下发音人的发音人描述
+* @param userSpace 用户空间
+* @param speakerName 发音人
+* @return SpeakerDescriptor指针
+*/
+const SpeakerDescriptor* GetSpeakerDescriptor(const char* userSpace, const char* speakerName);
+
+
+/**
+* 获取特定用户空间下的发音人数组
+* @param userSpace 用户空间
+* @param supportedSpeakers 用于输出发音人（名字）数组
+* @param element_num 用于输出发音人的个数（即发音人数组的大小）
+* @return 0--成功,&lt;0--失败
+*/
+int GetUserSpaceSupportedSpeaker(const char* userSpace, const char*** supportedSpeakers, unsigned int *element_num);
 
 #ifdef __cplusplus
 }

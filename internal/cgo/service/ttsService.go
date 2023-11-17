@@ -171,14 +171,14 @@ func (t *TTSService) GetSpeakers() []*data.SpeakerInfo {
 func (t *TTSService) GetUserSpeakers(userspace string) ([]string, error) {
 	cUserspace := C.CString(userspace)
 	defer C.free(unsafe.Pointer(cUserspace))
-	var speakerNum C.int
+	var speakerNum C.uint
 
 	if ok := C.GetUserSpaceSupportedSpeaker(cUserspace, (***C.char)(unsafe.Pointer(&C.speakerList)), &speakerNum); ok != 0 {
 		return nil, errors.New("fail to get user space supported speaker")
 	}
 	speakers := make([]string, speakerNum)
 	if C.speakerList != nil && speakerNum > 0 {
-		tmpSlice := (*[1<<30]*C.char)(unsafe.Pointer(C.speakerList))[:int(speakerNum):int(speakerNum)]
+		tmpSlice := (*[1 << 30]*C.char)(unsafe.Pointer(C.speakerList))[:int(speakerNum):int(speakerNum)]
 		for i, v := range tmpSlice {
 			speakers[i] = C.GoString(v)
 		}

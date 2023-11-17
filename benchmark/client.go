@@ -2,9 +2,11 @@ package benchmark
 
 import (
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
 	"sync"
@@ -95,7 +97,7 @@ func TestTTSV1(ctx context.Context, addr, text, speaker, traceId, robotTraceId s
 	return nil
 }
 
-func TestTTSV2(ctx context.Context, addr, text, speaker, traceId, robotTraceId, movement, expression string, num int) error {
+func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTraceId, movement, expression string, num int) error {
 
 	now := time.Now()
 	conn, err := GetGrpcConn(addr, ctx)
@@ -126,6 +128,7 @@ func TestTTSV2(ctx context.Context, addr, text, speaker, traceId, robotTraceId, 
 		ParameterFlag:        flagSet,
 		Version:              v2.ClientVersion_version,
 		Language:             "zh",
+		Userspace:            user,
 	}
 
 	response, err := ttsV2Client.Call(ctx, req)
@@ -135,7 +138,11 @@ func TestTTSV2(ctx context.Context, addr, text, speaker, traceId, robotTraceId, 
 	}
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-
+	f, err := os.OpenFile(fmt.Sprintf("./tmp/tts_%d.pcm", num), os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
 	go func() {
 		defer wg.Done()
 		for {
@@ -158,7 +165,12 @@ func TestTTSV2(ctx context.Context, addr, text, speaker, traceId, robotTraceId, 
 				log.Printf("receive message(Type %T)", temp)
 
 				if audio, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
-					log.Printf("pcm length:%d, status:%d", len(audio.SynthesizedAudio.Pcm), temp.Status)
+					n, err := f.Write(audio.SynthesizedAudio.Pcm)
+					if err != nil {
+						log.Println(err)
+						return
+					}
+					log.Printf("pcm length:%d, status:%d, write length:%d", len(audio.SynthesizedAudio.Pcm), temp.Status, n)
 				}
 			}
 		}

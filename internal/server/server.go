@@ -62,7 +62,7 @@ func server(logger log.Logger, timeout int64) middleware.Middleware {
 				"status", status,
 				"message", message,
 				"stack", stack,
-				"result", reply,
+				"result", reflect.ValueOf(reply).Elem().Interface(),
 				"isTimeout", fmt.Sprintf("timeout is %t", isTimeout),
 				"latency", latency,
 			)

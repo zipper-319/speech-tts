@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"io"
 	"log"
-	"math/rand"
 	"os"
 	"speech-tts/benchmark"
 	"strings"
@@ -78,15 +77,15 @@ func main() {
 					"Authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lSWQiOjAsIkFjY291bnQiOiJIQVJJWF9BSV9TSE9XX1BMQVRGT1JNIiwiUm9sZSI6IiIsImF1ZCI6WyJIQVJJWF9BSV9TSE9XX1BMQVRGT1JNIl0sImV4cCI6MTg0NjU2NDcwMCwiaWF0IjoxNjkxMDQ0NzAwLCJqdGkiOiI1NWY0N2U5Ni0zMWM4LTExZWUtOGZmNi00YWFlYTEwZTg5MWMifQ.Aj0dadEH1aXSIvz6RWGtmFXSbzY-QQS_-9jEDpB4IYU",
 				)
 				ctxBase := metadata.NewOutgoingContext(context.Background(), md)
-				ctx, cancel := context.WithCancel(ctxBase)
+				ctx, _ := context.WithCancel(ctxBase)
 
-				go func() {
-					rand.Seed(time.Now().UnixNano())
-					n := rand.Int31n(1000) + 100
-					time.Sleep(time.Millisecond * time.Duration(n))
-					cancel()
-					log.Printf("cancel after %d ms ", n)
-				}()
+				//go func() {
+				//	rand.Seed(time.Now().UnixNano())
+				//	n := rand.Int31n(1000) + 100
+				//	time.Sleep(time.Millisecond * time.Duration(n))
+				//	cancel()
+				//	log.Printf("cancel after %d ms ", n)
+				//}()
 
 				if currentTestVersion == "v1" {
 
@@ -97,8 +96,10 @@ func main() {
 					}
 
 				} else {
-
-					if err := benchmark.TestTTSV2(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
+					//user := utils.DefaultUser
+					user := "bill"
+					speaker := "testBIll"
+					if err := benchmark.TestTTSV2(ctx, user, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
 						movement, expression, num); err != nil {
 						log.Println("_________")
 						log.Printf("TestTTSV2; goroutine id:%d; err:%v", i, err)

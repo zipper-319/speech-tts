@@ -94,7 +94,7 @@ func ReLoadTTSResource(callback resource.CallbackFn) gin.HandlerFunc {
 		log.Infof("reload resource, resType:%d, language:%d", req.ResType, req.Language)
 
 		if int(req.ResType) < int(ttsData.ResType_Model) {
-			fileName, err := resource.SaveResource(resource.TransForm(req.DataMap), req.ResType, req.Language)
+			fileName, err := resource.SaveResource(req.DataMap, req.ResType, req.Language)
 			if err != nil {
 				log.Error(err)
 			}

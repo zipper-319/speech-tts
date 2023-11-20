@@ -95,7 +95,7 @@ func GetTTSResAndSave(ctx context.Context, resType ttsData.ResType, languageType
 	if err != nil {
 		return "", err
 	}
-	return SaveResource(dataList, resType, languageType)
+	return SaveResource(TransForm(dataList), resType, languageType)
 }
 
 func InitTTSResource(ctx context.Context, fn CallbackFn) error {
@@ -136,13 +136,17 @@ func InitTTSResource(ctx context.Context, fn CallbackFn) error {
 	return nil
 }
 
-func SaveResource(dataList []*ttsData.GetTtsDataResponse_TTSData, resType ttsData.ResType, languageType ttsData.LanguageType) (string, error) {
+func SaveResource(dataMap map[string]string, resType ttsData.ResType, languageType ttsData.LanguageType) (string, error) {
 	fileName := fmt.Sprintf("%s/%s_%s.txt", ResPath, resType.String(), languageType.String())
-	dataListByte, _ := json.Marshal(dataList)
-	d := md5.Sum(dataListByte)
+	dataMapByte, _ := json.Marshal(dataMap)
+	d := md5.Sum(dataMapByte)
 	version := hex.EncodeToString(d[:])
 	log.Infof("SaveResource fileName:%s,version:%s, oldVersion:%s", fileName, version, ResVersionMap[fileName])
 	if ResVersionMap[fileName] == version {
+		_, err := os.Stat(fileName)
+		if err != nil && os.IsNotExist(err) {
+			os.Create(fileName)
+		}
 		return fileName, nil
 	}
 	ResVersionMap[fileName] = version
@@ -159,8 +163,8 @@ func SaveResource(dataList []*ttsData.GetTtsDataResponse_TTSData, resType ttsDat
 	}
 	defer f.Close()
 	var n int
-	for _, v := range dataList {
-		i, _ := f.WriteString(fmt.Sprintf("%s%s%s\n", v.Key, split, v.Value))
+	for k, v := range dataMap {
+		i, _ := f.WriteString(fmt.Sprintf("%s%s%s\n", k, split, v))
 		n += i
 	}
 	log.Infof("write file:%s, length:%d", fileName, n)
@@ -192,13 +196,10 @@ func GetSpeakerModel(ctx context.Context, fn CallbackFn) error {
 	return nil
 }
 
-func TransForm(dataMap map[string]string) []*ttsData.GetTtsDataResponse_TTSData {
-	result := make([]*ttsData.GetTtsDataResponse_TTSData, 0, len(dataMap))
-	for k, v := range dataMap {
-		result = append(result, &ttsData.GetTtsDataResponse_TTSData{
-			Key:   k,
-			Value: v,
-		})
+func TransForm(dataList []*ttsData.GetTtsDataResponse_TTSData  ) map[string]string {
+	result := make(map[string]string,  len(dataList))
+	for _, v := range dataList {
+		result[v.Key] = v.Value
 	}
 	return result
 }

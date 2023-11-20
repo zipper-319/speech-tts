@@ -141,17 +141,23 @@ func SaveResource(dataMap map[string]string, resType ttsData.ResType, languageTy
 	dataMapByte, _ := json.Marshal(dataMap)
 	d := md5.Sum(dataMapByte)
 	version := hex.EncodeToString(d[:])
+	isExist := true
 	log.Infof("SaveResource fileName:%s,version:%s, oldVersion:%s", fileName, version, ResVersionMap[fileName])
+	_, err := os.Stat(fileName)
+	if err != nil && os.IsNotExist(err) {
+		isExist = false
+	}
 	if ResVersionMap[fileName] == version {
-		_, err := os.Stat(fileName)
-		if err != nil && os.IsNotExist(err) {
+		if !isExist {
 			os.Create(fileName)
 		}
 		return fileName, nil
 	}
 	ResVersionMap[fileName] = version
 
-	os.Rename(fileName, fileName+".bak"+time.Now().Format("20060102150405"))
+	if isExist {
+		os.Rename(fileName, fileName+".bak"+time.Now().Format("20060102150405"))
+	}
 	split := ResourceSplit
 	if resType == ttsData.ResType_Pronounce {
 		split = PronounceSplit
@@ -196,8 +202,8 @@ func GetSpeakerModel(ctx context.Context, fn CallbackFn) error {
 	return nil
 }
 
-func TransForm(dataList []*ttsData.GetTtsDataResponse_TTSData  ) map[string]string {
-	result := make(map[string]string,  len(dataList))
+func TransForm(dataList []*ttsData.GetTtsDataResponse_TTSData) map[string]string {
+	result := make(map[string]string, len(dataList))
 	for _, v := range dataList {
 		result[v.Key] = v.Value
 	}

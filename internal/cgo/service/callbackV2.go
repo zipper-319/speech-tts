@@ -309,7 +309,7 @@ func sendResp(object *data.HandlerObjectV2, response v2.TtsRes) {
 }
 
 func getHandlerObject(pUserData unsafe.Pointer) *data.HandlerObjectV2 {
-	handlerObject := pointer.Load(pUserData)
+	handlerObject := pointer.Load(int32(uintptr(pUserData)))
 	if handlerObject == nil {
 		log.Println("don't find to handler object;pUserData:", pUserData)
 		return nil

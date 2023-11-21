@@ -4,6 +4,8 @@ ENV LOGPATH=/opt/speech/tts/runtime/logs \
     PROJECT=speech-tts   \
     MODULE=tts-server    \
     dataServiceEnv=tts-data-service:9001  \
+    dataServiceAddr=tts-data-service:9001  \
+    IsOpenGrpc=true \
     TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
 

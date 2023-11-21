@@ -247,7 +247,7 @@ func (t *TTSService) GetSupportedExpression() []*v2.MessageExpression {
 //	return digitalPersonList
 //}
 
-func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData unsafe.Pointer, traceId string) (int, error) {
+func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData int32, traceId string) (int, error) {
 	var sdkSettings = C.TtsSetting{}
 
 	sdkSettings.speaker = C.CString(req.ParameterSpeakerName)
@@ -277,7 +277,7 @@ func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData unsafe.Pointe
 		text,
 		&sdkSettings,
 		&actionCallback,
-		pUserData,
+		unsafe.Pointer(uintptr(pUserData)),
 		traceIdC,
 	)
 	id := int(idC)
@@ -294,7 +294,7 @@ func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData unsafe.Pointe
 	return id, nil
 }
 
-func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) (int, error) {
+func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData int32) (int, error) {
 	var setting = C.TtsSetting{}
 
 	setting.speaker = C.CString(req.ParameterSpeakerName)
@@ -319,7 +319,7 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData unsafe.Pointer) 
 		text,
 		&setting,
 		&ttsCallback,
-		pUserData,
+		unsafe.Pointer(uintptr(pUserData)),
 		traceId,
 	)
 	id := int(idC)

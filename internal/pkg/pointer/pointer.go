@@ -5,7 +5,6 @@ import "C"
 import (
 	"github.com/pkg/errors"
 	"sync"
-	"unsafe"
 )
 
 var (
@@ -14,9 +13,9 @@ var (
 	id    = int32(0)
 )
 
-func Save(v interface{}) (unsafe.Pointer, error) {
+func Save(v interface{}) (int32, error) {
 	if v == nil {
-		return nil, errors.New("tts object is null")
+		return 0, errors.New("tts object is null")
 	}
 
 	// Generate real fake C pointer.
@@ -30,33 +29,26 @@ func Save(v interface{}) (unsafe.Pointer, error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 	id += 1
-	ptr := unsafe.Pointer(uintptr(id))
 
 	if _, ok := store[id]; ok {
-		return nil, errors.New("cgo-pointer has allocated")
+		return 0, errors.New("cgo-pointer has allocated")
 	}
 	store[id] = v
 
-	return ptr, nil
+	return id, nil
 }
 
-func Load(ptr unsafe.Pointer) (v interface{}) {
-	if ptr == nil {
-		return nil
-	}
+func Load(id int32) (v interface{}) {
 
 	mutex.RLock()
-	v = store[int32(uintptr(ptr))]
+	v = store[id]
 	mutex.RUnlock()
 	return
 }
 
-func Unref(ptr unsafe.Pointer) {
-	if ptr == nil {
-		return
-	}
+func Unref(id int32) {
 
 	mutex.Lock()
-	delete(store, int32(uintptr(ptr)))
+	delete(store, id)
 	mutex.Unlock()
 }

@@ -186,9 +186,18 @@ func (m *TtsRes) validate(all bool) error {
 
 	// no validation rules for ErrorMsg
 
-	switch m.ResultOneof.(type) {
-
+	switch v := m.ResultOneof.(type) {
 	case *TtsRes_SynthesizedAudio:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetSynthesizedAudio()).(type) {
@@ -220,6 +229,16 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_DebugInfo:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetDebugInfo()).(type) {
@@ -251,6 +270,16 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_ActionElement:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetActionElement()).(type) {
@@ -282,6 +311,16 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_ConfigText:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetConfigText()).(type) {
@@ -313,6 +352,16 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_TimeMouthShapes:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetTimeMouthShapes()).(type) {
@@ -344,6 +393,16 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_Expression:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetExpression()).(type) {
@@ -375,6 +434,16 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 	case *TtsRes_BodyMovement:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetBodyMovement()).(type) {
@@ -405,6 +474,8 @@ func (m *TtsRes) validate(all bool) error {
 			}
 		}
 
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -2548,6 +2619,8 @@ func (m *SpeakerParameter) validate(all bool) error {
 
 	// no validation rules for IsSupportMixedVoice
 
+	// no validation rules for IsBelongClone
+
 	if len(errors) > 0 {
 		return SpeakerParameterMultiError(errors)
 	}
@@ -3560,3 +3633,109 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetUserSpeakersResponseValidationError{}
+
+// Validate checks the field values on GetTtsConfigByUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetTtsConfigByUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTtsConfigByUserRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTtsConfigByUserRequestMultiError, or nil if none found.
+func (m *GetTtsConfigByUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTtsConfigByUserRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TraceId
+
+	// no validation rules for User
+
+	if len(errors) > 0 {
+		return GetTtsConfigByUserRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetTtsConfigByUserRequestMultiError is an error wrapping multiple validation
+// errors returned by GetTtsConfigByUserRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetTtsConfigByUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTtsConfigByUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTtsConfigByUserRequestMultiError) AllErrors() []error { return m }
+
+// GetTtsConfigByUserRequestValidationError is the validation error returned by
+// GetTtsConfigByUserRequest.Validate if the designated constraints aren't met.
+type GetTtsConfigByUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTtsConfigByUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTtsConfigByUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTtsConfigByUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTtsConfigByUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTtsConfigByUserRequestValidationError) ErrorName() string {
+	return "GetTtsConfigByUserRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetTtsConfigByUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTtsConfigByUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTtsConfigByUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTtsConfigByUserRequestValidationError{}

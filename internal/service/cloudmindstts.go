@@ -200,3 +200,38 @@ func (s *CloudMindsTTSService) GetUserSpeakers(ctx context.Context, req *pb.GetU
 		Speakers: speakerList,
 	}, nil
 }
+
+func (s *CloudMindsTTSService) GetTtsConfigByUser(ctx context.Context, req *pb.GetTtsConfigByUserRequest) (*pb.RespGetTtsConfig, error) {
+	speakerList := make([]*pb.SpeakerParameter, 0, len(s.uc.Speakers))
+	cloneSpeakerList, err := s.uc.GetUserSpeakers(req.User)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, speaker := range s.uc.Speakers {
+		speakerList = append(speakerList, &pb.SpeakerParameter{
+			SpeakerName:          speaker.SpeakerName,
+			ParameterSpeakerName: speaker.ParameterSpeakerName,
+			IsSupportEmotion:     speaker.IsSupportEmotion,
+			IsSupportMixedVoice:  speaker.IsSupportMixedVoice,
+		})
+	}
+	for _, speaker := range cloneSpeakerList {
+		speakerList = append(speakerList, &pb.SpeakerParameter{
+			ParameterSpeakerName: speaker,
+			IsBelongClone:        true,
+		})
+	}
+
+	return &pb.RespGetTtsConfig{
+		SpeakerList: &pb.SpeakerList{
+			List: speakerList,
+		},
+		SpeedList:      s.uc.SupportedSpeed,
+		VolumeList:     s.uc.SupportedVolume,
+		PitchList:      s.uc.GetSupportedPitch(),
+		EmotionList:    s.uc.GetSupportedEmotion(),
+		MovementList:   s.uc.GetSupportedMovement(),
+		ExpressionList: s.uc.GetSupportedExpression(),
+	}, nil
+}

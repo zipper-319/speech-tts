@@ -32,6 +32,12 @@ service CloudMindsTTS {
         };
     }
 
+    rpc GetTtsConfigByUser(GetTtsConfigByUserRequest) returns (RespGetTtsConfig){
+        option (google.api.http) = {
+            get: "/speech/tts/getConfigByUser",
+        };
+    }
+
     rpc Register(RegisterReq) returns (RegisterResp){
         option (google.api.http) = {
             post: "/speech/tts/register",
@@ -187,6 +193,7 @@ message SpeakerParameter {
     string parameter_speaker_name = 3;                      // 发音人英文名字
     bool is_support_emotion = 4;                            // 是否支持情感
     bool is_support_mixed_voice = 5;                        // 是否支持混合发音
+    bool  is_belong_clone = 6;                              // 是否属于克隆的发音人
 }
 
 message MessagePitch {
@@ -233,4 +240,9 @@ message GetUserSpeakersRequest{
 
 message GetUserSpeakersResponse{
     repeated string  speakers = 1;
+}
+
+message GetTtsConfigByUserRequest{
+    string trace_id = 1;
+    string user = 2;
 }

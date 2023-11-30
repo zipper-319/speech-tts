@@ -216,12 +216,14 @@ func (s *CloudMindsTTSService) GetTtsConfigByUser(ctx context.Context, req *pb.G
 			IsSupportMixedVoice:  speaker.IsSupportMixedVoice,
 		})
 	}
+	log.Debugf("speakerList: %v", speakerList)
 	for _, speaker := range cloneSpeakerList {
 		speakerList = append(speakerList, &pb.SpeakerParameter{
 			ParameterSpeakerName: speaker,
 			IsBelongClone:        true,
 		})
 	}
+	log.Debugf("cloneSpeakerList: %v", speakerList)
 
 	return &pb.RespGetTtsConfig{
 		SpeakerList: &pb.SpeakerList{

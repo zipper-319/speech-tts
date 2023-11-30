@@ -10,7 +10,7 @@ import (
 var (
 	mutex sync.RWMutex
 	store = map[int32]interface{}{}
-	id    = int32(0)
+	id    = int32(10000)
 )
 
 func Save(v interface{}) (int32, error) {

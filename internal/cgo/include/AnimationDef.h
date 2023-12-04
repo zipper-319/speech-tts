@@ -1,7 +1,7 @@
 #ifndef ANIMATION_DEF_H
 #define ANIMATION_DEF_H
 
-typedef char bool;
+#include <MyTypes.h>
 
 #ifdef __cplusplus
 extern "C"

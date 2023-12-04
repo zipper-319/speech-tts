@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"speech-tts/benchmark"
+	"speech-tts/internal/utils"
 	"strings"
 	"sync"
 	"time"
@@ -96,9 +97,7 @@ func main() {
 					}
 
 				} else {
-					//user := utils.DefaultUser
-					user := "bill"
-					speaker := "testBIll"
+					user := utils.DefaultUser
 					if err := benchmark.TestTTSV2(ctx, user, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
 						movement, expression, num); err != nil {
 						log.Println("_________")

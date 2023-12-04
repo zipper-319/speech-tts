@@ -22,7 +22,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-kratos/kratos/v2/log"
+	"log"
 	ttsData "speech-tts/export/service/proto"
 	"speech-tts/export/service/resource"
 	"speech-tts/internal/pkg/util"
@@ -34,23 +34,24 @@ const serviceName = "speech-tts"
 
 //export ResService_Init
 func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int {
+	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
 	ctx := context.Background()
 	fn := Callback(cb, pUserData)
 	go func() {
 		r := gin.Default()
 		r.POST("/resource/update", ReLoadTTSResource(fn))
 		if err := r.Run(port); err != nil {
-			log.Error(err)
+			log.Println(err)
 		}
 	}()
 
 	if err := resource.InitTTSResource(ctx, fn); err != nil {
-		log.Error(err)
+		log.Println(err)
 		return C.int(-1)
 	}
 	// 注册
 	if err := resource.RegisterResService(ctx, serviceName, fmt.Sprintf("http://%s%s/resource/update", util.GetHostIp(), port)); err != nil {
-		log.Error(err)
+		log.Println(err)
 		return C.int(-1)
 	}
 	resource.SaveResVersion()
@@ -60,7 +61,7 @@ func ResService_Init(cb *C.ResService_Callback, pUserData unsafe.Pointer) C.int 
 //export EndInit
 func EndInit() C.int {
 	if err := resource.UnRegisterResService(context.Background(), serviceName, util.GetHostIp()+port); err != nil {
-		log.Error(err)
+		log.Println(err)
 		return C.int(-1)
 	}
 	return C.int(0)
@@ -88,17 +89,17 @@ func ReLoadTTSResource(callback resource.CallbackFn) gin.HandlerFunc {
 	return func(g *gin.Context) {
 		var req UpdateResourceReq
 		if err := g.ShouldBindJSON(&req); err != nil {
-			log.Error(err)
+			log.Println(err)
 			return
 		}
-		log.Infof("reload resource,DataMap:%#v resType:%d, language:%d", req.DataMap, req.ResType, req.Language)
+		log.Printf("reload resource,DataMap:%#v resType:%d, language:%d", req.DataMap, req.ResType, req.Language)
 
 		if int(req.ResType) < int(ttsData.ResType_Model) {
 			fileName, err := resource.SaveResource(req.DataMap, req.ResType, req.Language)
 			if err != nil {
-				log.Error(err)
+				log.Println(err)
 			}
-			log.Infof("reload resource success, fileName:%s", fileName)
+			log.Printf("reload resource success, fileName:%s", fileName)
 			callback(req.ResType, req.Language, fileName)
 		} else if req.ResType == ttsData.ResType_Model {
 			speakerName := req.DataMap["speaker_name"]
@@ -106,10 +107,10 @@ func ReLoadTTSResource(callback resource.CallbackFn) gin.HandlerFunc {
 			modelUrl := req.DataMap["model_url"]
 			dstPath, err := resource.SaveSpeakerModel(modelUrl, speakerOwner, speakerName)
 			if err != nil {
-				log.Error(err)
+				log.Printf("fail to SaveSpeakerModel; modelUrl:%s, err:%v",modelUrl, err)
 				return
 			}
-			log.Infof("save speaker model success,speakerName:%s,speakerOwner:%s,modelUrl:%s, path: %s", speakerName, speakerOwner, modelUrl, dstPath)
+			log.Printf("save speaker model success,speakerName:%s,speakerOwner:%s,modelUrl:%s, path: %s", speakerName, speakerOwner, modelUrl, dstPath)
 			callback(ttsData.ResType_Model, ttsData.LanguageType_Chinese, dstPath)
 		}
 		resource.SaveResVersion()

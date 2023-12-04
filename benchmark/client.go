@@ -2,11 +2,9 @@ package benchmark
 
 import (
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
 	"io"
 	"log"
-	"os"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
 	"sync"
@@ -83,11 +81,11 @@ func TestTTSV1(ctx context.Context, addr, text, speaker, traceId, robotTraceId s
 				if temp.Error != v1.TtsErr_TTS_ERR_OK {
 					log.Printf("tts 内部服务错误：%v", temp.Error)
 				}
-				if temp.Status == v1.PcmStatus_STATUS_END {
-					log.Printf("cost:%d", time.Since(now).Milliseconds())
-				} else {
-					log.Printf("pcm length:%d, status:%s", len(temp.Pcm), temp.Status)
-				}
+				//if temp.Status == v1.PcmStatus_STATUS_END {
+				//	log.Printf("cost:%d", time.Since(now).Milliseconds())
+				//} else {
+				//	log.Printf("pcm length:%d, status:%s", len(temp.Pcm), temp.Status)
+				//}
 
 			}
 		}
@@ -107,7 +105,7 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 	ttsV2Client := v2.NewCloudMindsTTSClient(conn)
 
 	flagSet := make(map[string]string, 3)
-	flagSet["mouth"] = "true"
+	flagSet["mouth"] = "false"
 	if movement != "" {
 		flagSet["movement"] = "true"
 		flagSet["movementPara"] = movement
@@ -138,11 +136,11 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 	}
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-	f, err := os.OpenFile(fmt.Sprintf("./tmp/tts_%d.pcm", num), os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+	//f, err := os.OpenFile(fmt.Sprintf("./tmp/tts_%d.pcm", num), os.O_CREATE|os.O_WRONLY, 0666)
+	//if err != nil {
+	//	return err
+	//}
+	//defer f.Close()
 	go func() {
 		defer wg.Done()
 		for {
@@ -164,13 +162,14 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 				}
 				log.Printf("receive message(Type %T)", temp)
 
-				if audio, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
-					n, err := f.Write(audio.SynthesizedAudio.Pcm)
-					if err != nil {
-						log.Println(err)
-						return
-					}
-					log.Printf("pcm length:%d, status:%d, write length:%d", len(audio.SynthesizedAudio.Pcm), temp.Status, n)
+				if _, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
+					//n, err := f.Write(audio.SynthesizedAudio.Pcm)
+					//if err != nil {
+					//	log.Println(err)
+					//	return
+					//}
+					//log.Printf("pcm length:%d, status:%d, write length:%d", len(audio.SynthesizedAudio.Pcm), temp.Status, n)
+					//log.Printf("pcm length:%d, status:%d", len(audio.SynthesizedAudio.Pcm), temp.Status)
 				}
 			}
 		}

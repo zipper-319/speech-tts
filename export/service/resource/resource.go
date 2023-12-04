@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/log"
+	"log"
 	"os"
 	ttsData "speech-tts/export/service/proto"
 	"speech-tts/internal/pkg/util"
@@ -19,8 +19,8 @@ const (
 	GrpcPortDefault    = "9001"
 	SpeakModelPath     = "./res/read_and_speak/speak"
 	ResPath            = "./res"
-	RegSplit      = "@@"
-	ModelSplit     = ":"
+	RegSplit           = "@@"
+	ModelSplit         = ":"
 	TmpPath            = "./tmp"
 	ResVersionFileName = "./res/res_version.json"
 )
@@ -51,6 +51,7 @@ func init() {
 	if os.Getenv("IsOpenHttp") != "" {
 		IsOpenHttp = true
 	}
+	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
 	ResVersionMap = make(map[string]string, len(ttsData.ResType_name)*2)
 	_, err := os.Stat(ResVersionFileName)
 	if err == nil {
@@ -62,15 +63,15 @@ func init() {
 			json.Unmarshal(content, &ResVersionMap)
 		}
 	}
-	log.Infof("resource version map: %v", ResVersionMap)
+	log.Printf("resource version map: %v", ResVersionMap)
 
 	HttpUrl = fmt.Sprintf("%s:%s", addr, httpPort)
 	GrpcUrl = fmt.Sprintf("%s:%s", addr, grpcPort)
-	log.Info("dataServiceAddr:", addr, " dataServiceHttpPort:", httpPort, " dataServiceGrpcPort:", grpcPort)
+	log.Println("dataServiceAddr:", addr, " dataServiceHttpPort:", httpPort, " dataServiceGrpcPort:", grpcPort)
 }
 
 func RegisterResService(ctx context.Context, serviceName, callbackUrl string) error {
-	log.Infof("RegisterResService: serviceName: %s, callbackUrl: %s; IsOpenGrpc:%t", serviceName, callbackUrl, IsOpenHttp)
+	log.Printf("RegisterResService: serviceName: %s, callbackUrl: %s; IsOpenHttp:%t", serviceName, callbackUrl, IsOpenHttp)
 	if IsOpenHttp {
 		return RegisterResServiceByHttp(serviceName, callbackUrl)
 	} else {
@@ -105,16 +106,16 @@ func InitTTSResource(ctx context.Context, fn CallbackFn) error {
 		if int(v) >= int(ttsData.ResType_Model) {
 
 			if err := GetSpeakerModel(ctx, fn); err != nil {
-				log.Errorf("GetSpeakerModel error:%v", err)
+				log.Printf("GetSpeakerModel error:%v", err)
 				continue
 			}
-			log.Info("GetSpeakerModel success")
+			log.Println("GetSpeakerModel success")
 
 		} else {
 			if int(v) >= int(ttsData.ResType_Rhythm) {
 				fileName, err := GetTTSResAndSave(ctx, resType, ttsData.LanguageType_Chinese)
 				if err != nil {
-					log.Errorf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, ttsData.LanguageType_Chinese, err)
+					log.Printf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, ttsData.LanguageType_Chinese, err)
 					continue
 				}
 				fn(resType, ttsData.LanguageType_Chinese, fileName)
@@ -123,7 +124,7 @@ func InitTTSResource(ctx context.Context, fn CallbackFn) error {
 					languageType := ttsData.LanguageType(lang)
 					fileName, err := GetTTSResAndSave(ctx, resType, languageType)
 					if err != nil {
-						log.Errorf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, languageType, err)
+						log.Printf("Save tts resource; resourceType:%s,language:%s, error:%v", resType, languageType, err)
 						continue
 					}
 					fn(resType, languageType, fileName)
@@ -142,7 +143,7 @@ func SaveResource(dataMap map[string]string, resType ttsData.ResType, languageTy
 	d := md5.Sum(dataMapByte)
 	version := hex.EncodeToString(d[:])
 	isExist := true
-	log.Infof("SaveResource fileName:%s,version:%s, oldVersion:%s", fileName, version, ResVersionMap[fileName])
+	log.Printf("SaveResource fileName:%s,version:%s, oldVersion:%s", fileName, version, ResVersionMap[fileName])
 	_, err := os.Stat(fileName)
 	if err != nil && os.IsNotExist(err) {
 		isExist = false
@@ -173,7 +174,7 @@ func SaveResource(dataMap map[string]string, resType ttsData.ResType, languageTy
 		i, _ := f.WriteString(fmt.Sprintf("%s%s%s\n", k, split, v))
 		n += i
 	}
-	log.Infof("write file:%s, length:%d", fileName, n)
+	log.Printf("write file:%s, length:%d", fileName, n)
 	return fileName, nil
 }
 
@@ -195,6 +196,7 @@ func GetSpeakerModel(ctx context.Context, fn CallbackFn) error {
 
 		dstPath, err := SaveSpeakerModel(speakerModel.ModelUrl, speakerModel.SpeakerOwner, speakerModel.SpeakerName)
 		if err != nil {
+			log.Printf("fail to SaveSpeakerModel; modelUrl:%s, err:%v",speakerModel.ModelUrl, err)
 			return err
 		}
 		fn(ttsData.ResType_Model, ttsData.LanguageType_Chinese, dstPath)

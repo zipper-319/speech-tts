@@ -19,8 +19,8 @@ const (
 	GrpcPortDefault    = "9001"
 	SpeakModelPath     = "./res/read_and_speak/speak"
 	ResPath            = "./res"
-	ResourceSplit      = "@@"
-	PronounceSplit     = ":"
+	RegSplit      = "@@"
+	ModelSplit     = ":"
 	TmpPath            = "./tmp"
 	ResVersionFileName = "./res/res_version.json"
 )
@@ -32,7 +32,7 @@ type CallbackFn func(ttsData.ResType, ttsData.LanguageType, string)
 var (
 	HttpUrl    string
 	GrpcUrl    string
-	IsOpenGrpc bool
+	IsOpenHttp bool
 )
 
 func init() {
@@ -48,8 +48,8 @@ func init() {
 	if grpcPort == "" {
 		grpcPort = GrpcPortDefault
 	}
-	if os.Getenv("IsOpenGrpc") != "" {
-		IsOpenGrpc = true
+	if os.Getenv("IsOpenHttp") != "" {
+		IsOpenHttp = true
 	}
 	ResVersionMap = make(map[string]string, len(ttsData.ResType_name)*2)
 	_, err := os.Stat(ResVersionFileName)
@@ -70,19 +70,19 @@ func init() {
 }
 
 func RegisterResService(ctx context.Context, serviceName, callbackUrl string) error {
-	log.Infof("RegisterResService: serviceName: %s, callbackUrl: %s; IsOpenGrpc:%t", serviceName, callbackUrl, IsOpenGrpc)
-	if IsOpenGrpc {
-		return RegisterResServiceByGrpc(ctx, serviceName, callbackUrl)
-	} else {
+	log.Infof("RegisterResService: serviceName: %s, callbackUrl: %s; IsOpenGrpc:%t", serviceName, callbackUrl, IsOpenHttp)
+	if IsOpenHttp {
 		return RegisterResServiceByHttp(serviceName, callbackUrl)
+	} else {
+		return RegisterResServiceByGrpc(ctx, serviceName, callbackUrl)
 	}
 }
 
 func UnRegisterResService(ctx context.Context, serviceName, callbackUrl string) error {
-	if IsOpenGrpc {
-		return UnRegisterResServiceByGrpc(ctx, serviceName, callbackUrl)
-	} else {
+	if IsOpenHttp {
 		return UnregisterResServiceByHttp(serviceName, callbackUrl)
+	} else {
+		return UnRegisterResServiceByGrpc(ctx, serviceName, callbackUrl)
 	}
 }
 
@@ -158,9 +158,9 @@ func SaveResource(dataMap map[string]string, resType ttsData.ResType, languageTy
 	if isExist {
 		os.Rename(fileName, fileName+".bak"+time.Now().Format("20060102150405"))
 	}
-	split := ResourceSplit
-	if resType == ttsData.ResType_Pronounce {
-		split = PronounceSplit
+	split := ModelSplit
+	if resType == ttsData.ResType_RegStr || resType == ttsData.ResType_RegExp {
+		split = RegSplit
 	}
 
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)
@@ -182,10 +182,10 @@ func GetSpeakerModel(ctx context.Context, fn CallbackFn) error {
 		err       error
 		modelList []*ttsData.GetSpeakerModelResult_SpeakerModel
 	)
-	if IsOpenGrpc {
-		modelList, err = GetSpeakerModelByGrpc(ctx)
-	} else {
+	if IsOpenHttp {
 		modelList, err = GetSpeakerModelByHttp()
+	} else {
+		modelList, err = GetSpeakerModelByGrpc(ctx)
 	}
 	if err != nil {
 		return err

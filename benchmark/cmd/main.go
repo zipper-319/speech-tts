@@ -23,6 +23,7 @@ var speaker string
 var testVersion string
 var movement string
 var expression string
+var isSaveFile bool
 
 func init() {
 	flag.IntVar(&threadNum, "t", 1, "thread number, eg: -t 1")
@@ -32,7 +33,9 @@ func init() {
 	flag.StringVar(&testVersion, "v", "", "test Version, eg: -v v1")
 	flag.StringVar(&movement, "m", "Nvidia-a2g", "movement, eg: -m SweetGirl")
 	flag.StringVar(&expression, "e", "", "expression, eg: -e FaceGood")
+	flag.BoolVar(&isSaveFile, "i", false, "isSaveFile, eg: -i true")
 	log.SetFlags(log.Lshortfile | log.Lmicroseconds | log.Flags())
+
 }
 
 func main() {
@@ -99,7 +102,7 @@ func main() {
 				} else {
 					user := utils.DefaultUser
 					if err := benchmark.TestTTSV2(ctx, user, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
-						movement, expression, num); err != nil {
+						movement, expression, num, isSaveFile); err != nil {
 						log.Println("_________")
 						log.Printf("TestTTSV2; goroutine id:%d; err:%v", i, err)
 						log.Println("_________")

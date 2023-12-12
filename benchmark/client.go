@@ -2,9 +2,11 @@ package benchmark
 
 import (
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
 	"sync"
@@ -95,7 +97,7 @@ func TestTTSV1(ctx context.Context, addr, text, speaker, traceId, robotTraceId s
 	return nil
 }
 
-func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTraceId, movement, expression string, num int) error {
+func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTraceId, movement, expression string, num int, isSaveFile bool) error {
 
 	now := time.Now()
 	conn, err := GetGrpcConn(addr, ctx)
@@ -136,11 +138,17 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 	}
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-	//f, err := os.OpenFile(fmt.Sprintf("./tmp/tts_%d.pcm", num), os.O_CREATE|os.O_WRONLY, 0666)
-	//if err != nil {
-	//	return err
-	//}
-	//defer f.Close()
+	var f *os.File
+	var total int64
+
+	if isSaveFile {
+		f, err = os.OpenFile(fmt.Sprintf("./tmp/tts_%d.pcm", num), os.O_CREATE|os.O_WRONLY, 0666)
+		if err != nil {
+			return err
+		}
+	}
+
+	defer f.Close()
 	go func() {
 		defer wg.Done()
 		for {
@@ -157,24 +165,34 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 					log.Println(err)
 					return
 				}
+				var isFirstFrame bool
 				if temp.ErrorCode != 0 {
 					log.Println("tts 内部服务错误：", temp.ErrorCode)
 				}
-				log.Printf("receive message(Type %T)", temp)
+				//log.Printf("receive message(Type %T)", temp)
 
-				if _, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
-					//n, err := f.Write(audio.SynthesizedAudio.Pcm)
-					//if err != nil {
-					//	log.Println(err)
-					//	return
-					//}
-					//log.Printf("pcm length:%d, status:%d, write length:%d", len(audio.SynthesizedAudio.Pcm), temp.Status, n)
-					//log.Printf("pcm length:%d, status:%d", len(audio.SynthesizedAudio.Pcm), temp.Status)
+				if audio, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
+					audioLength := int64(len(audio.SynthesizedAudio.Pcm))
+					total += audioLength
+					if total != 0 && total == audioLength {
+						isFirstFrame = true
+					}
+
+					if isSaveFile && f != nil {
+						n, err := f.Write(audio.SynthesizedAudio.Pcm)
+						if err != nil {
+							log.Println(err)
+							return
+						}
+						log.Printf("pcm length:%d, total:%d, status:%d, write length:%d, isFirstFrame:%t", audioLength, total, temp.Status, n, isFirstFrame)
+					} else {
+						log.Printf("pcm length:%d, total:%d, status:%d, isFirstFrame:%t", audioLength, total, temp.Status, isFirstFrame)
+					}
 				}
 			}
 		}
 	}()
 	wg.Wait()
-	log.Printf("-------------------------,TestTTSV2---(%d);cost:%d\n\n", num, time.Since(now).Milliseconds())
+	log.Printf("-------------------------,TestTTSV2---(%d:%s);cost:%d\n\n", num, text, time.Since(now).Milliseconds())
 	return nil
 }

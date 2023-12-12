@@ -1,6 +1,7 @@
 package util
 
 import (
+	"errors"
 	"io"
 	"log"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 	"sync"
 )
 
-func DownloadFile(url, fileName string) error {
+func DownloadChunk(url, fileName string) error {
 	log.Printf("Starting download...; url:%s; fileName:%s", url, fileName)
 	wg := sync.WaitGroup{}
 	parts := 4
@@ -18,6 +19,9 @@ func DownloadFile(url, fileName string) error {
 	head, err := http.Head(url)
 	if err != nil {
 		return err
+	}
+	if head.StatusCode != 200 {
+		return errors.New("http status code is not 200; statusCode:" + strconv.Itoa(head.StatusCode))
 	}
 	filesize := head.ContentLength
 
@@ -86,4 +90,24 @@ func Download(url string, start int64, end int64, index int, fileName string, wg
 	}
 
 	log.Printf("Part %d finished\n", index)
+}
+
+func DownloadFile(url, filepath string) error {
+	// 发起GET请求
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// 创建一个空文件用于保存下载的数据
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// 将响应流直接复制到文件中
+	_, err = io.Copy(out, resp.Body)
+	return err // 如果成功则err为nil，否则返回错误信息
 }

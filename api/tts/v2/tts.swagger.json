@@ -225,6 +225,26 @@
       },
       "title": "Action基元数据"
     },
+    "ttsschemaAudioConfig": {
+      "type": "object",
+      "properties": {
+        "sampling_rate": {
+          "type": "integer",
+          "format": "int32",
+          "title": "采样率，16000Hz"
+        },
+        "channels": {
+          "type": "integer",
+          "format": "int32",
+          "title": "通道数, 1--mono"
+        },
+        "audio_encoding": {
+          "type": "integer",
+          "format": "int32",
+          "title": "音频编码, 参考enum AudioEncoding"
+        }
+      }
+    },
     "ttsschemaBodyMovement": {
       "type": "object",
       "properties": {
@@ -291,6 +311,10 @@
         "body_movement_config": {
           "$ref": "#/definitions/ttsschemaBodyMovementConfig",
           "title": "动作配置"
+        },
+        "audio_config": {
+          "$ref": "#/definitions/ttsschemaAudioConfig",
+          "title": "音频配置"
         }
       },
       "title": "音频流"

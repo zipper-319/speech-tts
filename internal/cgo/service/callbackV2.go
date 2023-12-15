@@ -21,7 +21,7 @@ import (
  */
 
 //export goOnStart
-func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig *C.FacialExpressionConfig, bodyMovementConfig *C.BodyMovementConfig) {
+func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, audioConfig *C.AudioConfig, facialExpressionConfig *C.FacialExpressionConfig, bodyMovementConfig *C.BodyMovementConfig) {
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
 	object := getHandlerObject(pUserData)
@@ -34,6 +34,7 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 	var facialExpressionFrameDim, bodyMovementFrameDim uint64
 	var facialExpressionFrameDurMs, bodyMovementFrameDurMs float32
 	var expressControlNameList string
+	audioConfigData := new(v2.AudioConfig)
 	//var movementControlNameList []string
 	if facialExpressionConfig != nil {
 		frameDimLen := uint64(facialExpressionConfig.frameDim)
@@ -58,6 +59,11 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 		//	}
 		//}
 	}
+	if audioConfig != nil {
+		audioConfigData.AudioEncoding = int32(audioConfig.AudioEncoding)
+		audioConfigData.SamplingRate = int32(audioConfig.SamplingRate)
+		audioConfigData.Channels = int32(audioConfig.Channels)
+	}
 	paramSetting := make(map[string]interface{})
 	paramSetting["FacialExpressionFrameDim"] = int32(facialExpressionFrameDim)
 	paramSetting["BodyMovementFrameDim"] = int32(bodyMovementFrameDim)
@@ -76,6 +82,7 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, facialExpressionConfig
 					FrameDim:   int32(bodyMovementFrameDim),
 					FrameDurMs: bodyMovementFrameDurMs,
 				},
+				AudioConfig: audioConfigData,
 			},
 		},
 	}
@@ -201,7 +208,7 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 	object.Log.Infof("start to goOnSynthesizedData;pUserData:%d", pUserData)
 
 	length := (C.int)(audioData.audio_size)
-	wav := C.GoBytes(unsafe.Pointer(audioData.audio_data), 2*length)
+	wav := C.GoBytes(unsafe.Pointer(audioData.audio_data), length)
 
 	response := v2.TtsRes{
 		Status: 2,

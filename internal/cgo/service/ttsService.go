@@ -273,6 +273,7 @@ func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData int32, traceI
 	defer C.free(unsafe.Pointer(sdkSettings.languageTip))
 	sdkSettings.userSpace = C.CString(req.Userspace)
 	defer C.free(unsafe.Pointer(sdkSettings.userSpace))
+	sdkSettings.audioEncoding = C.int(req.AudioEncoding)
 	idC := C.ActionSynthesizer_SynthesizeAction(
 		text,
 		&sdkSettings,

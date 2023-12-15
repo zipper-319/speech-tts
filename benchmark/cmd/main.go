@@ -30,7 +30,7 @@ func init() {
 	flag.IntVar(&useCaseNum, "u", 10, "useCase number, eg: -u 10")
 	flag.StringVar(&addr, "a", "127.0.0.1:3012", "addr, eg: -a 127.0.0.1:3012")
 	flag.StringVar(&speaker, "s", "DaXiaoFang", "speaker name, eg: -s DaXiaoFang")
-	flag.StringVar(&testVersion, "v", "", "test Version, eg: -v v1")
+	flag.StringVar(&testVersion, "v", "v2", "test Version, eg: -v v1")
 	flag.StringVar(&movement, "m", "Nvidia-a2g", "movement, eg: -m SweetGirl")
 	flag.StringVar(&expression, "e", "", "expression, eg: -e FaceGood")
 	flag.BoolVar(&isSaveFile, "i", false, "isSaveFile, eg: -i true")

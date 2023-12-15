@@ -80,6 +80,8 @@ func (m *TtsReq) validate(all bool) error {
 
 	// no validation rules for Userspace
 
+	// no validation rules for AudioEncoding
+
 	// no validation rules for Version
 
 	if len(errors) > 0 {
@@ -1010,6 +1012,35 @@ func (m *ConfigAndText) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetAudioConfig()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ConfigAndTextValidationError{
+					field:  "AudioConfig",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ConfigAndTextValidationError{
+					field:  "AudioConfig",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAudioConfig()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ConfigAndTextValidationError{
+				field:  "AudioConfig",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return ConfigAndTextMultiError(errors)
 	}
@@ -1303,6 +1334,111 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = BodyMovementConfigValidationError{}
+
+// Validate checks the field values on AudioConfig with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AudioConfig) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AudioConfig with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in AudioConfigMultiError, or
+// nil if none found.
+func (m *AudioConfig) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AudioConfig) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SamplingRate
+
+	// no validation rules for Channels
+
+	// no validation rules for AudioEncoding
+
+	if len(errors) > 0 {
+		return AudioConfigMultiError(errors)
+	}
+
+	return nil
+}
+
+// AudioConfigMultiError is an error wrapping multiple validation errors
+// returned by AudioConfig.ValidateAll() if the designated constraints aren't met.
+type AudioConfigMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AudioConfigMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AudioConfigMultiError) AllErrors() []error { return m }
+
+// AudioConfigValidationError is the validation error returned by
+// AudioConfig.Validate if the designated constraints aren't met.
+type AudioConfigValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AudioConfigValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AudioConfigValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AudioConfigValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AudioConfigValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AudioConfigValidationError) ErrorName() string { return "AudioConfigValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AudioConfigValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAudioConfig.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AudioConfigValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AudioConfigValidationError{}
 
 // Validate checks the field values on TimedMouthShapes with the rules defined
 // in the proto definition for this message. If any rules are violated, the

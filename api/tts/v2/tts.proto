@@ -65,7 +65,8 @@ message TtsReq {
     string trace_id = 9;                        //  trace_id
     string root_trace_id = 10;                  //  机器人请求ID
     string language = 11;                       //  语种提示
-    string userspace = 12;                      //  指定租户
+    string userspace = 12;                      //  指定租户  默认cloudminds
+    int32  audio_encoding = 13;                 //  LINEAR16 = 0, OPUS = 1,
     ClientVersion version = 100;                //  标识客户端版本号
 }
 
@@ -112,6 +113,7 @@ message ConfigAndText {
     string text = 1;                                     // 文本信息
     FacialExpressionConfig facial_expression_config = 2; // 表情配置
     BodyMovementConfig body_movement_config = 3;         // 动作配置
+    AudioConfig         audio_config = 4;                // 音频配置
 }
 
 //
@@ -126,6 +128,12 @@ message BodyMovementConfig {
     int32 frame_dim = 1;                                // 每帧的维度，即一帧由frameDim个float组成
     float frame_dur_ms = 2;                             // 每帧的持续时长
     string meta_data = 3;                               // 伴生数据的其他描述性信息(json)
+}
+
+message  AudioConfig {
+    int32 sampling_rate = 1;                           // 采样率，16000Hz
+    int32 channels = 2;                                // 通道数, 1--mono
+    int32 audio_encoding =3;                           // 音频编码, 参考enum AudioEncoding
 }
 
 // 口型

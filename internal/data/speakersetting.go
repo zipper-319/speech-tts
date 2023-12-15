@@ -131,4 +131,5 @@ type Speaker struct {
 	Expression           string
 	Language             string
 	Userspace            string
+	AudioEncoding        int32
 }

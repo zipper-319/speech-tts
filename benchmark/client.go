@@ -131,6 +131,7 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 		Userspace:            user,
 	}
 
+	log.Printf("----------------------TestTTSV2-----------(%d:%s)\n", num, text)
 	response, err := ttsV2Client.Call(ctx, req)
 	if err != nil {
 		log.Printf("Text:%s, err;%v", text, err)
@@ -184,15 +185,15 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 							log.Println(err)
 							return
 						}
-						log.Printf("pcm length:%d, total:%d, status:%d, write length:%d, isFirstFrame:%t", audioLength, total, temp.Status, n, isFirstFrame)
+						log.Printf("pcm length:%d, total:%d, status:%d, write length:%d, isFirstFrame:%t, cost:%dms", audioLength, total, temp.Status, n, isFirstFrame, time.Since(now).Milliseconds())
 					} else {
-						log.Printf("pcm length:%d, total:%d, status:%d, isFirstFrame:%t", audioLength, total, temp.Status, isFirstFrame)
+						log.Printf("pcm length:%d, total:%d, status:%d, isFirstFrame:%t, cost:%dms", audioLength, total, temp.Status, isFirstFrame, time.Since(now).Milliseconds())
 					}
 				}
 			}
 		}
 	}()
 	wg.Wait()
-	log.Printf("-------------------------,TestTTSV2---(%d:%s);cost:%d\n\n", num, text, time.Since(now).Milliseconds())
+	log.Printf("-------------------------TestTTSV2---(%d:%s);cost:%d\n\n", num, text, time.Since(now).Milliseconds())
 	return nil
 }

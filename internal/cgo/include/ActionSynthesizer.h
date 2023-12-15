@@ -47,11 +47,11 @@ enum {
 typedef struct
 {
     /**
-    * 音频数据（16kHz 16bit mono PCM数据）
+    * 音频数据
     */
-    short* audio_data;
+    char* audio_data;
     /**
-    * 音频数据帧数
+    * 字节长度
     */
     unsigned int audio_size;
     /**
@@ -59,6 +59,25 @@ typedef struct
     */
     unsigned int flags;
 }SynthesizedAudio;
+
+/**
+ * 音频config
+ */
+typedef struct
+{
+    /**
+    * 采样率，16000Hz
+    */
+    unsigned int sampling_rate;
+    /**
+    * 通道数, 1--mono
+    */
+    unsigned int channels;
+    /**
+    * 音频编码, 参考enum AudioEncoding
+    */
+    int audio_encoding;
+}AudioConfig;
 
 /**
  * Action回调
@@ -69,10 +88,11 @@ typedef struct
     * 语音合成开始
     * @param pUserData 应用层数据
     * @param ttsText 用于TTS合成的文本
+    * @param audioConfig 音频配置
     * @param expressionConfig 表情配置
     * @param movementConfig 动作配置
     */
-    void (*onStart)(void* pUserData, const char* ttsText, FacialExpressionConfig* expressionConfig, BodyMovementConfig* movementConfig);
+    void (*onStart)(void* pUserData, const char* ttsText, AudioConfig* audioConfig, FacialExpressionConfig* expressionConfig, BodyMovementConfig* movementConfig);
 
     /**
     * 合成的音频数据（以文本元素为单位输出）

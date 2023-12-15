@@ -28,6 +28,10 @@ enum {
     * 长切分（句号类分句+逗号类双空格+顿号双空格）
     */
     Normalize_Cut_Long_Period = 3,
+    /**
+    * 长切分（首句标点切分，非首句等同于Normalize_Cut_Long）
+    */
+    Normalize_Cut_Long_FirstSentence = 4,
 };
 
 /**
@@ -154,6 +158,10 @@ enum {
     * 表情描述
     */
     PARAMETER_EXPRESSION_DESCRIPTOR = 7,
+    /**
+    * 音频编码格式
+    */
+    PARAMETER_AUDIO_ENCODE = 8,
 //以下仅供内部debug
     /**
     * @deprecated tuning
@@ -177,6 +185,20 @@ enum {
     * 使能肢体动作合成
     */
     ENABLE_MOVEMENT = 1<<2,
+};
+
+/**
+* 音频编码格式
+*/
+enum AudioEncoding{
+    /**
+    * Uncompressed 16-bit signed little-endian samples (Linear PCM)
+    */
+    LINEAR16 = 0,
+    /**
+    * opus
+    */
+    OPUS = 1,
 };
 
 
@@ -224,6 +246,10 @@ typedef struct{
     * 指定speaker所属的用户空间，即要访问的该用户空间下的speaker，为空时默认为cloudminds
     */
     const char* userSpace;
+    /**
+    * 指定音频编码格式，参考enum AudioEncoding，默认为LINEAR16
+    */
+    int audioEncoding;
 }TtsSetting;
 
 
@@ -231,7 +257,7 @@ typedef struct{
 * 获取CmTts所支持的发音人数组
 * @param supportedSpeakers 用于输出发音人（名字）数组
 * @param element_num 用于输出发音人的个数（即发音人数组的大小）
-* @return 0--成功,&lt;0--失败
+* @return 0--成功,&lt;0--失败参考enum AudioEncoding，默认为LINEAR16
 */
 int GetSupportedSpeaker(const char*** supportedSpeakers, unsigned int *element_num);
 /**

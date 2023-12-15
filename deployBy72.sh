@@ -7,7 +7,7 @@ user="tts"
 password="Q9dMZp_pGX"
 CI_COMMIT_TAG=`git log --pretty=format:"%h" -1`
 DOCKER_REGISTRY_HOST="harbor.cloudminds.com"
-VERSION="v4.3.2"
+VERSION="v4.3.3"
 
 
 expect <<EOF
@@ -24,7 +24,7 @@ expect eof
 EOF
 
 expect -c '
-  spawn scp -P  10022 root@172.16.33.21:~/speech-tts/bin/speech-tts ./bin
+  spawn scp -P  10022 root@172.16.33.21:~/project/speech-tts/bin/speech-tts ./bin
   expect "*password"
   send "123456\r"
   interact

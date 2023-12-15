@@ -60,8 +60,11 @@ void TtsTextNormalizeInit(const char* dir);
 * @param language 当前TtsEngine所处理的语言
 * @param langTip 当前TtsEngine所处理的语言提示
 * @param offBase 偏移的基础量
-* @param cutType 分句模式，0-普通模式（句号类分句+逗号类分句+顿号双空格），1-VITS模式二期（句号类双空格+逗号类双空格+顿号双空格），
-* 2-停顿分句模式（句号类分句+逗号类分句+双空格分句），3-VITS模式一期（句号类分句+逗号类双空格+顿号双空格）
+* @param cutType 分句模式，0-普通模式（句号类分句+逗号类分句+顿号双空格），
+* 1-VITS模式二期（句号类双空格+逗号类双空格+顿号双空格），
+* 2-停顿分句模式（句号类分句+逗号类分句+双空格分句），
+* 3-VITS模式一期（句号类分句+逗号类双空格+顿号双空格）
+* 4-VITS模式三期（二期+首句分句尽量短）
 * @param cutLenCh 中文句子分句长度阈值
 * @param cutLenEn 英文句子分句长度阈值
 * @param ttsTextInfo TTS文本规整信息

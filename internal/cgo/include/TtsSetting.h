@@ -158,10 +158,6 @@ enum {
     * 表情描述
     */
     PARAMETER_EXPRESSION_DESCRIPTOR = 7,
-    /**
-    * 音频编码格式
-    */
-    PARAMETER_AUDIO_ENCODE = 8,
 //以下仅供内部debug
     /**
     * @deprecated tuning
@@ -194,11 +190,19 @@ enum AudioEncoding{
     /**
     * Uncompressed 16-bit signed little-endian samples (Linear PCM)
     */
-    LINEAR16 = 0,
+    PCM_LINEAR16 = 0,
     /**
-    * opus
+    * opus ogg
     */
-    OPUS = 1,
+    OPUS_OGG = 1,
+    /**
+    * opus CM
+    */
+    OPUS_CM = 2,
+    /**
+    * max, the number of encoding format
+    */
+    AUDIOENCODING_MAX,
 };
 
 
@@ -247,9 +251,9 @@ typedef struct{
     */
     const char* userSpace;
     /**
-    * 指定音频编码格式，参考enum AudioEncoding，默认为LINEAR16
+    * 指定音频编码格式，参考enum AudioEncoding，默认为PCM_LINEAR16
     */
-    int audioEncoding;
+    unsigned int audioEncoding;
 }TtsSetting;
 
 
@@ -257,7 +261,7 @@ typedef struct{
 * 获取CmTts所支持的发音人数组
 * @param supportedSpeakers 用于输出发音人（名字）数组
 * @param element_num 用于输出发音人的个数（即发音人数组的大小）
-* @return 0--成功,&lt;0--失败参考enum AudioEncoding，默认为LINEAR16
+* @return 0--成功,&lt;0--失败
 */
 int GetSupportedSpeaker(const char*** supportedSpeakers, unsigned int *element_num);
 /**

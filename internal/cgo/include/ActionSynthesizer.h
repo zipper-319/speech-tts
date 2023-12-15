@@ -76,7 +76,7 @@ typedef struct
     /**
     * 音频编码, 参考enum AudioEncoding
     */
-    int audio_encoding;
+    unsigned int audio_encoding;
 }AudioConfig;
 
 /**

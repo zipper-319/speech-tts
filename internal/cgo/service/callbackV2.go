@@ -60,9 +60,9 @@ func goOnStart(pUserData unsafe.Pointer, ttsText *C.char, audioConfig *C.AudioCo
 		//}
 	}
 	if audioConfig != nil {
-		audioConfigData.AudioEncoding = int32(audioConfig.AudioEncoding)
-		audioConfigData.SamplingRate = int32(audioConfig.SamplingRate)
-		audioConfigData.Channels = int32(audioConfig.Channels)
+		audioConfigData.AudioEncoding = int32(audioConfig.audio_encoding)
+		audioConfigData.SamplingRate = int32(audioConfig.sampling_rate)
+		audioConfigData.Channels = int32(audioConfig.channels)
 	}
 	paramSetting := make(map[string]interface{})
 	paramSetting["FacialExpressionFrameDim"] = int32(facialExpressionFrameDim)

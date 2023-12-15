@@ -33,4 +33,4 @@ expect -c '
     '
 
 modelx list modelx/speech-tts/ttsv2-model
-modelx push  modelx/speech-tts/ttsv2-model@${VERSION}_new
+modelx push  modelx/speech-tts/ttsv2-model@${VERSION}

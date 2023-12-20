@@ -83,7 +83,7 @@ message TtsRes {
         TimedMouthShapes time_mouth_shapes = 8; // 口型数据
         Expression expression = 9;              // 表情数据
         BodyMovement body_movement = 10;        // 动作数据
-        CoordinateData  coordinate_data = 11;   // 编码音频的坐标数据
+        CoordinateMapping  coordinate_mapping = 11;   // 坐标数据映射关系
     }
 }
 
@@ -94,14 +94,14 @@ message SynthesizedAudio {
     int32 is_punctuation = 3;                   // 是否标点1是标点
 }
 
-message AudioCoordinate {
+message TimeCoordinate {
     int32 start_time = 1;                        // 音频开始时间
     int32 duration = 2;                          // 音频持续时间
 }
 
-message CoordinateData{
+message CoordinateMapping{
     Coordinate coordinate = 1;                  // 文本坐标信息
-    AudioCoordinate audio_coordinate = 2;       // 音频坐标信息
+    TimeCoordinate time_coordinate = 2;         // 时间坐标信息
 }
 
 // 调试信息
@@ -174,8 +174,6 @@ message Coordinate {
     int32 order = 3;
     // 当len_utf8 = 0时，order与off_utf8一起描述一个的时间点。具体地，当off_utf8相同时，order相同则认为同时，order不同时，0优先，1次之，依次类推
     // 当len_utf8 > 0时，order无意义
-    int32 audio_off = 4;                                      // 音频起点
-    int32 audio_len = 5;                                      // 音频长度
 }
 
 message TimedMouthShape {

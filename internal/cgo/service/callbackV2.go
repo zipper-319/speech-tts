@@ -317,13 +317,13 @@ func goOnCoordinate(pUserData unsafe.Pointer, coordinate *C.Coordinate, timeCoor
 		return
 	}
 	object.Log.Infof("start to goOnCoordinate;pUserData:%d", pUserData)
-	coordinateData := &v2.CoordinateData{
+	coordinateData := &v2.CoordinateMapping{
 		Coordinate: &v2.Coordinate{
 			Off:   int32(coordinate.off_utf8),
 			Len:   int32(coordinate.len_utf8),
 			Order: int32(coordinate.order),
 		},
-		AudioCoordinate: &v2.AudioCoordinate{
+		TimeCoordinate: &v2.TimeCoordinate{
 			StartTime: int32(timeCoordinate.startMs),
 			Duration:  int32(timeCoordinate.durMs),
 		},
@@ -331,7 +331,7 @@ func goOnCoordinate(pUserData unsafe.Pointer, coordinate *C.Coordinate, timeCoor
 
 	response := v2.TtsRes{
 		Status:      2,
-		ResultOneof: &v2.TtsRes_CoordinateData{CoordinateData: coordinateData},
+		ResultOneof: &v2.TtsRes_CoordinateMapping{CoordinateMapping: coordinateData},
 	}
 
 	sendResp(object, response)

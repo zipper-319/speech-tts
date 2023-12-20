@@ -7,7 +7,7 @@ user="tts"
 password="Q9dMZp_pGX"
 CI_COMMIT_TAG=`git log --pretty=format:"%h" -1`
 DOCKER_REGISTRY_HOST="harbor.cloudminds.com"
-VERSION="v4.3.3"
+VERSION="v4.3.4"
 
 
 expect <<EOF

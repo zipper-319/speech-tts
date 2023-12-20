@@ -144,7 +144,7 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 		log.Println("goOnTimedMouthShape; irregularity type")
 		return
 	}
-	object.Log.Infof("start to goOnTimedMouthShape;pUserData: %d", pUserData)
+	object.Log.Infof("start to goOnTimedMouthShape;pUserData: %d; size:%d", pUserData, size)
 
 	var mouths = make([]*v2.TimedMouthShape, int32(size))
 	for i := 0; i < int(size); i++ {
@@ -169,28 +169,28 @@ func goOnTimedMouthShape(pUserData unsafe.Pointer, mouth *C.TimedMouthShape, siz
 }
 
 //export goOnActionElement
-func goOnActionElement(pUserData unsafe.Pointer, ctype C.int, url *C.char, operation_type C.int, coordinate unsafe.Pointer, render_duration C.int) {
+func goOnActionElement(pUserData unsafe.Pointer, actionType C.int, url *C.char, operationType C.int, coordinate unsafe.Pointer, renderDuration C.int) {
 	object := getHandlerObject(pUserData)
 	if object == nil {
 		log.Println("goOnActionElement; irregularity type")
 		return
 	}
-	object.Log.Infof("start to goOnActionElement;pUserData: %d", pUserData)
+	object.Log.Infof("start to goOnActionElement;pUserData: %d;actionType:%d, operationType:%d, renderDuration:%d", pUserData, actionType, operationType, renderDuration)
 
 	coordinateC := *(*C.Coordinate)(coordinate)
 	response := v2.TtsRes{
 		Status: 2,
 		ResultOneof: &v2.TtsRes_ActionElement{
 			ActionElement: &v2.ActionElement{
-				ActionType:    int32(ctype),
+				ActionType:    int32(actionType),
 				Url:           C.GoString(url),
-				OperationType: int32(operation_type),
+				OperationType: int32(operationType),
 				Coordinate: &v2.Coordinate{
 					Off:   int32(coordinateC.off_utf8),
 					Len:   int32(coordinateC.len_utf8),
 					Order: int32(coordinateC.order),
 				},
-				RenderDuration: int32(render_duration),
+				RenderDuration: int32(renderDuration),
 			},
 		},
 	}
@@ -246,13 +246,14 @@ func goOnFacialExpression(pUserData unsafe.Pointer, facialExpressionData *C.Faci
 		frameSize := uint64(facialExpressionData.frameSize)
 		startTimeMs := float32(facialExpressionData.startTimeMs)
 		size := int32(frameSize * framedDim)
-		var Expressiondata = make([]float32, size)
+		object.Log.Infof("start to goOnFacialExpression;pUserData:%d; size:%d", pUserData, size)
+		var expressionData = make([]float32, size)
 		for i := 0; i < int(size); i++ {
 			data := *(*C.float)(unsafe.Pointer(uintptr(unsafe.Pointer(facialExpressionData.data)) + uintptr(C.sizeof_float*C.int(i))))
-			Expressiondata[i] = float32(data)
+			expressionData[i] = float32(data)
 		}
 		expression = &v2.Expression{
-			Data:        Expressiondata,
+			Data:        expressionData,
 			FrameSize:   int32(frameSize),
 			StartTimeMs: startTimeMs,
 		}

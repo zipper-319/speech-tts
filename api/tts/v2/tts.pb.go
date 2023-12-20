@@ -240,6 +240,7 @@ type TtsRes struct {
 	//	*TtsRes_TimeMouthShapes
 	//	*TtsRes_Expression
 	//	*TtsRes_BodyMovement
+	//	*TtsRes_CoordinateData
 	ResultOneof isTtsRes_ResultOneof `protobuf_oneof:"result_oneof"`
 }
 
@@ -352,6 +353,13 @@ func (x *TtsRes) GetBodyMovement() *BodyMovement {
 	return nil
 }
 
+func (x *TtsRes) GetCoordinateData() *CoordinateData {
+	if x, ok := x.GetResultOneof().(*TtsRes_CoordinateData); ok {
+		return x.CoordinateData
+	}
+	return nil
+}
+
 type isTtsRes_ResultOneof interface {
 	isTtsRes_ResultOneof()
 }
@@ -384,6 +392,10 @@ type TtsRes_BodyMovement struct {
 	BodyMovement *BodyMovement `protobuf:"bytes,10,opt,name=body_movement,json=bodyMovement,proto3,oneof"` // 动作数据
 }
 
+type TtsRes_CoordinateData struct {
+	CoordinateData *CoordinateData `protobuf:"bytes,11,opt,name=coordinate_data,json=coordinateData,proto3,oneof"` // 编码音频的坐标数据
+}
+
 func (*TtsRes_SynthesizedAudio) isTtsRes_ResultOneof() {}
 
 func (*TtsRes_DebugInfo) isTtsRes_ResultOneof() {}
@@ -397,6 +409,8 @@ func (*TtsRes_TimeMouthShapes) isTtsRes_ResultOneof() {}
 func (*TtsRes_Expression) isTtsRes_ResultOneof() {}
 
 func (*TtsRes_BodyMovement) isTtsRes_ResultOneof() {}
+
+func (*TtsRes_CoordinateData) isTtsRes_ResultOneof() {}
 
 // 音频流
 type SynthesizedAudio struct {
@@ -462,6 +476,116 @@ func (x *SynthesizedAudio) GetIsPunctuation() int32 {
 	return 0
 }
 
+type AudioCoordinate struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	StartTime int32 `protobuf:"varint,1,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 音频开始时间
+	Duration  int32 `protobuf:"varint,2,opt,name=duration,proto3" json:"duration,omitempty"`                    // 音频持续时间
+}
+
+func (x *AudioCoordinate) Reset() {
+	*x = AudioCoordinate{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_tts_v2_tts_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AudioCoordinate) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AudioCoordinate) ProtoMessage() {}
+
+func (x *AudioCoordinate) ProtoReflect() protoreflect.Message {
+	mi := &file_tts_v2_tts_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AudioCoordinate.ProtoReflect.Descriptor instead.
+func (*AudioCoordinate) Descriptor() ([]byte, []int) {
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *AudioCoordinate) GetStartTime() int32 {
+	if x != nil {
+		return x.StartTime
+	}
+	return 0
+}
+
+func (x *AudioCoordinate) GetDuration() int32 {
+	if x != nil {
+		return x.Duration
+	}
+	return 0
+}
+
+type CoordinateData struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Coordinate      *Coordinate      `protobuf:"bytes,1,opt,name=coordinate,proto3" json:"coordinate,omitempty"`                                  // 文本坐标信息
+	AudioCoordinate *AudioCoordinate `protobuf:"bytes,2,opt,name=audio_coordinate,json=audioCoordinate,proto3" json:"audio_coordinate,omitempty"` // 音频坐标信息
+}
+
+func (x *CoordinateData) Reset() {
+	*x = CoordinateData{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_tts_v2_tts_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CoordinateData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CoordinateData) ProtoMessage() {}
+
+func (x *CoordinateData) ProtoReflect() protoreflect.Message {
+	mi := &file_tts_v2_tts_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CoordinateData.ProtoReflect.Descriptor instead.
+func (*CoordinateData) Descriptor() ([]byte, []int) {
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CoordinateData) GetCoordinate() *Coordinate {
+	if x != nil {
+		return x.Coordinate
+	}
+	return nil
+}
+
+func (x *CoordinateData) GetAudioCoordinate() *AudioCoordinate {
+	if x != nil {
+		return x.AudioCoordinate
+	}
+	return nil
+}
+
 // 调试信息
 type DebugInfo struct {
 	state         protoimpl.MessageState
@@ -475,7 +599,7 @@ type DebugInfo struct {
 func (x *DebugInfo) Reset() {
 	*x = DebugInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[3]
+		mi := &file_tts_v2_tts_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -488,7 +612,7 @@ func (x *DebugInfo) String() string {
 func (*DebugInfo) ProtoMessage() {}
 
 func (x *DebugInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[3]
+	mi := &file_tts_v2_tts_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -501,7 +625,7 @@ func (x *DebugInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DebugInfo.ProtoReflect.Descriptor instead.
 func (*DebugInfo) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{3}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DebugInfo) GetDebugType() string {
@@ -534,7 +658,7 @@ type ActionElement struct {
 func (x *ActionElement) Reset() {
 	*x = ActionElement{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[4]
+		mi := &file_tts_v2_tts_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -547,7 +671,7 @@ func (x *ActionElement) String() string {
 func (*ActionElement) ProtoMessage() {}
 
 func (x *ActionElement) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[4]
+	mi := &file_tts_v2_tts_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -560,7 +684,7 @@ func (x *ActionElement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActionElement.ProtoReflect.Descriptor instead.
 func (*ActionElement) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{4}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ActionElement) GetActionType() int32 {
@@ -613,7 +737,7 @@ type ConfigAndText struct {
 func (x *ConfigAndText) Reset() {
 	*x = ConfigAndText{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[5]
+		mi := &file_tts_v2_tts_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -626,7 +750,7 @@ func (x *ConfigAndText) String() string {
 func (*ConfigAndText) ProtoMessage() {}
 
 func (x *ConfigAndText) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[5]
+	mi := &file_tts_v2_tts_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -639,7 +763,7 @@ func (x *ConfigAndText) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfigAndText.ProtoReflect.Descriptor instead.
 func (*ConfigAndText) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{5}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ConfigAndText) GetText() string {
@@ -683,7 +807,7 @@ type FacialExpressionConfig struct {
 func (x *FacialExpressionConfig) Reset() {
 	*x = FacialExpressionConfig{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[6]
+		mi := &file_tts_v2_tts_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -696,7 +820,7 @@ func (x *FacialExpressionConfig) String() string {
 func (*FacialExpressionConfig) ProtoMessage() {}
 
 func (x *FacialExpressionConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[6]
+	mi := &file_tts_v2_tts_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -709,7 +833,7 @@ func (x *FacialExpressionConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FacialExpressionConfig.ProtoReflect.Descriptor instead.
 func (*FacialExpressionConfig) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{6}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *FacialExpressionConfig) GetFrameDim() int32 {
@@ -746,7 +870,7 @@ type BodyMovementConfig struct {
 func (x *BodyMovementConfig) Reset() {
 	*x = BodyMovementConfig{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[7]
+		mi := &file_tts_v2_tts_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -759,7 +883,7 @@ func (x *BodyMovementConfig) String() string {
 func (*BodyMovementConfig) ProtoMessage() {}
 
 func (x *BodyMovementConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[7]
+	mi := &file_tts_v2_tts_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -772,7 +896,7 @@ func (x *BodyMovementConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BodyMovementConfig.ProtoReflect.Descriptor instead.
 func (*BodyMovementConfig) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{7}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *BodyMovementConfig) GetFrameDim() int32 {
@@ -809,7 +933,7 @@ type AudioConfig struct {
 func (x *AudioConfig) Reset() {
 	*x = AudioConfig{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[8]
+		mi := &file_tts_v2_tts_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -822,7 +946,7 @@ func (x *AudioConfig) String() string {
 func (*AudioConfig) ProtoMessage() {}
 
 func (x *AudioConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[8]
+	mi := &file_tts_v2_tts_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -835,7 +959,7 @@ func (x *AudioConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AudioConfig.ProtoReflect.Descriptor instead.
 func (*AudioConfig) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{8}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *AudioConfig) GetSamplingRate() int32 {
@@ -872,7 +996,7 @@ type TimedMouthShapes struct {
 func (x *TimedMouthShapes) Reset() {
 	*x = TimedMouthShapes{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[9]
+		mi := &file_tts_v2_tts_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -885,7 +1009,7 @@ func (x *TimedMouthShapes) String() string {
 func (*TimedMouthShapes) ProtoMessage() {}
 
 func (x *TimedMouthShapes) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[9]
+	mi := &file_tts_v2_tts_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -898,7 +1022,7 @@ func (x *TimedMouthShapes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TimedMouthShapes.ProtoReflect.Descriptor instead.
 func (*TimedMouthShapes) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{9}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *TimedMouthShapes) GetMouths() []*TimedMouthShape {
@@ -929,7 +1053,7 @@ type Expression struct {
 func (x *Expression) Reset() {
 	*x = Expression{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[10]
+		mi := &file_tts_v2_tts_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -942,7 +1066,7 @@ func (x *Expression) String() string {
 func (*Expression) ProtoMessage() {}
 
 func (x *Expression) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[10]
+	mi := &file_tts_v2_tts_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -955,7 +1079,7 @@ func (x *Expression) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Expression.ProtoReflect.Descriptor instead.
 func (*Expression) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{10}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *Expression) GetData() []float32 {
@@ -993,7 +1117,7 @@ type BodyMovement struct {
 func (x *BodyMovement) Reset() {
 	*x = BodyMovement{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[11]
+		mi := &file_tts_v2_tts_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1006,7 +1130,7 @@ func (x *BodyMovement) String() string {
 func (*BodyMovement) ProtoMessage() {}
 
 func (x *BodyMovement) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[11]
+	mi := &file_tts_v2_tts_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1019,7 +1143,7 @@ func (x *BodyMovement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BodyMovement.ProtoReflect.Descriptor instead.
 func (*BodyMovement) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{11}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *BodyMovement) GetData() []float32 {
@@ -1052,12 +1176,16 @@ type Coordinate struct {
 	Off   int32 `protobuf:"varint,1,opt,name=off,proto3" json:"off,omitempty"` // 文本起点
 	Len   int32 `protobuf:"varint,2,opt,name=len,proto3" json:"len,omitempty"` // 文本长度
 	Order int32 `protobuf:"varint,3,opt,name=order,proto3" json:"order,omitempty"`
+	// 当len_utf8 = 0时，order与off_utf8一起描述一个的时间点。具体地，当off_utf8相同时，order相同则认为同时，order不同时，0优先，1次之，依次类推
+	// 当len_utf8 > 0时，order无意义
+	AudioOff int32 `protobuf:"varint,4,opt,name=audio_off,json=audioOff,proto3" json:"audio_off,omitempty"` // 音频起点
+	AudioLen int32 `protobuf:"varint,5,opt,name=audio_len,json=audioLen,proto3" json:"audio_len,omitempty"` // 音频长度
 }
 
 func (x *Coordinate) Reset() {
 	*x = Coordinate{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[12]
+		mi := &file_tts_v2_tts_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1070,7 +1198,7 @@ func (x *Coordinate) String() string {
 func (*Coordinate) ProtoMessage() {}
 
 func (x *Coordinate) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[12]
+	mi := &file_tts_v2_tts_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1083,7 +1211,7 @@ func (x *Coordinate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Coordinate.ProtoReflect.Descriptor instead.
 func (*Coordinate) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{12}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *Coordinate) GetOff() int32 {
@@ -1107,6 +1235,20 @@ func (x *Coordinate) GetOrder() int32 {
 	return 0
 }
 
+func (x *Coordinate) GetAudioOff() int32 {
+	if x != nil {
+		return x.AudioOff
+	}
+	return 0
+}
+
+func (x *Coordinate) GetAudioLen() int32 {
+	if x != nil {
+		return x.AudioLen
+	}
+	return 0
+}
+
 type TimedMouthShape struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1119,7 +1261,7 @@ type TimedMouthShape struct {
 func (x *TimedMouthShape) Reset() {
 	*x = TimedMouthShape{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[13]
+		mi := &file_tts_v2_tts_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1132,7 +1274,7 @@ func (x *TimedMouthShape) String() string {
 func (*TimedMouthShape) ProtoMessage() {}
 
 func (x *TimedMouthShape) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[13]
+	mi := &file_tts_v2_tts_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1145,7 +1287,7 @@ func (x *TimedMouthShape) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TimedMouthShape.ProtoReflect.Descriptor instead.
 func (*TimedMouthShape) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{13}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *TimedMouthShape) GetDurationUs() uint64 {
@@ -1171,7 +1313,7 @@ type VerVersionReq struct {
 func (x *VerVersionReq) Reset() {
 	*x = VerVersionReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[14]
+		mi := &file_tts_v2_tts_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1184,7 +1326,7 @@ func (x *VerVersionReq) String() string {
 func (*VerVersionReq) ProtoMessage() {}
 
 func (x *VerVersionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[14]
+	mi := &file_tts_v2_tts_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1197,7 +1339,7 @@ func (x *VerVersionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerVersionReq.ProtoReflect.Descriptor instead.
 func (*VerVersionReq) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{14}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{16}
 }
 
 type VerVersionRsp struct {
@@ -1211,7 +1353,7 @@ type VerVersionRsp struct {
 func (x *VerVersionRsp) Reset() {
 	*x = VerVersionRsp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[15]
+		mi := &file_tts_v2_tts_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1224,7 +1366,7 @@ func (x *VerVersionRsp) String() string {
 func (*VerVersionRsp) ProtoMessage() {}
 
 func (x *VerVersionRsp) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[15]
+	mi := &file_tts_v2_tts_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1237,7 +1379,7 @@ func (x *VerVersionRsp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerVersionRsp.ProtoReflect.Descriptor instead.
 func (*VerVersionRsp) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{15}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *VerVersionRsp) GetVersion() string {
@@ -1256,7 +1398,7 @@ type VerReq struct {
 func (x *VerReq) Reset() {
 	*x = VerReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[16]
+		mi := &file_tts_v2_tts_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1269,7 +1411,7 @@ func (x *VerReq) String() string {
 func (*VerReq) ProtoMessage() {}
 
 func (x *VerReq) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[16]
+	mi := &file_tts_v2_tts_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1282,7 +1424,7 @@ func (x *VerReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerReq.ProtoReflect.Descriptor instead.
 func (*VerReq) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{16}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{18}
 }
 
 type RespGetTtsConfig struct {
@@ -1304,7 +1446,7 @@ type RespGetTtsConfig struct {
 func (x *RespGetTtsConfig) Reset() {
 	*x = RespGetTtsConfig{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[17]
+		mi := &file_tts_v2_tts_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1317,7 +1459,7 @@ func (x *RespGetTtsConfig) String() string {
 func (*RespGetTtsConfig) ProtoMessage() {}
 
 func (x *RespGetTtsConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[17]
+	mi := &file_tts_v2_tts_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1330,7 +1472,7 @@ func (x *RespGetTtsConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespGetTtsConfig.ProtoReflect.Descriptor instead.
 func (*RespGetTtsConfig) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{17}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RespGetTtsConfig) GetSpeakerList() *SpeakerList {
@@ -1401,7 +1543,7 @@ type SpeakerList struct {
 func (x *SpeakerList) Reset() {
 	*x = SpeakerList{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[18]
+		mi := &file_tts_v2_tts_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1414,7 +1556,7 @@ func (x *SpeakerList) String() string {
 func (*SpeakerList) ProtoMessage() {}
 
 func (x *SpeakerList) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[18]
+	mi := &file_tts_v2_tts_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1427,7 +1569,7 @@ func (x *SpeakerList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SpeakerList.ProtoReflect.Descriptor instead.
 func (*SpeakerList) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{18}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *SpeakerList) GetList() []*SpeakerParameter {
@@ -1454,7 +1596,7 @@ type SpeakerParameter struct {
 func (x *SpeakerParameter) Reset() {
 	*x = SpeakerParameter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[19]
+		mi := &file_tts_v2_tts_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1467,7 +1609,7 @@ func (x *SpeakerParameter) String() string {
 func (*SpeakerParameter) ProtoMessage() {}
 
 func (x *SpeakerParameter) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[19]
+	mi := &file_tts_v2_tts_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1480,7 +1622,7 @@ func (x *SpeakerParameter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SpeakerParameter.ProtoReflect.Descriptor instead.
 func (*SpeakerParameter) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{19}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{21}
 }
 
 // Deprecated: Marked as deprecated in tts/v2/tts.proto.
@@ -1538,7 +1680,7 @@ type MessagePitch struct {
 func (x *MessagePitch) Reset() {
 	*x = MessagePitch{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[20]
+		mi := &file_tts_v2_tts_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1551,7 +1693,7 @@ func (x *MessagePitch) String() string {
 func (*MessagePitch) ProtoMessage() {}
 
 func (x *MessagePitch) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[20]
+	mi := &file_tts_v2_tts_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1564,7 +1706,7 @@ func (x *MessagePitch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MessagePitch.ProtoReflect.Descriptor instead.
 func (*MessagePitch) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{20}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *MessagePitch) GetName() string {
@@ -1593,7 +1735,7 @@ type MessageEmotion struct {
 func (x *MessageEmotion) Reset() {
 	*x = MessageEmotion{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[21]
+		mi := &file_tts_v2_tts_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1606,7 +1748,7 @@ func (x *MessageEmotion) String() string {
 func (*MessageEmotion) ProtoMessage() {}
 
 func (x *MessageEmotion) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[21]
+	mi := &file_tts_v2_tts_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1619,7 +1761,7 @@ func (x *MessageEmotion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MessageEmotion.ProtoReflect.Descriptor instead.
 func (*MessageEmotion) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{21}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *MessageEmotion) GetName() string {
@@ -1648,7 +1790,7 @@ type MessageDigitalPerson struct {
 func (x *MessageDigitalPerson) Reset() {
 	*x = MessageDigitalPerson{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[22]
+		mi := &file_tts_v2_tts_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1661,7 +1803,7 @@ func (x *MessageDigitalPerson) String() string {
 func (*MessageDigitalPerson) ProtoMessage() {}
 
 func (x *MessageDigitalPerson) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[22]
+	mi := &file_tts_v2_tts_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1674,7 +1816,7 @@ func (x *MessageDigitalPerson) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MessageDigitalPerson.ProtoReflect.Descriptor instead.
 func (*MessageDigitalPerson) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{22}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *MessageDigitalPerson) GetName() string {
@@ -1703,7 +1845,7 @@ type MessageMovement struct {
 func (x *MessageMovement) Reset() {
 	*x = MessageMovement{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[23]
+		mi := &file_tts_v2_tts_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1716,7 +1858,7 @@ func (x *MessageMovement) String() string {
 func (*MessageMovement) ProtoMessage() {}
 
 func (x *MessageMovement) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[23]
+	mi := &file_tts_v2_tts_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1729,7 +1871,7 @@ func (x *MessageMovement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MessageMovement.ProtoReflect.Descriptor instead.
 func (*MessageMovement) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{23}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *MessageMovement) GetName() string {
@@ -1758,7 +1900,7 @@ type MessageExpression struct {
 func (x *MessageExpression) Reset() {
 	*x = MessageExpression{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[24]
+		mi := &file_tts_v2_tts_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1771,7 +1913,7 @@ func (x *MessageExpression) String() string {
 func (*MessageExpression) ProtoMessage() {}
 
 func (x *MessageExpression) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[24]
+	mi := &file_tts_v2_tts_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1784,7 +1926,7 @@ func (x *MessageExpression) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MessageExpression.ProtoReflect.Descriptor instead.
 func (*MessageExpression) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{24}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *MessageExpression) GetName() string {
@@ -1813,7 +1955,7 @@ type RegisterReq struct {
 func (x *RegisterReq) Reset() {
 	*x = RegisterReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[25]
+		mi := &file_tts_v2_tts_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1826,7 +1968,7 @@ func (x *RegisterReq) String() string {
 func (*RegisterReq) ProtoMessage() {}
 
 func (x *RegisterReq) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[25]
+	mi := &file_tts_v2_tts_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1839,7 +1981,7 @@ func (x *RegisterReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterReq.ProtoReflect.Descriptor instead.
 func (*RegisterReq) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{25}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *RegisterReq) GetAccount() string {
@@ -1867,7 +2009,7 @@ type RegisterResp struct {
 func (x *RegisterResp) Reset() {
 	*x = RegisterResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[26]
+		mi := &file_tts_v2_tts_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1880,7 +2022,7 @@ func (x *RegisterResp) String() string {
 func (*RegisterResp) ProtoMessage() {}
 
 func (x *RegisterResp) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[26]
+	mi := &file_tts_v2_tts_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1893,7 +2035,7 @@ func (x *RegisterResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterResp.ProtoReflect.Descriptor instead.
 func (*RegisterResp) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{26}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *RegisterResp) GetToken() string {
@@ -1915,7 +2057,7 @@ type GetUserSpeakersRequest struct {
 func (x *GetUserSpeakersRequest) Reset() {
 	*x = GetUserSpeakersRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[27]
+		mi := &file_tts_v2_tts_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1928,7 +2070,7 @@ func (x *GetUserSpeakersRequest) String() string {
 func (*GetUserSpeakersRequest) ProtoMessage() {}
 
 func (x *GetUserSpeakersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[27]
+	mi := &file_tts_v2_tts_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1941,7 +2083,7 @@ func (x *GetUserSpeakersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserSpeakersRequest.ProtoReflect.Descriptor instead.
 func (*GetUserSpeakersRequest) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{27}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetUserSpeakersRequest) GetTraceId() string {
@@ -1969,7 +2111,7 @@ type GetUserSpeakersResponse struct {
 func (x *GetUserSpeakersResponse) Reset() {
 	*x = GetUserSpeakersResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[28]
+		mi := &file_tts_v2_tts_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1982,7 +2124,7 @@ func (x *GetUserSpeakersResponse) String() string {
 func (*GetUserSpeakersResponse) ProtoMessage() {}
 
 func (x *GetUserSpeakersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[28]
+	mi := &file_tts_v2_tts_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1995,7 +2137,7 @@ func (x *GetUserSpeakersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserSpeakersResponse.ProtoReflect.Descriptor instead.
 func (*GetUserSpeakersResponse) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{28}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetUserSpeakersResponse) GetSpeakers() []string {
@@ -2017,7 +2159,7 @@ type GetTtsConfigByUserRequest struct {
 func (x *GetTtsConfigByUserRequest) Reset() {
 	*x = GetTtsConfigByUserRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tts_v2_tts_proto_msgTypes[29]
+		mi := &file_tts_v2_tts_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2030,7 +2172,7 @@ func (x *GetTtsConfigByUserRequest) String() string {
 func (*GetTtsConfigByUserRequest) ProtoMessage() {}
 
 func (x *GetTtsConfigByUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tts_v2_tts_proto_msgTypes[29]
+	mi := &file_tts_v2_tts_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2043,7 +2185,7 @@ func (x *GetTtsConfigByUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTtsConfigByUserRequest.ProtoReflect.Descriptor instead.
 func (*GetTtsConfigByUserRequest) Descriptor() ([]byte, []int) {
-	return file_tts_v2_tts_proto_rawDescGZIP(), []int{29}
+	return file_tts_v2_tts_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetTtsConfigByUserRequest) GetTraceId() string {
@@ -2110,7 +2252,7 @@ var file_tts_v2_tts_proto_rawDesc = []byte{
 	0x65, 0x72, 0x46, 0x6c, 0x61, 0x67, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b,
 	0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a,
 	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61,
-	0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0xb3, 0x04, 0x0a, 0x06, 0x54, 0x74, 0x73, 0x52,
+	0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0xf9, 0x04, 0x0a, 0x06, 0x54, 0x74, 0x73, 0x52,
 	0x65, 0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x5f, 0x63, 0x6f, 0x64, 0x65,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64,
 	0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28,
@@ -2144,96 +2286,118 @@ var file_tts_v2_tts_proto_rawDesc = []byte{
 	0x0d, 0x62, 0x6f, 0x64, 0x79, 0x5f, 0x6d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x18, 0x0a,
 	0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61,
 	0x2e, 0x42, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x48, 0x00, 0x52,
-	0x0c, 0x62, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x42, 0x0e, 0x0a,
-	0x0c, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x5f, 0x6f, 0x6e, 0x65, 0x6f, 0x66, 0x22, 0x82, 0x01,
-	0x0a, 0x10, 0x53, 0x79, 0x6e, 0x74, 0x68, 0x65, 0x73, 0x69, 0x7a, 0x65, 0x64, 0x41, 0x75, 0x64,
-	0x69, 0x6f, 0x12, 0x10, 0x0a, 0x03, 0x70, 0x63, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52,
-	0x03, 0x70, 0x63, 0x6d, 0x12, 0x35, 0x0a, 0x0a, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61,
-	0x74, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63,
-	0x68, 0x65, 0x6d, 0x61, 0x2e, 0x43, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x52,
-	0x0a, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x12, 0x25, 0x0a, 0x0e, 0x69,
-	0x73, 0x5f, 0x70, 0x75, 0x6e, 0x63, 0x74, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20,
-	0x01, 0x28, 0x05, 0x52, 0x0d, 0x69, 0x73, 0x50, 0x75, 0x6e, 0x63, 0x74, 0x75, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x22, 0x3e, 0x0a, 0x09, 0x44, 0x65, 0x62, 0x75, 0x67, 0x49, 0x6e, 0x66, 0x6f, 0x12,
-	0x1d, 0x0a, 0x0a, 0x64, 0x65, 0x62, 0x75, 0x67, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x09, 0x64, 0x65, 0x62, 0x75, 0x67, 0x54, 0x79, 0x70, 0x65, 0x12, 0x12,
-	0x0a, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x69, 0x6e,
-	0x66, 0x6f, 0x22, 0xc9, 0x01, 0x0a, 0x0d, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x45, 0x6c, 0x65,
-	0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x74,
-	0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0a, 0x61, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x54, 0x79, 0x70, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x25, 0x0a, 0x0e, 0x6f, 0x70, 0x65, 0x72, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52,
-	0x0d, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x12, 0x35,
-	0x0a, 0x0a, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x15, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x43,
-	0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x52, 0x0a, 0x63, 0x6f, 0x6f, 0x72, 0x64,
-	0x69, 0x6e, 0x61, 0x74, 0x65, 0x12, 0x27, 0x0a, 0x0f, 0x72, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x5f,
-	0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0e,
-	0x72, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x8c,
-	0x02, 0x0a, 0x0d, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x41, 0x6e, 0x64, 0x54, 0x65, 0x78, 0x74,
-	0x12, 0x12, 0x0a, 0x04, 0x74, 0x65, 0x78, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
-	0x74, 0x65, 0x78, 0x74, 0x12, 0x5b, 0x0a, 0x18, 0x66, 0x61, 0x63, 0x69, 0x61, 0x6c, 0x5f, 0x65,
-	0x78, 0x70, 0x72, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65,
-	0x6d, 0x61, 0x2e, 0x46, 0x61, 0x63, 0x69, 0x61, 0x6c, 0x45, 0x78, 0x70, 0x72, 0x65, 0x73, 0x73,
-	0x69, 0x6f, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x16, 0x66, 0x61, 0x63, 0x69, 0x61,
-	0x6c, 0x45, 0x78, 0x70, 0x72, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x69,
-	0x67, 0x12, 0x4f, 0x0a, 0x14, 0x62, 0x6f, 0x64, 0x79, 0x5f, 0x6d, 0x6f, 0x76, 0x65, 0x6d, 0x65,
-	0x6e, 0x74, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32,
-	0x1d, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x42, 0x6f, 0x64, 0x79,
-	0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x12,
-	0x62, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x43, 0x6f, 0x6e, 0x66,
-	0x69, 0x67, 0x12, 0x39, 0x0a, 0x0c, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x5f, 0x63, 0x6f, 0x6e, 0x66,
-	0x69, 0x67, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63,
-	0x68, 0x65, 0x6d, 0x61, 0x2e, 0x41, 0x75, 0x64, 0x69, 0x6f, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
-	0x52, 0x0b, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x22, 0x74, 0x0a,
-	0x16, 0x46, 0x61, 0x63, 0x69, 0x61, 0x6c, 0x45, 0x78, 0x70, 0x72, 0x65, 0x73, 0x73, 0x69, 0x6f,
-	0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x1b, 0x0a, 0x09, 0x66, 0x72, 0x61, 0x6d, 0x65,
-	0x5f, 0x64, 0x69, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x66, 0x72, 0x61, 0x6d,
-	0x65, 0x44, 0x69, 0x6d, 0x12, 0x20, 0x0a, 0x0c, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x75,
-	0x72, 0x5f, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0a, 0x66, 0x72, 0x61, 0x6d,
-	0x65, 0x44, 0x75, 0x72, 0x4d, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6d, 0x65, 0x74, 0x61, 0x5f, 0x64,
-	0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x44,
-	0x61, 0x74, 0x61, 0x22, 0x70, 0x0a, 0x12, 0x42, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d,
-	0x65, 0x6e, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x1b, 0x0a, 0x09, 0x66, 0x72, 0x61,
-	0x6d, 0x65, 0x5f, 0x64, 0x69, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x66, 0x72,
-	0x61, 0x6d, 0x65, 0x44, 0x69, 0x6d, 0x12, 0x20, 0x0a, 0x0c, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x5f,
-	0x64, 0x75, 0x72, 0x5f, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0a, 0x66, 0x72,
-	0x61, 0x6d, 0x65, 0x44, 0x75, 0x72, 0x4d, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6d, 0x65, 0x74, 0x61,
-	0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x65, 0x74,
-	0x61, 0x44, 0x61, 0x74, 0x61, 0x22, 0x75, 0x0a, 0x0b, 0x41, 0x75, 0x64, 0x69, 0x6f, 0x43, 0x6f,
-	0x6e, 0x66, 0x69, 0x67, 0x12, 0x23, 0x0a, 0x0d, 0x73, 0x61, 0x6d, 0x70, 0x6c, 0x69, 0x6e, 0x67,
-	0x5f, 0x72, 0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0c, 0x73, 0x61, 0x6d,
-	0x70, 0x6c, 0x69, 0x6e, 0x67, 0x52, 0x61, 0x74, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x63, 0x68, 0x61,
-	0x6e, 0x6e, 0x65, 0x6c, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x63, 0x68, 0x61,
-	0x6e, 0x6e, 0x65, 0x6c, 0x73, 0x12, 0x25, 0x0a, 0x0e, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x5f, 0x65,
-	0x6e, 0x63, 0x6f, 0x64, 0x69, 0x6e, 0x67, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0d, 0x61,
-	0x75, 0x64, 0x69, 0x6f, 0x45, 0x6e, 0x63, 0x6f, 0x64, 0x69, 0x6e, 0x67, 0x22, 0x6a, 0x0a, 0x10,
-	0x54, 0x69, 0x6d, 0x65, 0x64, 0x4d, 0x6f, 0x75, 0x74, 0x68, 0x53, 0x68, 0x61, 0x70, 0x65, 0x73,
-	0x12, 0x32, 0x0a, 0x06, 0x6d, 0x6f, 0x75, 0x74, 0x68, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x1a, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x54, 0x69, 0x6d,
-	0x65, 0x64, 0x4d, 0x6f, 0x75, 0x74, 0x68, 0x53, 0x68, 0x61, 0x70, 0x65, 0x52, 0x06, 0x6d, 0x6f,
-	0x75, 0x74, 0x68, 0x73, 0x12, 0x22, 0x0a, 0x0d, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69,
-	0x6d, 0x65, 0x5f, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0b, 0x73, 0x74, 0x61,
-	0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x4d, 0x73, 0x22, 0x63, 0x0a, 0x0a, 0x45, 0x78, 0x70, 0x72,
-	0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01,
-	0x20, 0x03, 0x28, 0x02, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x12, 0x1d, 0x0a, 0x0a, 0x66, 0x72,
-	0x61, 0x6d, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09,
-	0x66, 0x72, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x22, 0x0a, 0x0d, 0x73, 0x74, 0x61,
-	0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x5f, 0x6d, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02,
-	0x52, 0x0b, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x4d, 0x73, 0x22, 0x65, 0x0a,
-	0x0c, 0x42, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x12, 0x0a,
-	0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x03, 0x28, 0x02, 0x52, 0x04, 0x64, 0x61, 0x74,
-	0x61, 0x12, 0x1d, 0x0a, 0x0a, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x7a, 0x65,
-	0x12, 0x22, 0x0a, 0x0d, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x5f, 0x6d,
-	0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0b, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69,
-	0x6d, 0x65, 0x4d, 0x73, 0x22, 0x46, 0x0a, 0x0a, 0x43, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61,
-	0x74, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6f, 0x66, 0x66, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52,
-	0x03, 0x6f, 0x66, 0x66, 0x12, 0x10, 0x0a, 0x03, 0x6c, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x05, 0x52, 0x03, 0x6c, 0x65, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x22, 0x48, 0x0a, 0x0f,
+	0x0c, 0x62, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x44, 0x0a,
+	0x0f, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61,
+	0x18, 0x0b, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65,
+	0x6d, 0x61, 0x2e, 0x43, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x44, 0x61, 0x74,
+	0x61, 0x48, 0x00, 0x52, 0x0e, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x44,
+	0x61, 0x74, 0x61, 0x42, 0x0e, 0x0a, 0x0c, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x5f, 0x6f, 0x6e,
+	0x65, 0x6f, 0x66, 0x22, 0x82, 0x01, 0x0a, 0x10, 0x53, 0x79, 0x6e, 0x74, 0x68, 0x65, 0x73, 0x69,
+	0x7a, 0x65, 0x64, 0x41, 0x75, 0x64, 0x69, 0x6f, 0x12, 0x10, 0x0a, 0x03, 0x70, 0x63, 0x6d, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x03, 0x70, 0x63, 0x6d, 0x12, 0x35, 0x0a, 0x0a, 0x63, 0x6f,
+	0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15,
+	0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x43, 0x6f, 0x6f, 0x72, 0x64,
+	0x69, 0x6e, 0x61, 0x74, 0x65, 0x52, 0x0a, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74,
+	0x65, 0x12, 0x25, 0x0a, 0x0e, 0x69, 0x73, 0x5f, 0x70, 0x75, 0x6e, 0x63, 0x74, 0x75, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0d, 0x69, 0x73, 0x50, 0x75, 0x6e,
+	0x63, 0x74, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x4c, 0x0a, 0x0f, 0x41, 0x75, 0x64, 0x69,
+	0x6f, 0x43, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x73,
+	0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x09, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x75,
+	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64, 0x75,
+	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x8e, 0x01, 0x0a, 0x0e, 0x43, 0x6f, 0x6f, 0x72, 0x64,
+	0x69, 0x6e, 0x61, 0x74, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x35, 0x0a, 0x0a, 0x63, 0x6f, 0x6f,
+	0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e,
+	0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x43, 0x6f, 0x6f, 0x72, 0x64, 0x69,
+	0x6e, 0x61, 0x74, 0x65, 0x52, 0x0a, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65,
+	0x12, 0x45, 0x0a, 0x10, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x5f, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69,
+	0x6e, 0x61, 0x74, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x74, 0x74, 0x73,
+	0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x41, 0x75, 0x64, 0x69, 0x6f, 0x43, 0x6f, 0x6f, 0x72,
+	0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x52, 0x0f, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x43, 0x6f, 0x6f,
+	0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x22, 0x3e, 0x0a, 0x09, 0x44, 0x65, 0x62, 0x75, 0x67,
+	0x49, 0x6e, 0x66, 0x6f, 0x12, 0x1d, 0x0a, 0x0a, 0x64, 0x65, 0x62, 0x75, 0x67, 0x5f, 0x74, 0x79,
+	0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x64, 0x65, 0x62, 0x75, 0x67, 0x54,
+	0x79, 0x70, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x22, 0xc9, 0x01, 0x0a, 0x0d, 0x41, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x45, 0x6c, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x61, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0a,
+	0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72,
+	0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x25, 0x0a, 0x0e,
+	0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x05, 0x52, 0x0d, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54,
+	0x79, 0x70, 0x65, 0x12, 0x35, 0x0a, 0x0a, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74,
+	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68,
+	0x65, 0x6d, 0x61, 0x2e, 0x43, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x52, 0x0a,
+	0x63, 0x6f, 0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x12, 0x27, 0x0a, 0x0f, 0x72, 0x65,
+	0x6e, 0x64, 0x65, 0x72, 0x5f, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x0e, 0x72, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x44, 0x75, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x22, 0x8c, 0x02, 0x0a, 0x0d, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x41, 0x6e,
+	0x64, 0x54, 0x65, 0x78, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x65, 0x78, 0x74, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x65, 0x78, 0x74, 0x12, 0x5b, 0x0a, 0x18, 0x66, 0x61, 0x63,
+	0x69, 0x61, 0x6c, 0x5f, 0x65, 0x78, 0x70, 0x72, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x5f, 0x63,
+	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x74, 0x74,
+	0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x46, 0x61, 0x63, 0x69, 0x61, 0x6c, 0x45, 0x78,
+	0x70, 0x72, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x16,
+	0x66, 0x61, 0x63, 0x69, 0x61, 0x6c, 0x45, 0x78, 0x70, 0x72, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e,
+	0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x4f, 0x0a, 0x14, 0x62, 0x6f, 0x64, 0x79, 0x5f, 0x6d,
+	0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61,
+	0x2e, 0x42, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x43, 0x6f, 0x6e,
+	0x66, 0x69, 0x67, 0x52, 0x12, 0x62, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e,
+	0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x39, 0x0a, 0x0c, 0x61, 0x75, 0x64, 0x69, 0x6f,
+	0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e,
+	0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x41, 0x75, 0x64, 0x69, 0x6f, 0x43,
+	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x0b, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x43, 0x6f, 0x6e, 0x66,
+	0x69, 0x67, 0x22, 0x74, 0x0a, 0x16, 0x46, 0x61, 0x63, 0x69, 0x61, 0x6c, 0x45, 0x78, 0x70, 0x72,
+	0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x1b, 0x0a, 0x09,
+	0x66, 0x72, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x69, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x08, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x44, 0x69, 0x6d, 0x12, 0x20, 0x0a, 0x0c, 0x66, 0x72, 0x61,
+	0x6d, 0x65, 0x5f, 0x64, 0x75, 0x72, 0x5f, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52,
+	0x0a, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x44, 0x75, 0x72, 0x4d, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6d,
+	0x65, 0x74, 0x61, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x6d, 0x65, 0x74, 0x61, 0x44, 0x61, 0x74, 0x61, 0x22, 0x70, 0x0a, 0x12, 0x42, 0x6f, 0x64, 0x79,
+	0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x1b,
+	0x0a, 0x09, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x69, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x08, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x44, 0x69, 0x6d, 0x12, 0x20, 0x0a, 0x0c, 0x66,
+	0x72, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x75, 0x72, 0x5f, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x02, 0x52, 0x0a, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x44, 0x75, 0x72, 0x4d, 0x73, 0x12, 0x1b, 0x0a,
+	0x09, 0x6d, 0x65, 0x74, 0x61, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x44, 0x61, 0x74, 0x61, 0x22, 0x75, 0x0a, 0x0b, 0x41, 0x75,
+	0x64, 0x69, 0x6f, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x23, 0x0a, 0x0d, 0x73, 0x61, 0x6d,
+	0x70, 0x6c, 0x69, 0x6e, 0x67, 0x5f, 0x72, 0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x0c, 0x73, 0x61, 0x6d, 0x70, 0x6c, 0x69, 0x6e, 0x67, 0x52, 0x61, 0x74, 0x65, 0x12, 0x1a,
+	0x0a, 0x08, 0x63, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x08, 0x63, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x73, 0x12, 0x25, 0x0a, 0x0e, 0x61, 0x75,
+	0x64, 0x69, 0x6f, 0x5f, 0x65, 0x6e, 0x63, 0x6f, 0x64, 0x69, 0x6e, 0x67, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x05, 0x52, 0x0d, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x45, 0x6e, 0x63, 0x6f, 0x64, 0x69, 0x6e,
+	0x67, 0x22, 0x6a, 0x0a, 0x10, 0x54, 0x69, 0x6d, 0x65, 0x64, 0x4d, 0x6f, 0x75, 0x74, 0x68, 0x53,
+	0x68, 0x61, 0x70, 0x65, 0x73, 0x12, 0x32, 0x0a, 0x06, 0x6d, 0x6f, 0x75, 0x74, 0x68, 0x73, 0x18,
+	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x74, 0x74, 0x73, 0x73, 0x63, 0x68, 0x65, 0x6d,
+	0x61, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x64, 0x4d, 0x6f, 0x75, 0x74, 0x68, 0x53, 0x68, 0x61, 0x70,
+	0x65, 0x52, 0x06, 0x6d, 0x6f, 0x75, 0x74, 0x68, 0x73, 0x12, 0x22, 0x0a, 0x0d, 0x73, 0x74, 0x61,
+	0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x5f, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02,
+	0x52, 0x0b, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x4d, 0x73, 0x22, 0x63, 0x0a,
+	0x0a, 0x45, 0x78, 0x70, 0x72, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x64,
+	0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x03, 0x28, 0x02, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x12,
+	0x1d, 0x0a, 0x0a, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x09, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x22,
+	0x0a, 0x0d, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x5f, 0x6d, 0x73, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0b, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65,
+	0x4d, 0x73, 0x22, 0x65, 0x0a, 0x0c, 0x42, 0x6f, 0x64, 0x79, 0x4d, 0x6f, 0x76, 0x65, 0x6d, 0x65,
+	0x6e, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x03, 0x28, 0x02,
+	0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x12, 0x1d, 0x0a, 0x0a, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x5f,
+	0x73, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x66, 0x72, 0x61, 0x6d,
+	0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x22, 0x0a, 0x0d, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74,
+	0x69, 0x6d, 0x65, 0x5f, 0x6d, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0b, 0x73, 0x74,
+	0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x4d, 0x73, 0x22, 0x80, 0x01, 0x0a, 0x0a, 0x43, 0x6f,
+	0x6f, 0x72, 0x64, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6f, 0x66, 0x66, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03, 0x6f, 0x66, 0x66, 0x12, 0x10, 0x0a, 0x03, 0x6c, 0x65,
+	0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03, 0x6c, 0x65, 0x6e, 0x12, 0x14, 0x0a, 0x05,
+	0x6f, 0x72, 0x64, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6f, 0x72, 0x64,
+	0x65, 0x72, 0x12, 0x1b, 0x0a, 0x09, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x5f, 0x6f, 0x66, 0x66, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x4f, 0x66, 0x66, 0x12,
+	0x1b, 0x0a, 0x09, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x5f, 0x6c, 0x65, 0x6e, 0x18, 0x05, 0x20, 0x01,
+	0x28, 0x05, 0x52, 0x08, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x4c, 0x65, 0x6e, 0x22, 0x48, 0x0a, 0x0f,
 	0x54, 0x69, 0x6d, 0x65, 0x64, 0x4d, 0x6f, 0x75, 0x74, 0x68, 0x53, 0x68, 0x61, 0x70, 0x65, 0x12,
 	0x1f, 0x0a, 0x0b, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x75, 0x73, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x04, 0x52, 0x0a, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x55, 0x73,
@@ -2396,81 +2560,86 @@ func file_tts_v2_tts_proto_rawDescGZIP() []byte {
 }
 
 var file_tts_v2_tts_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_tts_v2_tts_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
+var file_tts_v2_tts_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
 var file_tts_v2_tts_proto_goTypes = []interface{}{
 	(ClientVersion)(0),                // 0: ttsschema.ClientVersion
 	(*TtsReq)(nil),                    // 1: ttsschema.TtsReq
 	(*TtsRes)(nil),                    // 2: ttsschema.TtsRes
 	(*SynthesizedAudio)(nil),          // 3: ttsschema.SynthesizedAudio
-	(*DebugInfo)(nil),                 // 4: ttsschema.DebugInfo
-	(*ActionElement)(nil),             // 5: ttsschema.ActionElement
-	(*ConfigAndText)(nil),             // 6: ttsschema.ConfigAndText
-	(*FacialExpressionConfig)(nil),    // 7: ttsschema.FacialExpressionConfig
-	(*BodyMovementConfig)(nil),        // 8: ttsschema.BodyMovementConfig
-	(*AudioConfig)(nil),               // 9: ttsschema.AudioConfig
-	(*TimedMouthShapes)(nil),          // 10: ttsschema.TimedMouthShapes
-	(*Expression)(nil),                // 11: ttsschema.Expression
-	(*BodyMovement)(nil),              // 12: ttsschema.BodyMovement
-	(*Coordinate)(nil),                // 13: ttsschema.Coordinate
-	(*TimedMouthShape)(nil),           // 14: ttsschema.TimedMouthShape
-	(*VerVersionReq)(nil),             // 15: ttsschema.VerVersionReq
-	(*VerVersionRsp)(nil),             // 16: ttsschema.VerVersionRsp
-	(*VerReq)(nil),                    // 17: ttsschema.VerReq
-	(*RespGetTtsConfig)(nil),          // 18: ttsschema.RespGetTtsConfig
-	(*SpeakerList)(nil),               // 19: ttsschema.SpeakerList
-	(*SpeakerParameter)(nil),          // 20: ttsschema.SpeakerParameter
-	(*MessagePitch)(nil),              // 21: ttsschema.MessagePitch
-	(*MessageEmotion)(nil),            // 22: ttsschema.MessageEmotion
-	(*MessageDigitalPerson)(nil),      // 23: ttsschema.MessageDigitalPerson
-	(*MessageMovement)(nil),           // 24: ttsschema.MessageMovement
-	(*MessageExpression)(nil),         // 25: ttsschema.MessageExpression
-	(*RegisterReq)(nil),               // 26: ttsschema.RegisterReq
-	(*RegisterResp)(nil),              // 27: ttsschema.RegisterResp
-	(*GetUserSpeakersRequest)(nil),    // 28: ttsschema.GetUserSpeakersRequest
-	(*GetUserSpeakersResponse)(nil),   // 29: ttsschema.GetUserSpeakersResponse
-	(*GetTtsConfigByUserRequest)(nil), // 30: ttsschema.GetTtsConfigByUserRequest
-	nil,                               // 31: ttsschema.TtsReq.ParameterFlagEntry
+	(*AudioCoordinate)(nil),           // 4: ttsschema.AudioCoordinate
+	(*CoordinateData)(nil),            // 5: ttsschema.CoordinateData
+	(*DebugInfo)(nil),                 // 6: ttsschema.DebugInfo
+	(*ActionElement)(nil),             // 7: ttsschema.ActionElement
+	(*ConfigAndText)(nil),             // 8: ttsschema.ConfigAndText
+	(*FacialExpressionConfig)(nil),    // 9: ttsschema.FacialExpressionConfig
+	(*BodyMovementConfig)(nil),        // 10: ttsschema.BodyMovementConfig
+	(*AudioConfig)(nil),               // 11: ttsschema.AudioConfig
+	(*TimedMouthShapes)(nil),          // 12: ttsschema.TimedMouthShapes
+	(*Expression)(nil),                // 13: ttsschema.Expression
+	(*BodyMovement)(nil),              // 14: ttsschema.BodyMovement
+	(*Coordinate)(nil),                // 15: ttsschema.Coordinate
+	(*TimedMouthShape)(nil),           // 16: ttsschema.TimedMouthShape
+	(*VerVersionReq)(nil),             // 17: ttsschema.VerVersionReq
+	(*VerVersionRsp)(nil),             // 18: ttsschema.VerVersionRsp
+	(*VerReq)(nil),                    // 19: ttsschema.VerReq
+	(*RespGetTtsConfig)(nil),          // 20: ttsschema.RespGetTtsConfig
+	(*SpeakerList)(nil),               // 21: ttsschema.SpeakerList
+	(*SpeakerParameter)(nil),          // 22: ttsschema.SpeakerParameter
+	(*MessagePitch)(nil),              // 23: ttsschema.MessagePitch
+	(*MessageEmotion)(nil),            // 24: ttsschema.MessageEmotion
+	(*MessageDigitalPerson)(nil),      // 25: ttsschema.MessageDigitalPerson
+	(*MessageMovement)(nil),           // 26: ttsschema.MessageMovement
+	(*MessageExpression)(nil),         // 27: ttsschema.MessageExpression
+	(*RegisterReq)(nil),               // 28: ttsschema.RegisterReq
+	(*RegisterResp)(nil),              // 29: ttsschema.RegisterResp
+	(*GetUserSpeakersRequest)(nil),    // 30: ttsschema.GetUserSpeakersRequest
+	(*GetUserSpeakersResponse)(nil),   // 31: ttsschema.GetUserSpeakersResponse
+	(*GetTtsConfigByUserRequest)(nil), // 32: ttsschema.GetTtsConfigByUserRequest
+	nil,                               // 33: ttsschema.TtsReq.ParameterFlagEntry
 }
 var file_tts_v2_tts_proto_depIdxs = []int32{
-	31, // 0: ttsschema.TtsReq.parameter_flag:type_name -> ttsschema.TtsReq.ParameterFlagEntry
+	33, // 0: ttsschema.TtsReq.parameter_flag:type_name -> ttsschema.TtsReq.ParameterFlagEntry
 	0,  // 1: ttsschema.TtsReq.version:type_name -> ttsschema.ClientVersion
 	3,  // 2: ttsschema.TtsRes.synthesized_audio:type_name -> ttsschema.SynthesizedAudio
-	4,  // 3: ttsschema.TtsRes.debug_info:type_name -> ttsschema.DebugInfo
-	5,  // 4: ttsschema.TtsRes.action_element:type_name -> ttsschema.ActionElement
-	6,  // 5: ttsschema.TtsRes.config_text:type_name -> ttsschema.ConfigAndText
-	10, // 6: ttsschema.TtsRes.time_mouth_shapes:type_name -> ttsschema.TimedMouthShapes
-	11, // 7: ttsschema.TtsRes.expression:type_name -> ttsschema.Expression
-	12, // 8: ttsschema.TtsRes.body_movement:type_name -> ttsschema.BodyMovement
-	13, // 9: ttsschema.SynthesizedAudio.coordinate:type_name -> ttsschema.Coordinate
-	13, // 10: ttsschema.ActionElement.coordinate:type_name -> ttsschema.Coordinate
-	7,  // 11: ttsschema.ConfigAndText.facial_expression_config:type_name -> ttsschema.FacialExpressionConfig
-	8,  // 12: ttsschema.ConfigAndText.body_movement_config:type_name -> ttsschema.BodyMovementConfig
-	9,  // 13: ttsschema.ConfigAndText.audio_config:type_name -> ttsschema.AudioConfig
-	14, // 14: ttsschema.TimedMouthShapes.mouths:type_name -> ttsschema.TimedMouthShape
-	19, // 15: ttsschema.RespGetTtsConfig.speaker_list:type_name -> ttsschema.SpeakerList
-	21, // 16: ttsschema.RespGetTtsConfig.pitch_list:type_name -> ttsschema.MessagePitch
-	22, // 17: ttsschema.RespGetTtsConfig.emotion_list:type_name -> ttsschema.MessageEmotion
-	23, // 18: ttsschema.RespGetTtsConfig.digital_person_list:type_name -> ttsschema.MessageDigitalPerson
-	24, // 19: ttsschema.RespGetTtsConfig.movement_list:type_name -> ttsschema.MessageMovement
-	25, // 20: ttsschema.RespGetTtsConfig.expression_list:type_name -> ttsschema.MessageExpression
-	20, // 21: ttsschema.SpeakerList.list:type_name -> ttsschema.SpeakerParameter
-	1,  // 22: ttsschema.CloudMindsTTS.Call:input_type -> ttsschema.TtsReq
-	15, // 23: ttsschema.CloudMindsTTS.GetVersion:input_type -> ttsschema.VerVersionReq
-	17, // 24: ttsschema.CloudMindsTTS.GetTtsConfig:input_type -> ttsschema.VerReq
-	28, // 25: ttsschema.CloudMindsTTS.GetUserSpeakers:input_type -> ttsschema.GetUserSpeakersRequest
-	30, // 26: ttsschema.CloudMindsTTS.GetTtsConfigByUser:input_type -> ttsschema.GetTtsConfigByUserRequest
-	26, // 27: ttsschema.CloudMindsTTS.Register:input_type -> ttsschema.RegisterReq
-	2,  // 28: ttsschema.CloudMindsTTS.Call:output_type -> ttsschema.TtsRes
-	16, // 29: ttsschema.CloudMindsTTS.GetVersion:output_type -> ttsschema.VerVersionRsp
-	18, // 30: ttsschema.CloudMindsTTS.GetTtsConfig:output_type -> ttsschema.RespGetTtsConfig
-	29, // 31: ttsschema.CloudMindsTTS.GetUserSpeakers:output_type -> ttsschema.GetUserSpeakersResponse
-	18, // 32: ttsschema.CloudMindsTTS.GetTtsConfigByUser:output_type -> ttsschema.RespGetTtsConfig
-	27, // 33: ttsschema.CloudMindsTTS.Register:output_type -> ttsschema.RegisterResp
-	28, // [28:34] is the sub-list for method output_type
-	22, // [22:28] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	6,  // 3: ttsschema.TtsRes.debug_info:type_name -> ttsschema.DebugInfo
+	7,  // 4: ttsschema.TtsRes.action_element:type_name -> ttsschema.ActionElement
+	8,  // 5: ttsschema.TtsRes.config_text:type_name -> ttsschema.ConfigAndText
+	12, // 6: ttsschema.TtsRes.time_mouth_shapes:type_name -> ttsschema.TimedMouthShapes
+	13, // 7: ttsschema.TtsRes.expression:type_name -> ttsschema.Expression
+	14, // 8: ttsschema.TtsRes.body_movement:type_name -> ttsschema.BodyMovement
+	5,  // 9: ttsschema.TtsRes.coordinate_data:type_name -> ttsschema.CoordinateData
+	15, // 10: ttsschema.SynthesizedAudio.coordinate:type_name -> ttsschema.Coordinate
+	15, // 11: ttsschema.CoordinateData.coordinate:type_name -> ttsschema.Coordinate
+	4,  // 12: ttsschema.CoordinateData.audio_coordinate:type_name -> ttsschema.AudioCoordinate
+	15, // 13: ttsschema.ActionElement.coordinate:type_name -> ttsschema.Coordinate
+	9,  // 14: ttsschema.ConfigAndText.facial_expression_config:type_name -> ttsschema.FacialExpressionConfig
+	10, // 15: ttsschema.ConfigAndText.body_movement_config:type_name -> ttsschema.BodyMovementConfig
+	11, // 16: ttsschema.ConfigAndText.audio_config:type_name -> ttsschema.AudioConfig
+	16, // 17: ttsschema.TimedMouthShapes.mouths:type_name -> ttsschema.TimedMouthShape
+	21, // 18: ttsschema.RespGetTtsConfig.speaker_list:type_name -> ttsschema.SpeakerList
+	23, // 19: ttsschema.RespGetTtsConfig.pitch_list:type_name -> ttsschema.MessagePitch
+	24, // 20: ttsschema.RespGetTtsConfig.emotion_list:type_name -> ttsschema.MessageEmotion
+	25, // 21: ttsschema.RespGetTtsConfig.digital_person_list:type_name -> ttsschema.MessageDigitalPerson
+	26, // 22: ttsschema.RespGetTtsConfig.movement_list:type_name -> ttsschema.MessageMovement
+	27, // 23: ttsschema.RespGetTtsConfig.expression_list:type_name -> ttsschema.MessageExpression
+	22, // 24: ttsschema.SpeakerList.list:type_name -> ttsschema.SpeakerParameter
+	1,  // 25: ttsschema.CloudMindsTTS.Call:input_type -> ttsschema.TtsReq
+	17, // 26: ttsschema.CloudMindsTTS.GetVersion:input_type -> ttsschema.VerVersionReq
+	19, // 27: ttsschema.CloudMindsTTS.GetTtsConfig:input_type -> ttsschema.VerReq
+	30, // 28: ttsschema.CloudMindsTTS.GetUserSpeakers:input_type -> ttsschema.GetUserSpeakersRequest
+	32, // 29: ttsschema.CloudMindsTTS.GetTtsConfigByUser:input_type -> ttsschema.GetTtsConfigByUserRequest
+	28, // 30: ttsschema.CloudMindsTTS.Register:input_type -> ttsschema.RegisterReq
+	2,  // 31: ttsschema.CloudMindsTTS.Call:output_type -> ttsschema.TtsRes
+	18, // 32: ttsschema.CloudMindsTTS.GetVersion:output_type -> ttsschema.VerVersionRsp
+	20, // 33: ttsschema.CloudMindsTTS.GetTtsConfig:output_type -> ttsschema.RespGetTtsConfig
+	31, // 34: ttsschema.CloudMindsTTS.GetUserSpeakers:output_type -> ttsschema.GetUserSpeakersResponse
+	20, // 35: ttsschema.CloudMindsTTS.GetTtsConfigByUser:output_type -> ttsschema.RespGetTtsConfig
+	29, // 36: ttsschema.CloudMindsTTS.Register:output_type -> ttsschema.RegisterResp
+	31, // [31:37] is the sub-list for method output_type
+	25, // [25:31] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_tts_v2_tts_proto_init() }
@@ -2516,7 +2685,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DebugInfo); i {
+			switch v := v.(*AudioCoordinate); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2528,7 +2697,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ActionElement); i {
+			switch v := v.(*CoordinateData); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2540,7 +2709,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ConfigAndText); i {
+			switch v := v.(*DebugInfo); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2552,7 +2721,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FacialExpressionConfig); i {
+			switch v := v.(*ActionElement); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2564,7 +2733,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BodyMovementConfig); i {
+			switch v := v.(*ConfigAndText); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2576,7 +2745,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AudioConfig); i {
+			switch v := v.(*FacialExpressionConfig); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2588,7 +2757,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TimedMouthShapes); i {
+			switch v := v.(*BodyMovementConfig); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2600,7 +2769,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Expression); i {
+			switch v := v.(*AudioConfig); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2612,7 +2781,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BodyMovement); i {
+			switch v := v.(*TimedMouthShapes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2624,7 +2793,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Coordinate); i {
+			switch v := v.(*Expression); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2636,7 +2805,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TimedMouthShape); i {
+			switch v := v.(*BodyMovement); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2648,7 +2817,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*VerVersionReq); i {
+			switch v := v.(*Coordinate); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2660,7 +2829,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*VerVersionRsp); i {
+			switch v := v.(*TimedMouthShape); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2672,7 +2841,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*VerReq); i {
+			switch v := v.(*VerVersionReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2684,7 +2853,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RespGetTtsConfig); i {
+			switch v := v.(*VerVersionRsp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2696,7 +2865,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SpeakerList); i {
+			switch v := v.(*VerReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2708,7 +2877,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SpeakerParameter); i {
+			switch v := v.(*RespGetTtsConfig); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2720,7 +2889,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessagePitch); i {
+			switch v := v.(*SpeakerList); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2732,7 +2901,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessageEmotion); i {
+			switch v := v.(*SpeakerParameter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2744,7 +2913,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessageDigitalPerson); i {
+			switch v := v.(*MessagePitch); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2756,7 +2925,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessageMovement); i {
+			switch v := v.(*MessageEmotion); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2768,7 +2937,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MessageExpression); i {
+			switch v := v.(*MessageDigitalPerson); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2780,7 +2949,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterReq); i {
+			switch v := v.(*MessageMovement); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2792,7 +2961,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterResp); i {
+			switch v := v.(*MessageExpression); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2804,7 +2973,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetUserSpeakersRequest); i {
+			switch v := v.(*RegisterReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2816,7 +2985,7 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetUserSpeakersResponse); i {
+			switch v := v.(*RegisterResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2828,6 +2997,30 @@ func file_tts_v2_tts_proto_init() {
 			}
 		}
 		file_tts_v2_tts_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetUserSpeakersRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_tts_v2_tts_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetUserSpeakersResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_tts_v2_tts_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetTtsConfigByUserRequest); i {
 			case 0:
 				return &v.state
@@ -2848,6 +3041,7 @@ func file_tts_v2_tts_proto_init() {
 		(*TtsRes_TimeMouthShapes)(nil),
 		(*TtsRes_Expression)(nil),
 		(*TtsRes_BodyMovement)(nil),
+		(*TtsRes_CoordinateData)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -2855,7 +3049,7 @@ func file_tts_v2_tts_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_tts_v2_tts_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   31,
+			NumMessages:   33,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

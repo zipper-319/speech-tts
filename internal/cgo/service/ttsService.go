@@ -19,6 +19,8 @@ extern void goOnBodyMovement(void*, BodyMovementSegment*);
 extern void goOnEnd(void*, int flags);
 extern void goOnDebug(void*, const char *, const char *);
 extern void goOnActionElement(void*, int, const char*, int, Coordinate*, int);
+extern void goOnCoordinate(void* pUserData, Coordinate* coordinate, TimeCoordinate* timeCoordinate);
+extern void goOnEncodedData(void* pUserData, SynthesizedAudio* data);
 
 typedef void (*typOnStart)(void* pUserData, const char* ttsText, FacialExpressionConfig* expressionConfig, BodyMovementConfig* movementConfig);
 typedef void (*typOnSynthesizedData)(void* pUserData, SynthesizedAudio* data, Coordinate* coordinate);
@@ -28,6 +30,8 @@ typedef void (*typOnFacialExpression)(void* pUserData, FacialExpression* express
 typedef void (*typOnBodyMovement)(void* pUserData, BodyMovementSegment* movement);
 typedef void (*typOnActionElement)(void* pUserData, int type, const char* url, int operation_type, Coordinate* coordinate, int render_duration);
 typedef void (*typOnEnd)(void* pUserData, int flags);
+typedef void (*tyOnCoordinate)(void* pUserData, Coordinate* coordinate, TimeCoordinate* timeCoordinate);
+typedef void (*typOnEncodedData)(void* pUserData, SynthesizedAudio* data);
 
 extern void goOnStartV1(void*);
 extern void goOnAudioV1(void*, char*,int);
@@ -81,6 +85,8 @@ func init() {
 	actionCallback.onFacialExpression = C.typOnFacialExpression(C.goOnFacialExpression)
 	actionCallback.onBodyMovement = C.typOnBodyMovement(C.goOnBodyMovement)
 	actionCallback.onActionElement = C.typOnActionElement(C.goOnActionElement)
+	actionCallback.onCoordinate = C.typOnCoordinate(C.goOnCoordinate)
+	actionCallback.onEncodedData = C.typOnEncodedData(C.goOnEncodedData)
 
 	ttsCallback.onStart = C.typOnStartV1(C.goOnStartV1)
 	ttsCallback.onAudio = C.typOnAudioV1(C.goOnAudioV1)

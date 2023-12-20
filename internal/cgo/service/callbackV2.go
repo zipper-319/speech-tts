@@ -309,6 +309,61 @@ func goOnBodyMovement(pUserData unsafe.Pointer, bodyMovementData unsafe.Pointer)
 	object.Log.Infof("end to goOnBodyMovement pUserData: %d", pUserData)
 }
 
+//export goOnCoordinate
+func goOnCoordinate(pUserData unsafe.Pointer, coordinate *C.Coordinate, timeCoordinate *C.TimeCoordinate) {
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnCoordinate; irregularity type")
+		return
+	}
+	object.Log.Infof("start to goOnCoordinate;pUserData:%d", pUserData)
+	coordinateData := &v2.CoordinateData{
+		Coordinate: &v2.Coordinate{
+			Off:   int32(coordinate.off_utf8),
+			Len:   int32(coordinate.len_utf8),
+			Order: int32(coordinate.order),
+		},
+		AudioCoordinate: &v2.AudioCoordinate{
+			StartTime: int32(timeCoordinate.startMs),
+			Duration:  int32(timeCoordinate.durMs),
+		},
+	}
+
+	response := v2.TtsRes{
+		Status:      2,
+		ResultOneof: &v2.TtsRes_CoordinateData{CoordinateData: coordinateData},
+	}
+
+	sendResp(object, response)
+	object.Log.Infof("end to goOnCoordinate pUserData: %d", pUserData)
+
+}
+
+//export goOnBodyMovement
+func goOnEncodedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio) {
+	object := getHandlerObject(pUserData)
+	if object == nil {
+		log.Println("goOnEncodedData; irregularity type")
+		return
+	}
+	object.Log.Infof("start to goOnEncodedData;pUserData:%d", pUserData)
+	length := (C.int)(audioData.audio_size)
+	wav := C.GoBytes(unsafe.Pointer(audioData.audio_data), length)
+
+	response := v2.TtsRes{
+		Status: 2,
+		ResultOneof: &v2.TtsRes_SynthesizedAudio{
+			SynthesizedAudio: &v2.SynthesizedAudio{
+				Pcm:           wav,
+				IsPunctuation: int32(audioData.flags),
+			},
+		},
+	}
+	sendResp(object, response)
+	object.Log.Infof("end to goOnEncodedData pUserData: %d", pUserData)
+
+}
+
 func sendResp(object *data.HandlerObjectV2, response v2.TtsRes) {
 
 	if object != nil && object.BackChan != nil {

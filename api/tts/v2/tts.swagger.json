@@ -245,6 +245,21 @@
         }
       }
     },
+    "ttsschemaAudioCoordinate": {
+      "type": "object",
+      "properties": {
+        "start_time": {
+          "type": "integer",
+          "format": "int32",
+          "title": "音频开始时间"
+        },
+        "duration": {
+          "type": "integer",
+          "format": "int32",
+          "title": "音频持续时间"
+        }
+      }
+    },
     "ttsschemaBodyMovement": {
       "type": "object",
       "properties": {
@@ -334,11 +349,34 @@
         },
         "order": {
           "type": "integer",
+          "format": "int32"
+        },
+        "audio_off": {
+          "type": "integer",
           "format": "int32",
-          "title": "当len_utf8 = 0时，order与off_utf8一起描述一个的时间点。具体地，当off_utf8相同时，order相同则认为同时，order不同时，0优先，1次之，依次类推\n 当len_utf8 \u003e 0时，order无意义"
+          "description": "音频起点",
+          "title": "当len_utf8 = 0时，order与off_utf8一起描述一个的时间点。具体地，当off_utf8相同时，order相同则认为同时，order不同时，0优先，1次之，依次类推\n当len_utf8 \u003e 0时，order无意义"
+        },
+        "audio_len": {
+          "type": "integer",
+          "format": "int32",
+          "title": "音频长度"
         }
       },
       "title": "坐标信息"
+    },
+    "ttsschemaCoordinateData": {
+      "type": "object",
+      "properties": {
+        "coordinate": {
+          "$ref": "#/definitions/ttsschemaCoordinate",
+          "title": "文本坐标信息"
+        },
+        "audio_coordinate": {
+          "$ref": "#/definitions/ttsschemaAudioCoordinate",
+          "title": "音频坐标信息"
+        }
+      }
     },
     "ttsschemaDebugInfo": {
       "type": "object",
@@ -690,6 +728,10 @@
         "body_movement": {
           "$ref": "#/definitions/ttsschemaBodyMovement",
           "title": "动作数据"
+        },
+        "coordinate_data": {
+          "$ref": "#/definitions/ttsschemaCoordinateData",
+          "title": "编码音频的坐标数据"
         }
       }
     },

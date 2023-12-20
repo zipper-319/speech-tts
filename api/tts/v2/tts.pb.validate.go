@@ -476,6 +476,47 @@ func (m *TtsRes) validate(all bool) error {
 			}
 		}
 
+	case *TtsRes_CoordinateData:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetCoordinateData()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TtsResValidationError{
+						field:  "CoordinateData",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TtsResValidationError{
+						field:  "CoordinateData",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCoordinateData()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TtsResValidationError{
+					field:  "CoordinateData",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}
@@ -689,6 +730,268 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SynthesizedAudioValidationError{}
+
+// Validate checks the field values on AudioCoordinate with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AudioCoordinate) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AudioCoordinate with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AudioCoordinateMultiError, or nil if none found.
+func (m *AudioCoordinate) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AudioCoordinate) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for StartTime
+
+	// no validation rules for Duration
+
+	if len(errors) > 0 {
+		return AudioCoordinateMultiError(errors)
+	}
+
+	return nil
+}
+
+// AudioCoordinateMultiError is an error wrapping multiple validation errors
+// returned by AudioCoordinate.ValidateAll() if the designated constraints
+// aren't met.
+type AudioCoordinateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AudioCoordinateMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AudioCoordinateMultiError) AllErrors() []error { return m }
+
+// AudioCoordinateValidationError is the validation error returned by
+// AudioCoordinate.Validate if the designated constraints aren't met.
+type AudioCoordinateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AudioCoordinateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AudioCoordinateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AudioCoordinateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AudioCoordinateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AudioCoordinateValidationError) ErrorName() string { return "AudioCoordinateValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AudioCoordinateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAudioCoordinate.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AudioCoordinateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AudioCoordinateValidationError{}
+
+// Validate checks the field values on CoordinateData with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CoordinateData) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CoordinateData with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CoordinateDataMultiError,
+// or nil if none found.
+func (m *CoordinateData) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CoordinateData) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCoordinate()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CoordinateDataValidationError{
+					field:  "Coordinate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CoordinateDataValidationError{
+					field:  "Coordinate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCoordinate()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CoordinateDataValidationError{
+				field:  "Coordinate",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetAudioCoordinate()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CoordinateDataValidationError{
+					field:  "AudioCoordinate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CoordinateDataValidationError{
+					field:  "AudioCoordinate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAudioCoordinate()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CoordinateDataValidationError{
+				field:  "AudioCoordinate",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CoordinateDataMultiError(errors)
+	}
+
+	return nil
+}
+
+// CoordinateDataMultiError is an error wrapping multiple validation errors
+// returned by CoordinateData.ValidateAll() if the designated constraints
+// aren't met.
+type CoordinateDataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CoordinateDataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CoordinateDataMultiError) AllErrors() []error { return m }
+
+// CoordinateDataValidationError is the validation error returned by
+// CoordinateData.Validate if the designated constraints aren't met.
+type CoordinateDataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CoordinateDataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CoordinateDataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CoordinateDataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CoordinateDataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CoordinateDataValidationError) ErrorName() string { return "CoordinateDataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CoordinateDataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCoordinateData.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CoordinateDataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CoordinateDataValidationError{}
 
 // Validate checks the field values on DebugInfo with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -1809,6 +2112,10 @@ func (m *Coordinate) validate(all bool) error {
 	// no validation rules for Len
 
 	// no validation rules for Order
+
+	// no validation rules for AudioOff
+
+	// no validation rules for AudioLen
 
 	if len(errors) > 0 {
 		return CoordinateMultiError(errors)

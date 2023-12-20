@@ -30,7 +30,7 @@ typedef void (*typOnFacialExpression)(void* pUserData, FacialExpression* express
 typedef void (*typOnBodyMovement)(void* pUserData, BodyMovementSegment* movement);
 typedef void (*typOnActionElement)(void* pUserData, int type, const char* url, int operation_type, Coordinate* coordinate, int render_duration);
 typedef void (*typOnEnd)(void* pUserData, int flags);
-typedef void (*tyOnCoordinate)(void* pUserData, Coordinate* coordinate, TimeCoordinate* timeCoordinate);
+typedef void (*typOnCoordinate)(void* pUserData, Coordinate* coordinate, TimeCoordinate* timeCoordinate);
 typedef void (*typOnEncodedData)(void* pUserData, SynthesizedAudio* data);
 
 extern void goOnStartV1(void*);

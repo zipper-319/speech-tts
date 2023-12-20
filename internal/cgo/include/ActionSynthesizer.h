@@ -32,6 +32,21 @@ typedef struct
 }Coordinate;
 
 /**
+* 时间坐标
+*/
+typedef struct
+{
+    /**
+    * 时间起点
+    */
+    unsigned int startMs;
+    /**
+    * 时长
+    */
+    unsigned int durMs;
+}TimeCoordinate;
+
+/**
 * 数据的特性集
 */
 enum {
@@ -101,6 +116,22 @@ typedef struct
     * @param coordinate 该数据的坐标信息
     */
     void (*onSynthesizedData)(void* pUserData, SynthesizedAudio* data, Coordinate* coordinate);
+
+    /**
+    * 坐标信息（时间坐标与文本坐标的映射）
+    * @param pUserData 应用层数据
+    * @param coordinate 文本坐标
+    * @param timeCoordinate 时间坐标
+    */
+    void (*onCoordinate)(void* pUserData, Coordinate* coordinate, TimeCoordinate* timeCoordinate);
+
+    /**
+    * 编码后的音频数据
+    * onEncodedData和onCoordinate一起，构成对onSynthesizedData的一个替代，一次请求中onSynthesizedData和onEncodedData只会有一个被回调
+    * @param pUserData 应用层数据
+    * @param data SynthesizedAudio
+    */
+    void (*onEncodedData)(void* pUserData, SynthesizedAudio* data);
 
     /**
     * 语音合成结束

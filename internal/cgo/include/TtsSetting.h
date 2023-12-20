@@ -196,7 +196,7 @@ enum AudioEncoding{
     */
     OPUS_OGG = 1,
     /**
-    * opus CM
+    * opus CM (非正式)
     */
     OPUS_CM = 2,
     /**

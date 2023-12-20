@@ -339,7 +339,7 @@ func goOnCoordinate(pUserData unsafe.Pointer, coordinate *C.Coordinate, timeCoor
 
 }
 
-//export goOnBodyMovement
+//export goOnEncodedData
 func goOnEncodedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio) {
 	object := getHandlerObject(pUserData)
 	if object == nil {

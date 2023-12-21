@@ -208,13 +208,13 @@ func goOnSynthesizedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio
 	object.Log.Infof("start to goOnSynthesizedData;pUserData:%d", pUserData)
 
 	length := (C.int)(audioData.audio_size)
-	wav := C.GoBytes(unsafe.Pointer(audioData.audio_data), length)
+	pcm := C.GoBytes(unsafe.Pointer(audioData.audio_data), length)
 
 	response := v2.TtsRes{
 		Status: 2,
 		ResultOneof: &v2.TtsRes_SynthesizedAudio{
 			SynthesizedAudio: &v2.SynthesizedAudio{
-				Pcm: wav,
+				Pcm: pcm,
 				Coordinate: &v2.Coordinate{
 					Off:   int32(coordinate.off_utf8),
 					Len:   int32(coordinate.len_utf8),
@@ -348,14 +348,13 @@ func goOnEncodedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio) {
 	}
 	object.Log.Infof("start to goOnEncodedData;pUserData:%d", pUserData)
 	length := (C.int)(audioData.audio_size)
-	wav := C.GoBytes(unsafe.Pointer(audioData.audio_data), length)
+	audio := C.GoBytes(unsafe.Pointer(audioData.audio_data), length)
 
 	response := v2.TtsRes{
 		Status: 2,
-		ResultOneof: &v2.TtsRes_SynthesizedAudio{
-			SynthesizedAudio: &v2.SynthesizedAudio{
-				Pcm:           wav,
-				IsPunctuation: int32(audioData.flags),
+		ResultOneof: &v2.TtsRes_EncodedData{
+			EncodedData: &v2.EncodedData{
+				Audio: audio,
 			},
 		},
 	}

@@ -367,6 +367,16 @@
       },
       "title": "调试信息"
     },
+    "ttsschemaEncodedData": {
+      "type": "object",
+      "properties": {
+        "audio": {
+          "type": "string",
+          "format": "byte",
+          "title": "pcm"
+        }
+      }
+    },
     "ttsschemaExpression": {
       "type": "object",
       "properties": {
@@ -722,6 +732,10 @@
         "coordinate_mapping": {
           "$ref": "#/definitions/ttsschemaCoordinateMapping",
           "title": "坐标数据映射关系"
+        },
+        "encoded_data": {
+          "$ref": "#/definitions/ttsschemaEncodedData",
+          "title": "编码后的音频数据"
         }
       }
     },

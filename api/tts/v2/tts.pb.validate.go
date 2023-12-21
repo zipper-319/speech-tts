@@ -517,6 +517,47 @@ func (m *TtsRes) validate(all bool) error {
 			}
 		}
 
+	case *TtsRes_EncodedData:
+		if v == nil {
+			err := TtsResValidationError{
+				field:  "ResultOneof",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetEncodedData()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TtsResValidationError{
+						field:  "EncodedData",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TtsResValidationError{
+						field:  "EncodedData",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEncodedData()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TtsResValidationError{
+					field:  "EncodedData",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}
@@ -730,6 +771,107 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SynthesizedAudioValidationError{}
+
+// Validate checks the field values on EncodedData with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *EncodedData) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on EncodedData with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in EncodedDataMultiError, or
+// nil if none found.
+func (m *EncodedData) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *EncodedData) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Audio
+
+	if len(errors) > 0 {
+		return EncodedDataMultiError(errors)
+	}
+
+	return nil
+}
+
+// EncodedDataMultiError is an error wrapping multiple validation errors
+// returned by EncodedData.ValidateAll() if the designated constraints aren't met.
+type EncodedDataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m EncodedDataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m EncodedDataMultiError) AllErrors() []error { return m }
+
+// EncodedDataValidationError is the validation error returned by
+// EncodedData.Validate if the designated constraints aren't met.
+type EncodedDataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EncodedDataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EncodedDataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EncodedDataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EncodedDataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EncodedDataValidationError) ErrorName() string { return "EncodedDataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e EncodedDataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEncodedData.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EncodedDataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EncodedDataValidationError{}
 
 // Validate checks the field values on TimeCoordinate with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

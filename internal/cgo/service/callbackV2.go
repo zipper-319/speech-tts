@@ -335,7 +335,7 @@ func goOnCoordinate(pUserData unsafe.Pointer, coordinate *C.Coordinate, timeCoor
 	}
 
 	sendResp(object, response)
-	object.Log.Infof("end to goOnCoordinate pUserData: %d", pUserData)
+	object.Log.Infof("end to goOnCoordinate pUserData: %d, coordinateData:%v", pUserData, coordinateData)
 
 }
 
@@ -359,7 +359,7 @@ func goOnEncodedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio) {
 		},
 	}
 	sendResp(object, response)
-	object.Log.Infof("end to goOnEncodedData pUserData: %d", pUserData)
+	object.Log.Infof("end to goOnEncodedData;pUserData:%d; size:%d; audio length:%d", pUserData,  length, len(audio))
 
 }
 

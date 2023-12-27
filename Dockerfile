@@ -1,4 +1,4 @@
-FROM harbor.cloudminds.com/library/asr-mkl-base:bionic.CM-Beta-1.3
+FROM harbor.cloudminds.com/library/cuda11.3.1-runtime:focal.CM-v1.4
 
 ENV LOGPATH=/opt/speech/tts/runtime/logs \
     PROJECT=speech-tts   \

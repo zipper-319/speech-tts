@@ -13,7 +13,6 @@ fi
 
 PROJECT_NAME="speech-tts"
 # apt update
-apt-get install libcurl3 -y
 
 cd /opt/speech/tts/
 ln -s /data third

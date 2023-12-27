@@ -9,16 +9,10 @@ ENV LOGPATH=/opt/speech/tts/runtime/logs \
     TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
 
-#RUN apt update \
-#    && apt install -y tzdata \
-#    && ln -fs /usr/share/zoneinfo/${TZ} /etc/localtime \
-#    && echo ${TZ} > /etc/timezone\
-#    && dpkg-reconfigure --frontend noninteractive tzdata \
-#    && rm -rf /var/lib/apt/lists/*
 
 RUN echo ${TZ} > /etc/timezone
 
-RUN apt update && apt install -y  -d libcurl3 libssl1.0.0
+RUN apt update && apt install -y  -d libcurl4
 
 EXPOSE 4012
 EXPOSE 3012

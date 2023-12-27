@@ -84,7 +84,7 @@ message TtsRes {
         Expression expression = 9;              // 表情数据
         BodyMovement body_movement = 10;        // 动作数据
         CoordinateMapping  coordinate_mapping = 11;   // 坐标数据映射关系
-        EncodedData       encoded_data = 12;    // 编码后的音频数据
+        AudioData       audio_data = 12;        // 编码后的音频数据
     }
 }
 
@@ -95,8 +95,8 @@ message SynthesizedAudio {
     int32 is_punctuation = 3;                   // 是否标点1是标点
 }
 
-message EncodedData{
-    bytes audio = 1;                              // pcm
+message AudioData{
+    bytes audio = 1;                              // 编码的音频数据
 }
 
 message TimeCoordinate {

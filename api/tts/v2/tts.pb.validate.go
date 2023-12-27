@@ -517,7 +517,7 @@ func (m *TtsRes) validate(all bool) error {
 			}
 		}
 
-	case *TtsRes_EncodedData:
+	case *TtsRes_AudioData:
 		if v == nil {
 			err := TtsResValidationError{
 				field:  "ResultOneof",
@@ -530,11 +530,11 @@ func (m *TtsRes) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetEncodedData()).(type) {
+			switch v := interface{}(m.GetAudioData()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, TtsResValidationError{
-						field:  "EncodedData",
+						field:  "AudioData",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -542,16 +542,16 @@ func (m *TtsRes) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, TtsResValidationError{
-						field:  "EncodedData",
+						field:  "AudioData",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetEncodedData()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetAudioData()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return TtsResValidationError{
-					field:  "EncodedData",
+					field:  "AudioData",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -772,22 +772,22 @@ var _ interface {
 	ErrorName() string
 } = SynthesizedAudioValidationError{}
 
-// Validate checks the field values on EncodedData with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on AudioData with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *EncodedData) Validate() error {
+func (m *AudioData) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on EncodedData with the rules defined in
+// ValidateAll checks the field values on AudioData with the rules defined in
 // the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in EncodedDataMultiError, or
-// nil if none found.
-func (m *EncodedData) ValidateAll() error {
+// result is a list of violation errors wrapped in AudioDataMultiError, or nil
+// if none found.
+func (m *AudioData) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *EncodedData) validate(all bool) error {
+func (m *AudioData) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -797,18 +797,18 @@ func (m *EncodedData) validate(all bool) error {
 	// no validation rules for Audio
 
 	if len(errors) > 0 {
-		return EncodedDataMultiError(errors)
+		return AudioDataMultiError(errors)
 	}
 
 	return nil
 }
 
-// EncodedDataMultiError is an error wrapping multiple validation errors
-// returned by EncodedData.ValidateAll() if the designated constraints aren't met.
-type EncodedDataMultiError []error
+// AudioDataMultiError is an error wrapping multiple validation errors returned
+// by AudioData.ValidateAll() if the designated constraints aren't met.
+type AudioDataMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m EncodedDataMultiError) Error() string {
+func (m AudioDataMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -817,11 +817,11 @@ func (m EncodedDataMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m EncodedDataMultiError) AllErrors() []error { return m }
+func (m AudioDataMultiError) AllErrors() []error { return m }
 
-// EncodedDataValidationError is the validation error returned by
-// EncodedData.Validate if the designated constraints aren't met.
-type EncodedDataValidationError struct {
+// AudioDataValidationError is the validation error returned by
+// AudioData.Validate if the designated constraints aren't met.
+type AudioDataValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -829,22 +829,22 @@ type EncodedDataValidationError struct {
 }
 
 // Field function returns field value.
-func (e EncodedDataValidationError) Field() string { return e.field }
+func (e AudioDataValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e EncodedDataValidationError) Reason() string { return e.reason }
+func (e AudioDataValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e EncodedDataValidationError) Cause() error { return e.cause }
+func (e AudioDataValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e EncodedDataValidationError) Key() bool { return e.key }
+func (e AudioDataValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e EncodedDataValidationError) ErrorName() string { return "EncodedDataValidationError" }
+func (e AudioDataValidationError) ErrorName() string { return "AudioDataValidationError" }
 
 // Error satisfies the builtin error interface
-func (e EncodedDataValidationError) Error() string {
+func (e AudioDataValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -856,14 +856,14 @@ func (e EncodedDataValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sEncodedData.%s: %s%s",
+		"invalid %sAudioData.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = EncodedDataValidationError{}
+var _ error = AudioDataValidationError{}
 
 var _ interface {
 	Field() string
@@ -871,7 +871,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = EncodedDataValidationError{}
+} = AudioDataValidationError{}
 
 // Validate checks the field values on TimeCoordinate with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

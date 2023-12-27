@@ -352,14 +352,14 @@ func goOnEncodedData(pUserData unsafe.Pointer, audioData *C.SynthesizedAudio) {
 
 	response := v2.TtsRes{
 		Status: 2,
-		ResultOneof: &v2.TtsRes_EncodedData{
-			EncodedData: &v2.EncodedData{
+		ResultOneof: &v2.TtsRes_AudioData{
+			AudioData: &v2.AudioData{
 				Audio: audio,
 			},
 		},
 	}
 	sendResp(object, response)
-	object.Log.Infof("end to goOnEncodedData;pUserData:%d; size:%d; audio length:%d", pUserData,  length, len(audio))
+	object.Log.Infof("end to goOnEncodedData;pUserData:%d; size:%d; audio length:%d", pUserData, length, len(audio))
 
 }
 

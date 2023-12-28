@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
+	"google.golang.org/grpc/metadata"
 	pb "speech-tts/api/tts/v2"
 	"speech-tts/internal/cgo/service"
 	"speech-tts/internal/conf"
@@ -17,7 +18,9 @@ import (
 	"speech-tts/internal/pkg/pointer"
 	"speech-tts/internal/pkg/trace"
 	"speech-tts/internal/utils"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type CloudMindsTTSService struct {
@@ -42,6 +45,7 @@ func NewCloudMindsTTSService(logger log.Logger, uc *service.TTSService, s *conf.
 }
 
 func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallServer) error {
+	now := time.Now()
 	ctx := conn.Context()
 	spanCtx, span := trace.NewTraceSpan(ctx, "TTSService v2 call", nil)
 
@@ -128,6 +132,9 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	}
 	isInterrupted := false
 	for response := range object.BackChan {
+		md := metadata.Pairs("cost",fmt.Sprintf("%d", time.Since(now).Milliseconds()))
+		md.Append("status", strconv.Itoa(int(response.Status)))
+		conn.SendHeader(md)
 		if !isInterrupted {
 			if err := conn.Send(&response); err != nil {
 				logger.Errorf("send err:%v", err)
@@ -138,6 +145,8 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 			}
 		}
 	}
+	md := metadata.Pairs("cost",fmt.Sprintf("%d", time.Since(now).Milliseconds()))
+	conn.SendHeader(md)
 
 	return nil
 }

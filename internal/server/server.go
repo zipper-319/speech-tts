@@ -11,6 +11,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"reflect"
 	"runtime/debug"
@@ -185,6 +186,9 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 
 	log.NewHelper(w.Logger).Infof("trace:%s;Send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d; status:%d",
 		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen, status)
+	if status == 3 {
+		w.SendHeader(metadata.Pairs("cost",fmt.Sprintf("%d", time.Since(w.firstTime).Milliseconds())))
+	}
 	return w.ServerStream.SendMsg(m)
 }
 

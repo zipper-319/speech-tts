@@ -262,6 +262,8 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 			log.NewHelper(logger).Errorf("------------RPC failed with error: %v", err)
 			return status.Errorf(code, err.Error())
 		}
+		md := metadata.Pairs("cost",fmt.Sprintf("%d", time.Since(now).Milliseconds()))
+		ss.SendHeader(md)
 		return err
 	}
 }

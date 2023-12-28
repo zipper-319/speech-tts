@@ -94,6 +94,10 @@ func TestTTSV1(ctx context.Context, addr, text, speaker, traceId, robotTraceId s
 		}
 	}()
 	wg.Wait()
+	trailerMD := response.Trailer()
+	for key, value := range trailerMD {
+		log.Printf("trailer key:%s, value:%s\n", key, value)
+	}
 	log.Printf("--------------------------------TestTTSV1----(%d); cost:%d\n\n", num, time.Since(now).Milliseconds())
 	return nil
 }

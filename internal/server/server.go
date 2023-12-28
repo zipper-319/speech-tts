@@ -187,7 +187,7 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	log.NewHelper(w.Logger).Infof("trace:%s;Send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d; status:%d",
 		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen, status)
 	if status == 3 {
-		md := metadata.Pairs("cost",fmt.Sprintf("%d", time.Since(w.firstTime).Milliseconds()))
+		md := metadata.Pairs("cost", fmt.Sprintf("%d", time.Since(w.firstTime).Milliseconds()))
 		w.SendHeader(md)
 		w.SetTrailer(md)
 	}
@@ -262,6 +262,8 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 			log.NewHelper(logger).Errorf("------------RPC failed with error: %v", err)
 			return status.Errorf(code, err.Error())
 		}
+		md := metadata.Pairs("cost", fmt.Sprintf("%d", time.Since(now).Milliseconds()))
+		ss.SetTrailer(md)
 		return err
 	}
 }

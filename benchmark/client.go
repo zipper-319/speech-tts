@@ -172,7 +172,7 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 					log.Println("tts 内部服务错误：", temp.ErrorCode)
 				}
 				//log.Printf("receive message(Type %T)", temp)
-				header, ok := metadata.FromIncomingContext( response.Context())
+				header, ok := metadata.FromIncomingContext(response.Context())
 				log.Println("header:", header, "ok:", ok)
 
 				if audio, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
@@ -198,6 +198,10 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 		}
 	}()
 	wg.Wait()
+	trailerMD := response.Trailer()
+	for key, value := range trailerMD {
+		log.Printf("trailer key:%s, value:%s\n", key, value)
+	}
 	log.Printf("-------------------------TestTTSV2---(%d:%s);cost:%d\n\n", num, text, time.Since(now).Milliseconds())
 	return nil
 }

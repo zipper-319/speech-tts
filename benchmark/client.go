@@ -131,7 +131,7 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,
 		ParameterFlag:        flagSet,
-		Version:              v2.ClientVersion_ox97sfb5,
+		Version:              v2.ClientVersion_Version,
 		Language:             "zh",
 		Userspace:            user,
 	}

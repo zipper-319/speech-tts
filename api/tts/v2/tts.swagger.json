@@ -301,9 +301,10 @@
     "ttsschemaClientVersion": {
       "type": "string",
       "enum": [
-        "ox97sfb5"
+        "Invalid",
+        "Version"
       ],
-      "default": "ox97sfb5"
+      "default": "Invalid"
     },
     "ttsschemaConfigAndText": {
       "type": "object",

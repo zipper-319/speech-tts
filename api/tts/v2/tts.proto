@@ -47,7 +47,7 @@ service CloudMindsTTS {
 }
 
 enum ClientVersion{
-    ox9735b5 = 0;
+    ox97sfb5 = 0;
 }
 
 

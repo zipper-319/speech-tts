@@ -47,7 +47,8 @@ service CloudMindsTTS {
 }
 
 enum ClientVersion{
-    c06485f12 = 0;  // 当前客户端的版本号
+    Invalid = 0;
+    Version = 0x9735b5;  // 当前客户端的版本号
 }
 
 

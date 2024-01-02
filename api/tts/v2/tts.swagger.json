@@ -301,11 +301,10 @@
     "ttsschemaClientVersion": {
       "type": "string",
       "enum": [
-        "invalid",
-        "version"
+        "oxc0648504"
       ],
-      "default": "invalid",
-      "title": "- invalid: 无效的版本号\n - version: 当前客户端的版本号"
+      "default": "oxc0648504",
+      "title": "- oxc0648504: 当前客户端的版本号"
     },
     "ttsschemaConfigAndText": {
       "type": "object",

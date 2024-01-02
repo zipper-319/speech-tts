@@ -301,9 +301,9 @@
     "ttsschemaClientVersion": {
       "type": "string",
       "enum": [
-        "ox9735b5"
+        "ox97sfb5"
       ],
-      "default": "ox9735b5"
+      "default": "ox97sfb5"
     },
     "ttsschemaConfigAndText": {
       "type": "object",

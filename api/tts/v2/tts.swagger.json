@@ -301,10 +301,9 @@
     "ttsschemaClientVersion": {
       "type": "string",
       "enum": [
-        "oxc0648504"
+        "ox9735b5"
       ],
-      "default": "oxc0648504",
-      "title": "- oxc0648504: 当前客户端的版本号"
+      "default": "ox9735b5"
     },
     "ttsschemaConfigAndText": {
       "type": "object",

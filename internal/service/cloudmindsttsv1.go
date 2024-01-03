@@ -44,6 +44,10 @@ func (s *CloudMindsTTSServiceV1) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_Call
 		identifier = tokenInfo.Account
 	}
 
+	myTraceId := ctx.Value(jwtUtil.TraceId{})
+
+	req.TraceId = fmt.Sprintf("sdk(%s)-%s", myTraceId, req.TraceId)
+
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
 	logger.Infof("call TTSServiceV1;the req——————text:%s;speakerName:%s;Emotions:%s;Pitch:%s;identifier:%s",
 		req.Text, req.ParameterSpeakerName, req.Emotions, req.Pitch, identifier)

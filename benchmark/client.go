@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 	"io"
 	"log"
 	"os"
@@ -176,8 +175,6 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 					log.Println("tts 内部服务错误：", temp.ErrorCode)
 				}
 				//log.Printf("receive message(Type %T)", temp)
-				header, ok := metadata.FromIncomingContext(response.Context())
-				log.Println("header:", header, "ok:", ok)
 
 				if audio, ok := temp.ResultOneof.(*v2.TtsRes_SynthesizedAudio); ok {
 					audioLength := int64(len(audio.SynthesizedAudio.Pcm))
@@ -206,6 +203,6 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 	for key, value := range trailerMD {
 		log.Printf("trailer key:%s, value:%s\n", key, value)
 	}
-	log.Printf("-------------------------TestTTSV2---(%d:%s);cost:%d\n\n", num, text, time.Since(now).Milliseconds())
+	log.Printf("-------TestTTSV2---(%d:%s);client cost:%d,server cost:%d, first frame cost:%d\n\n", num, text, time.Since(now).Milliseconds())
 	return nil
 }

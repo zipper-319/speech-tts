@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/google/uuid"
 	"github.com/google/wire"
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc"
@@ -166,6 +167,10 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 			case *v2.TtsRes_SynthesizedAudio:
 				audioLength = len(result.SynthesizedAudio.Pcm)
 				w.sendAudioLen += audioLength
+			case *v2.TtsRes_AudioData:
+				audioLength = len(result.AudioData.Audio)
+				w.sendAudioLen += audioLength
+
 			case *v2.TtsRes_ActionElement:
 				log.NewHelper(w.Logger).Infof("trace:%s; ActionElement:%v", traceId, result.ActionElement)
 			case *v2.TtsRes_BodyMovement:
@@ -183,9 +188,13 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	defer span.End()
 	span.SetAttributes(attribute.Key("SendMsg times").Int(w.sendTimes))
 	span.SetAttributes(attribute.Key("SendMsg length").Int(audioLength))
+	if w.sendAudioLen == audioLength {
+		md := metadata.Pairs("cost", fmt.Sprintf("%d", time.Since(w.firstTime).Milliseconds()))
+		w.SetTrailer(md)
+	}
 
-	log.NewHelper(w.Logger).Infof("trace:%s;Send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d; status:%d",
-		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen, status)
+	log.NewHelper(w.Logger).Infof("trace:%s;send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d;isFirstFrame:%t, status:%d, cost:%.3fs;",
+		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen, w.sendAudioLen == audioLength, status, time.Since(w.firstTime).Seconds())
 	return w.ServerStream.SendMsg(m)
 }
 
@@ -218,13 +227,14 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 		code := codes.OK
 		fullMethod := info.FullMethod
 		now := time.Now()
-		log.NewHelper(logger).Infof("---------------------start FullMethod:%s --------------------", fullMethod)
+		myTraceId := uuid.New().String()
+		log.NewHelper(logger).Infof("---------------------start FullMethod:%s; sdk traceId:%s --------------------", fullMethod, myTraceId)
 		defer func() {
 			if e := recover(); e != nil {
 				debug.PrintStack()
 				err = status.Errorf(codes.Internal, "Panic err: %v", e)
 			}
-			log.NewHelper(logger).Infof("-----------------------end FullMethod:%s; cost:%.3fs; err:%v----------------", fullMethod, time.Since(now).Seconds(), err)
+			log.NewHelper(logger).Infof("-----------------------end FullMethod:%s; sdk traceId:%s, cost:%.3fs; err:%v----------------", fullMethod, myTraceId, time.Since(now).Seconds(), err)
 		}()
 
 		ctx := ss.Context()
@@ -251,6 +261,7 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 		if identifier != nil {
 			ctx = context.WithValue(ctx, jwtUtil.Identifier{}, identifier)
 		}
+		ctx = context.WithValue(ctx, jwtUtil.TraceId{}, myTraceId)
 
 		if err = handler(srv, newWrappedStream(ss, logger, ctx)); err != nil {
 			code = codes.Internal

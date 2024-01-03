@@ -15,6 +15,8 @@ import (
 
 type Identifier struct{}
 
+type TraceId struct{}
+
 type Option func(*options)
 
 var NotVerify = []string{

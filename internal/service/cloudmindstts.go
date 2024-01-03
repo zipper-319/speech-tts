@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	pb "speech-tts/api/tts/v2"
@@ -45,10 +44,9 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 	ctx := conn.Context()
 	spanCtx, span := trace.NewTraceSpan(ctx, "TTSService v2 call", nil)
 
-	if req.TraceId == "" {
-		uuidNum, _ := uuid.NewRandom()
-		req.TraceId = fmt.Sprintf("%s-%s", "sdk", uuidNum.String())
-	}
+	myTraceId := ctx.Value(jwtUtil.TraceId{})
+
+	req.TraceId = fmt.Sprintf("sdk(%s)-%s", myTraceId, req.TraceId)
 
 	span.SetAttributes(attribute.Key("speakerName").String(req.ParameterSpeakerName))
 	span.SetAttributes(attribute.Key("traceId").String(req.TraceId))

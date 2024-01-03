@@ -216,7 +216,6 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 					serverCost = tmp
 				}
 			}
-
 		}
 	}
 	log.Printf("-------TestTTSV2---(%d:%s);client cost:%d,server cost:%d, first frame cost:%d\n\n", num, text, time.Since(now).Milliseconds(), serverCost, serverFirstCost)

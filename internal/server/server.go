@@ -189,6 +189,7 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	span.SetAttributes(attribute.Key("SendMsg times").Int(w.sendTimes))
 	span.SetAttributes(attribute.Key("SendMsg length").Int(audioLength))
 	if w.sendAudioLen == audioLength {
+		log.NewHelper(w.Logger).Infof("set trailer,w.sendAudioLen:%d,audioLength:%d", w.sendAudioLen, audioLength)
 		md := metadata.Pairs("cost", fmt.Sprintf("%d", time.Since(w.firstTime).Milliseconds()))
 		w.SetTrailer(md)
 	}

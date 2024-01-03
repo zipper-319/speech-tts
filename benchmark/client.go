@@ -9,6 +9,7 @@ import (
 	"os"
 	v1 "speech-tts/api/tts/v1"
 	v2 "speech-tts/api/tts/v2"
+	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -200,9 +201,24 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 	}()
 	wg.Wait()
 	trailerMD := response.Trailer()
+	serverCost := 0
+	serverFirstCost := 0
 	for key, value := range trailerMD {
 		log.Printf("trailer key:%s, value:%s\n", key, value)
+		if key == "cost" {
+			if len(value) > 0 {
+				if tmp, err := strconv.Atoi(value[0]); err == nil {
+					serverFirstCost = tmp
+				}
+			}
+			if len(value) > 1 {
+				if tmp, err := strconv.Atoi(value[1]); err == nil {
+					serverCost = tmp
+				}
+			}
+
+		}
 	}
-	log.Printf("-------TestTTSV2---(%d:%s);client cost:%d,server cost:%d, first frame cost:%d\n\n", num, text, time.Since(now).Milliseconds())
+	log.Printf("-------TestTTSV2---(%d:%s);client cost:%d,server cost:%d, first frame cost:%d\n\n", num, text, time.Since(now).Milliseconds(), serverCost, serverFirstCost)
 	return nil
 }

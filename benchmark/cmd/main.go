@@ -24,6 +24,7 @@ var testVersion string
 var movement string
 var expression string
 var isSaveFile bool
+var filePath string
 
 func init() {
 	flag.IntVar(&threadNum, "t", 1, "thread number, eg: -t 1")
@@ -34,6 +35,7 @@ func init() {
 	flag.StringVar(&movement, "m", "Nvidia-a2g", "movement, eg: -m SweetGirl")
 	flag.StringVar(&expression, "e", "", "expression, eg: -e FaceGood")
 	flag.BoolVar(&isSaveFile, "i", false, "isSaveFile, eg: -i true")
+	flag.StringVar(&filePath, "f", "./testTTS.txt", "filePath, eg: -f ./testTTS.txt")
 	log.SetFlags(log.Lshortfile | log.Lmicroseconds | log.Flags())
 
 }
@@ -43,7 +45,7 @@ func main() {
 	flag.Parse()
 	log.Printf("thread number:%d; useCase number:%d, speaker:%s, testVersion:%s, movement:%s", threadNum, useCaseNum, speaker, testVersion, movement)
 
-	file, err := os.Open("./testTTS.txt")
+	file, err := os.Open(filePath)
 	reader := bufio.NewReader(file)
 	if err != nil {
 		return

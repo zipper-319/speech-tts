@@ -146,6 +146,7 @@ func (w *wrappedStream) RecvMsg(m interface{}) error {
 func (w *wrappedStream) SendMsg(m interface{}) error {
 	w.sendTimes += 1
 	audioLength := 0
+	isFirstFrame := false
 	var status int32
 	var traceId string
 	if w.ttsReq != nil {
@@ -167,9 +168,15 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 			case *v2.TtsRes_SynthesizedAudio:
 				audioLength = len(result.SynthesizedAudio.Pcm)
 				w.sendAudioLen += audioLength
+				if w.sendAudioLen == audioLength{
+					isFirstFrame = true
+				}
 			case *v2.TtsRes_AudioData:
 				audioLength = len(result.AudioData.Audio)
 				w.sendAudioLen += audioLength
+				if w.sendAudioLen == audioLength{
+					isFirstFrame = true
+				}
 
 			case *v2.TtsRes_ActionElement:
 				log.NewHelper(w.Logger).Infof("trace:%s; ActionElement:%v", traceId, result.ActionElement)
@@ -188,14 +195,14 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	defer span.End()
 	span.SetAttributes(attribute.Key("SendMsg times").Int(w.sendTimes))
 	span.SetAttributes(attribute.Key("SendMsg length").Int(audioLength))
-	if w.sendAudioLen == audioLength {
+	if isFirstFrame {
 		log.NewHelper(w.Logger).Infof("set trailer,w.sendAudioLen:%d,audioLength:%d", w.sendAudioLen, audioLength)
 		md := metadata.Pairs("cost", fmt.Sprintf("%d", time.Since(w.firstTime).Milliseconds()))
 		w.SetTrailer(md)
 	}
 
 	log.NewHelper(w.Logger).Infof("trace:%s;send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d;isFirstFrame:%t, status:%d, cost:%.3fs;",
-		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen, w.sendAudioLen == audioLength, status, time.Since(w.firstTime).Seconds())
+		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen, isFirstFrame, status, time.Since(w.firstTime).Seconds())
 	return w.ServerStream.SendMsg(m)
 }
 

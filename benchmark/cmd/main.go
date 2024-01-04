@@ -66,8 +66,8 @@ func main() {
 		averageClientCost := totalClientCost / int64(len(resultList))
 		averageFirstServerCost := totalFirstServerCost / int64(len(resultList))
 		averageServerCost := totalServerCost / int64(len(resultList))
-		out.WriteString(fmt.Sprintf("\n 版本：%s \n", v2version))
-		out.WriteString(fmt.Sprintf(" 用例总数：%d  并发数：%d 发音人：%s tts服务端地址：%s 客户端第一帧平均耗时：%d, 客户端平均耗时：%d, 服务端第一帧平均耗时:%d 服务端平均耗时:%d \n", useCaseNum, threadNum, speaker, addr, averageFirstClientCost, averageClientCost, averageFirstServerCost, averageServerCost))
+		out.WriteString(fmt.Sprintf("\n版本：%s \n", v2version))
+		out.WriteString(fmt.Sprintf("用例总数：%d  并发数：%d 发音人：%s tts服务端地址：%s 客户端第一帧平均耗时：%d, 客户端平均耗时：%d, 服务端第一帧平均耗时:%d 服务端平均耗时:%d \n", useCaseNum, threadNum, speaker, addr, averageFirstClientCost, averageClientCost, averageFirstServerCost, averageServerCost))
 		out.Close()
 	}()
 

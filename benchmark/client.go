@@ -240,3 +240,16 @@ func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker,
 		ServerCost:      serverCost,
 	}, nil
 }
+
+func GetV2Version(ctx context.Context, addr string) string {
+	conn, err := GetGrpcConn(addr, ctx)
+	if err != nil {
+		panic(err)
+	}
+	ttsV2Client := v2.NewCloudMindsTTSClient(conn)
+	rsp, err := ttsV2Client.GetVersion(ctx, &v2.VerVersionReq{})
+	if err != nil {
+		panic(err)
+	}
+	return rsp.Version
+}

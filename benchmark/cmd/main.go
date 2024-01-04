@@ -45,7 +45,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
 	flag.Parse()
 	log.Printf("thread number:%d; useCase number:%d, speaker:%s, testVersion:%s, movement:%s", threadNum, useCaseNum, speaker, testVersion, movement)
-
+	v2version := benchmark.GetV2Version(context.Background(), addr)
 	outResultList := atomic.Value{}
 	outResultList.Store(make([]*benchmark.OutResult, 0, useCaseNum))
 
@@ -67,7 +67,7 @@ func main() {
 		averageFirstServerCost := totalFirstServerCost / int64(len(resultList))
 		averageServerCost := totalServerCost / int64(len(resultList))
 		out.WriteString("\n")
-		out.WriteString(fmt.Sprintf("用例总数：%d  并发数：%d 发音人：%s tts服务端地址：%s 客户端第一帧平均耗时：%d, 客户端平均耗时：%d, 服务端第一帧平均耗时:%d 服务端平均耗时:%d \n", useCaseNum, threadNum, speaker, addr, averageFirstClientCost, averageClientCost, averageFirstServerCost, averageServerCost))
+		out.WriteString(fmt.Sprintf("版本：%s  用例总数：%d  并发数：%d 发音人：%s tts服务端地址：%s 客户端第一帧平均耗时：%d, 客户端平均耗时：%d, 服务端第一帧平均耗时:%d 服务端平均耗时:%d \n", v2version, useCaseNum, threadNum, speaker, addr, averageFirstClientCost, averageClientCost, averageFirstServerCost, averageServerCost))
 		out.Close()
 	}()
 
@@ -175,8 +175,4 @@ func main() {
 	}
 	close(ch)
 	wg.Wait()
-}
-
-func AverageCost(outResultList []*benchmark.OutResult) {
-
 }

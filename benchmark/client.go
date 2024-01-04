@@ -19,6 +19,15 @@ import (
 var globalClientConn unsafe.Pointer
 var lck sync.Mutex
 
+type OutResult struct {
+	Index           int
+	Text            string
+	FirstClientCost int64
+	ClientCost      int64
+	FirstServerCost int
+	ServerCost      int
+}
+
 func GetGrpcConn(addr string, ctx context.Context) (*grpc.ClientConn, error) {
 	if atomic.LoadPointer(&globalClientConn) != nil {
 		return (*grpc.ClientConn)(globalClientConn), nil
@@ -102,12 +111,12 @@ func TestTTSV1(ctx context.Context, addr, text, speaker, traceId, robotTraceId s
 	return nil
 }
 
-func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTraceId, movement, expression string, num int, isSaveFile bool) error {
+func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker, traceId, robotTraceId, movement, expression string, num int, isSaveFile bool) (*OutResult, error) {
 
 	now := time.Now()
 	conn, err := GetGrpcConn(addr, ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	ttsV2Client := v2.NewCloudMindsTTSClient(conn)
 
@@ -140,7 +149,7 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 	response, err := ttsV2Client.Call(ctx, req)
 	if err != nil {
 		log.Printf("Text:%s, err;%v", text, err)
-		return err
+		return nil, err
 	}
 	wg := sync.WaitGroup{}
 	wg.Add(1)
@@ -150,9 +159,11 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 	if isSaveFile {
 		f, err = os.OpenFile(fmt.Sprintf("./tmp/tts_%d.pcm", num), os.O_CREATE|os.O_WRONLY, 0666)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
+
+	firstCost := int64(0)
 
 	defer f.Close()
 	go func() {
@@ -182,6 +193,7 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 					total += audioLength
 					if total != 0 && total == audioLength {
 						isFirstFrame = true
+						firstCost = time.Since(now).Milliseconds()
 					}
 
 					if isSaveFile && f != nil {
@@ -219,5 +231,12 @@ func TestTTSV2(ctx context.Context, user, addr, text, speaker, traceId, robotTra
 		}
 	}
 	log.Printf("-------TestTTSV2---(%d:%s);client cost:%d,server cost:%d, first frame cost:%d\n\n", num, text, time.Since(now).Milliseconds(), serverCost, serverFirstCost)
-	return nil
+	return &OutResult{
+		Index:           num,
+		Text:            text,
+		FirstClientCost: firstCost,
+		ClientCost:      time.Since(now).Milliseconds(),
+		FirstServerCost: serverFirstCost,
+		ServerCost:      serverCost,
+	}, nil
 }

@@ -6,13 +6,13 @@ import (
 	"flag"
 	"fmt"
 	"google.golang.org/grpc/metadata"
-	"io"
 	"log"
 	"os"
 	"speech-tts/benchmark"
 	"speech-tts/internal/utils"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -25,6 +25,7 @@ var movement string
 var expression string
 var isSaveFile bool
 var filePath string
+var outfile string
 
 func init() {
 	flag.IntVar(&threadNum, "t", 1, "thread number, eg: -t 1")
@@ -35,9 +36,9 @@ func init() {
 	flag.StringVar(&movement, "m", "Nvidia-a2g", "movement, eg: -m SweetGirl")
 	flag.StringVar(&expression, "e", "", "expression, eg: -e FaceGood")
 	flag.BoolVar(&isSaveFile, "i", false, "isSaveFile, eg: -i true")
-	flag.StringVar(&filePath, "f", "./testTTS.txt", "filePath, eg: -f ./testTTS.txt")
+	flag.StringVar(&filePath, "f", "./testText.txt", "filePath, eg: -f ./testText.txt")
+	flag.StringVar(&outfile, "o", "./testResult.txt", "outfile, eg: -o ./testResult.txt")
 	log.SetFlags(log.Lshortfile | log.Lmicroseconds | log.Flags())
-
 }
 
 func main() {
@@ -45,8 +46,33 @@ func main() {
 	flag.Parse()
 	log.Printf("thread number:%d; useCase number:%d, speaker:%s, testVersion:%s, movement:%s", threadNum, useCaseNum, speaker, testVersion, movement)
 
-	file, err := os.Open(filePath)
-	reader := bufio.NewReader(file)
+	outResultList := atomic.Value{}
+	outResultList.Store(make([]*benchmark.OutResult, 0, useCaseNum))
+
+	out, err := os.OpenFile(outfile, os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		resultList := outResultList.Load().([]*benchmark.OutResult)
+		var totalFirstClientCost, totalClientCost, totalFirstServerCost, totalServerCost int64
+		for _, outResult := range resultList {
+			totalFirstClientCost += outResult.FirstClientCost
+			totalClientCost += outResult.ClientCost
+			totalFirstServerCost += int64(outResult.FirstServerCost)
+			totalServerCost += int64(outResult.ServerCost)
+		}
+		averageFirstClientCost := totalFirstClientCost / int64(len(resultList))
+		averageClientCost := totalClientCost / int64(len(resultList))
+		averageFirstServerCost := totalFirstServerCost / int64(len(resultList))
+		averageServerCost := totalServerCost / int64(len(resultList))
+		out.WriteString("\n")
+		out.WriteString(fmt.Sprintf("用例总数：%d  并发数：%d 发音人：%s tts服务端地址：%s 客户端第一帧平均耗时：%d, 客户端平均耗时：%d, 服务端第一帧平均耗时:%d 服务端平均耗时:%d \n", useCaseNum, threadNum, speaker, addr, averageFirstClientCost, averageClientCost, averageFirstServerCost, averageServerCost))
+		out.Close()
+	}()
+
+	out.WriteString(fmt.Sprintf("%s  %s  %s  %s  %s\n", "文本", "客户端第一帧耗时", "客户端总耗时", "服务端第一帧耗时", "服务端总耗时"))
+
 	if err != nil {
 		return
 	}
@@ -103,36 +129,54 @@ func main() {
 
 				} else {
 					user := utils.DefaultUser
-					if err := benchmark.TestTTSV2(ctx, user, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
-						movement, expression, num, isSaveFile); err != nil {
+					if outResult, err := benchmark.TestTTSV2(ctx, out, user, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
+						movement, expression, num, isSaveFile); err == nil {
+						resultList := outResultList.Load().([]*benchmark.OutResult)
+						out.WriteString(fmt.Sprintf("%s   %dms   %dms     %dms     %dms\n", outResult.Text, outResult.FirstClientCost, outResult.ClientCost, outResult.FirstServerCost, outResult.ServerCost))
+						resultList = append(resultList, outResult)
+						outResultList.Store(resultList)
+					} else {
 						log.Println("_________")
 						log.Printf("TestTTSV2; goroutine id:%d; err:%v", i, err)
 						log.Println("_________")
 					}
-
 				}
 			}
 		}(i)
 
 	}
-	var lineNum int
+	var currentLine int
+
 	for {
-		line, _, err := reader.ReadLine()
-		if err != nil && err != io.EOF {
-			log.Println(err)
+		file, err := os.Open(filePath)
+		if err != nil {
+			fmt.Printf("打开文件时出错: %v\n", err)
 			return
 		}
-		if err == io.EOF {
-			break
+
+		scanner := bufio.NewScanner(file)
+		// 循环读取每一行直到EOF或达到指定行数
+		for scanner.Scan() && currentLine < useCaseNum {
+			ch <- scanner.Text()
+			currentLine++
 		}
-		ch <- string(line)
-		lineNum += 1
-		if lineNum == useCaseNum {
-			log.Printf("finished to test tts;num:%d", useCaseNum)
-			close(ch)
-			break
+
+		if err = scanner.Err(); err != nil {
+			fmt.Printf("读取文件时出错: %v\n", err)
+			file.Close()
+			return
+		}
+
+		file.Close()
+
+		if currentLine >= useCaseNum {
+			break // 如果已经达到指定的行数，则退出循环
 		}
 	}
-
+	close(ch)
 	wg.Wait()
+}
+
+func AverageCost(outResultList []*benchmark.OutResult) {
+
 }

@@ -20,10 +20,11 @@ var globalClientConn unsafe.Pointer
 var lck sync.Mutex
 
 type OutResult struct {
-	Index           int
+	TraceId         string
 	Text            string
 	FirstClientCost int64
 	ClientCost      int64
+	ServerTime      string
 	FirstServerCost int
 	ServerCost      int
 }
@@ -215,6 +216,8 @@ func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker,
 	trailerMD := response.Trailer()
 	serverCost := 0
 	serverFirstCost := 0
+	sdkTraceId := ""
+	serverTime := ""
 	for key, value := range trailerMD {
 		log.Printf("trailer key:%s, value:%s\n", key, value)
 		if key == "cost" {
@@ -229,10 +232,17 @@ func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker,
 				}
 			}
 		}
+		if key == "traceId" && len(value) > 0 {
+			sdkTraceId = value[0]
+		}
+		if key == "serverTime" && len(value) > 0 {
+			serverTime = value[0]
+		}
 	}
 	log.Printf("-------TestTTSV2---(%d:%s);client cost:%d,server cost:%d, first frame cost:%d\n\n", num, text, time.Since(now).Milliseconds(), serverCost, serverFirstCost)
 	return &OutResult{
-		Index:           num,
+		TraceId:         sdkTraceId,
+		ServerTime:      serverTime,
 		Text:            text,
 		FirstClientCost: firstCost,
 		ClientCost:      time.Since(now).Milliseconds(),

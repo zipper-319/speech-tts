@@ -71,7 +71,7 @@ func main() {
 		out.Close()
 	}()
 
-	out.WriteString(fmt.Sprintf("%s  %s  %s  %s  %s\n", "文本", "客户端第一帧耗时", "客户端总耗时", "服务端第一帧耗时", "服务端总耗时"))
+	out.WriteString(fmt.Sprintf("%s %s  %s  %s  %s  %s  %s  %s\n", "trace id", "客户端开始时间点", "客户端第一帧耗时", "客户端总耗时", "服务端的接收时间点", "服务端第一帧耗时", "服务端总耗时", "文本"))
 
 	if err != nil {
 		return

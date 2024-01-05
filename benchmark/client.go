@@ -232,10 +232,10 @@ func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker,
 				}
 			}
 		}
-		if key == "traceId" && len(value) > 0 {
+		if key == "trace_id" && len(value) > 0 {
 			sdkTraceId = value[0]
 		}
-		if key == "serverTime" && len(value) > 0 {
+		if key == "server_time" && len(value) > 0 {
 			serverTime = value[0]
 		}
 	}

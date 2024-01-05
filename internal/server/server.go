@@ -277,8 +277,8 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 			return status.Errorf(code, err.Error())
 		}
 		md := metadata.Pairs("cost", fmt.Sprintf("%d", time.Since(now).Milliseconds()),
-			"traceId", myTraceId,
-			"serverTime", time.Now().Format("2006-01-02 15:04:05.000"),
+			"trace_id", myTraceId,
+			"server_time", time.Now().Format("2006-01-02 15:04:05.000"),
 		)
 		ss.SetTrailer(md)
 		return err

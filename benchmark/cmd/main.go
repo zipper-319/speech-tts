@@ -118,9 +118,8 @@ func main() {
 				//	cancel()
 				//	log.Printf("cancel after %d ms ", n)
 				//}()
-
+                clientNow := time.Now()
 				if currentTestVersion == "v1" {
-
 					if err := benchmark.TestTTSV1(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num), num); err != nil {
 						log.Println("_________")
 						log.Printf("TestTTSV1; goroutine id:%d; err:%v", i, err)
@@ -132,7 +131,8 @@ func main() {
 					if outResult, err := benchmark.TestTTSV2(ctx, out, user, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
 						movement, expression, num, isSaveFile); err == nil {
 						resultList := outResultList.Load().([]*benchmark.OutResult)
-						out.WriteString(fmt.Sprintf("%s   %dms   %dms     %dms     %dms\n", outResult.Text, outResult.FirstClientCost, outResult.ClientCost, outResult.FirstServerCost, outResult.ServerCost))
+						out.WriteString(fmt.Sprintf("%s   %s   %dms   %dms   %s   %dms    %dms   %s\n", outResult.TraceId, clientNow.Format("2006-01-02 15:04:05.000") ,
+							outResult.FirstClientCost, outResult.ClientCost, outResult.ServerTime,  outResult.FirstServerCost, outResult.ServerCost, outResult.Text))
 						resultList = append(resultList, outResult)
 						outResultList.Store(resultList)
 					} else {

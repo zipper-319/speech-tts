@@ -168,13 +168,13 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 			case *v2.TtsRes_SynthesizedAudio:
 				audioLength = len(result.SynthesizedAudio.Pcm)
 				w.sendAudioLen += audioLength
-				if w.sendAudioLen == audioLength{
+				if w.sendAudioLen == audioLength {
 					isFirstFrame = true
 				}
 			case *v2.TtsRes_AudioData:
 				audioLength = len(result.AudioData.Audio)
 				w.sendAudioLen += audioLength
-				if w.sendAudioLen == audioLength{
+				if w.sendAudioLen == audioLength {
 					isFirstFrame = true
 				}
 
@@ -276,7 +276,10 @@ func streamInterceptor(logger log.Logger) grpc.StreamServerInterceptor {
 			log.NewHelper(logger).Errorf("------------RPC failed with error: %v", err)
 			return status.Errorf(code, err.Error())
 		}
-		md := metadata.Pairs("cost", fmt.Sprintf("%d", time.Since(now).Milliseconds()))
+		md := metadata.Pairs("cost", fmt.Sprintf("%d", time.Since(now).Milliseconds()),
+			"traceId", myTraceId,
+			"serverTime", time.Now().Format("2006-01-02 15:04:05.000"),
+		)
 		ss.SetTrailer(md)
 		return err
 	}

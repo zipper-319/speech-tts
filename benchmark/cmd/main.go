@@ -37,7 +37,7 @@ func init() {
 	flag.StringVar(&expression, "e", "", "expression, eg: -e FaceGood")
 	flag.BoolVar(&isSaveFile, "i", false, "isSaveFile, eg: -i true")
 	flag.StringVar(&filePath, "f", "./testText.txt", "filePath, eg: -f ./testText.txt")
-	flag.StringVar(&outfile, "o", "./testResult.txt", "outfile, eg: -o ./testResult.txt")
+	flag.StringVar(&outfile, "o", "", "outfile, eg: -o ./testResult.txt")
 	log.SetFlags(log.Lshortfile | log.Lmicroseconds | log.Flags())
 }
 
@@ -48,6 +48,10 @@ func main() {
 	v2version := benchmark.GetV2Version(context.Background(), addr)
 	outResultList := atomic.Value{}
 	outResultList.Store(make([]*benchmark.OutResult, 0, useCaseNum))
+
+	if outfile == "" {
+		outfile = fmt.Sprintf("%s-%d-%d", speaker, threadNum, time.Now().Unix())
+	}
 
 	out, err := os.OpenFile(outfile, os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
@@ -118,7 +122,7 @@ func main() {
 				//	cancel()
 				//	log.Printf("cancel after %d ms ", n)
 				//}()
-                clientNow := time.Now()
+				clientNow := time.Now()
 				if currentTestVersion == "v1" {
 					if err := benchmark.TestTTSV1(ctx, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num), num); err != nil {
 						log.Println("_________")
@@ -131,8 +135,8 @@ func main() {
 					if outResult, err := benchmark.TestTTSV2(ctx, out, user, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
 						movement, expression, num, isSaveFile); err == nil {
 						resultList := outResultList.Load().([]*benchmark.OutResult)
-						out.WriteString(fmt.Sprintf("%s   %s   %dms   %dms   %s   %dms    %dms   %s\n", outResult.TraceId, clientNow.Format("2006-01-02 15:04:05.000") ,
-							outResult.FirstClientCost, outResult.ClientCost, outResult.ServerTime,  outResult.FirstServerCost, outResult.ServerCost, outResult.Text))
+						out.WriteString(fmt.Sprintf("%s   %s   %dms   %dms   %s   %dms    %dms   %s\n", outResult.TraceId, clientNow.Format("2006-01-02 15:04:05.000"),
+							outResult.FirstClientCost, outResult.ClientCost, outResult.ServerTime, outResult.FirstServerCost, outResult.ServerCost, outResult.Text))
 						resultList = append(resultList, outResult)
 						outResultList.Store(resultList)
 					} else {

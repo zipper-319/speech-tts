@@ -22,7 +22,7 @@ mkdir -p $MODEL_PATH/res/animation
 cp -r $MODULE_DIR/../animation/res/* $MODEL_PATH/res/animation
 cd $MODEL_Dir/$MODEL_PATH
 
-/usr/bin/expect login.exp
+/usr/bin/expect ./login.exp
 
 modelx list modelx/speech-tts/ttsv2-model
 modelx push  modelx/speech-tts/ttsv2-model@${VERSION}

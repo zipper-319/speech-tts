@@ -5,5 +5,5 @@ set TOKEN "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ6aXBwZXIuemhhbyIsImV4
 puts $TOKEN
 spawn modelx login modelx
 expect "Token:"
-send "$TOKEN/r"
+send "$TOKEN\r"
 interact

@@ -1,9 +1,0 @@
-项目所依赖的预编译的第三库
-1.libtorch
-2.cuda-10.1 (是否必须待确认)
-cp /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcudart.so.10.1.243 /usr/local/cuda-10.1/targets/x86_64-linux/lib/libnvToolsExt.so.1.0.0  /usr/local/cuda-10.1/targets/x86_64-linux/lib/libnvrtc-builtins.so.10.1.243 ./libs/
-mv libcudart.so.10.1.243 libcudart.so.10.1
-mv libnvrtc-builtins.so.10.1.243 libnvrtc-builtins.so
-mv libnvToolsExt.so.1.0.0 libnvToolsExt.so
-
-

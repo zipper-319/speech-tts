@@ -28,7 +28,7 @@ cd $MODEL_Dir/$MODEL_PATH
   puts $TOKEN
   spawn modelx login modelx
   expect "Token:"
-  send "$TOKEN/r"
+  send "$TOKEN\r"
   interact
 '
 

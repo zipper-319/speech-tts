@@ -12,6 +12,7 @@ if [ -z "$SERVER_ID" ]; then
 fi
 
 PROJECT_NAME="speech-tts"
+apt-get install libcurl3 -y
 # apt update
 
 cd /opt/speech/tts/

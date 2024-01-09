@@ -17,9 +17,9 @@ expect {
 "*(yes/no)?" { send "yes\r",exp_continue }
 "*password"  { send "123456\r" }
 }
-expect "*:~#" { send "cd project/speech-tts\r" }
-expect "*:~/project/speech-tts#" { send "bash build.sh $VERSION $AppName $CI_COMMIT_TAG\r" }
-expect "*:~/project/speech-tts#" { send "exit \r" }
+expect "*:~#" { send "cd speech-tts\r" }
+expect "*:~/speech-tts#" { send "bash build.sh $VERSION $AppName $CI_COMMIT_TAG\r" }
+expect "*:~/speech-tts#" { send "exit \r" }
 expect eof
 EOF
 

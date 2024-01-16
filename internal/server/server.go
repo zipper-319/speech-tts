@@ -149,6 +149,7 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	isFirstFrame := false
 	var status int32
 	var traceId string
+	var encodeType int32
 	if w.ttsReq != nil {
 		traceId = w.ttsReq.traceId
 	}
@@ -171,13 +172,14 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 				if w.sendAudioLen == audioLength {
 					isFirstFrame = true
 				}
+				encodeType = 0
 			case *v2.TtsRes_AudioData:
 				audioLength = len(result.AudioData.Audio)
 				w.sendAudioLen += audioLength
 				if w.sendAudioLen == audioLength {
 					isFirstFrame = true
 				}
-
+				encodeType = 1
 			case *v2.TtsRes_ActionElement:
 				log.NewHelper(w.Logger).Infof("trace:%s; ActionElement:%v", traceId, result.ActionElement)
 			case *v2.TtsRes_BodyMovement:
@@ -201,8 +203,8 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 		w.SetTrailer(md)
 	}
 
-	log.NewHelper(w.Logger).Infof("trace:%s;send %d message (Type: %T) after %dms; the length of audio is %d; the total length is %d;isFirstFrame:%t, status:%d, cost:%.3fs;",
-		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), audioLength, w.sendAudioLen, isFirstFrame, status, time.Since(w.firstTime).Seconds())
+	log.NewHelper(w.Logger).Infof("trace:%s;send %d message (Type: %T) after %dms; encode type:%d, the length of audio is %d; the total length is %d;isFirstFrame:%t, status:%d, cost:%.3fs;",
+		traceId, w.sendTimes, m, time.Since(w.firstTime).Milliseconds(), encodeType, audioLength, w.sendAudioLen, isFirstFrame, status, time.Since(w.firstTime).Seconds())
 	return w.ServerStream.SendMsg(m)
 }
 

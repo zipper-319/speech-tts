@@ -1,14 +1,22 @@
 #!/bin/bash
 
+Commit=$1
 MODEL_Dir=`pwd`
 MODULE_DIR=/home/data/下载
 sourceDir=$MODULE_DIR/TTS_SDK_*
 cd $MODULE_DIR
-VERSION=`ls | grep TTS_SDK_ | grep -v zip| awk -F_ '{print $3}'`
+if [[ -z $Commit ]];then
+  VERSION=`ls | grep TTS_SDK_ | grep -v zip| awk -F_ '{print $3}'`
+else
+  VERSION=`ls | grep $Commit | grep -v zip| awk -F_ '{print $3}'`
+  sourceDir=$MODULE_DIR/TTS_SDK_$VERSION
+
+fi
 if [[ -z $VERSION ]];then
   echo "not find VERSION" $VERSION
   exit -1
 fi
+echo $sourceDir
 echo 'version is' $VERSION
 MODEL_PATH="speech-tts-model-out"
 cd $MODEL_Dir

@@ -151,7 +151,8 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	var traceId string
 	var encodeType int32
 	if w.ttsReq != nil {
-		traceId = w.ttsReq.traceId
+		myTraceId := w.ctx.Value(jwtUtil.TraceId{})
+		traceId = fmt.Sprintf("sdk(%s)-%s", myTraceId, w.ttsReq.traceId)
 	}
 	if m != nil {
 		if resp, ok := m.(*v1.TtsRes); ok {

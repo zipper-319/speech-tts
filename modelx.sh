@@ -14,7 +14,7 @@ mkdir -p $MODEL_PATH/lib
 mkdir -p $MODEL_PATH/res
 
 cp $sourceDir/lib/*  $MODEL_PATH/lib/
-cp $sourceDir/libCmTts.so.online_voicetuning $MODEL_PATH/libCmTts.so.online_voicetuning
+cp $sourceDir/libCmTts.so $MODEL_PATH/libCmTts.so.online_voicetuning
 cp -r $sourceDir/res/* $MODEL_PATH/res
 cd $MODEL_Dir/$MODEL_PATH
 

@@ -50,7 +50,7 @@ var (
 
 var keyFunc jwt.Keyfunc
 
-var isOpenJwt bool
+var isCloseJwt bool
 
 // Parser is a jwt parser
 type options struct {
@@ -82,13 +82,13 @@ func WithTokenHeader(header map[string]interface{}) Option {
 	}
 }
 
-func Server(logger log.Logger, jwtKey string, isOpen bool, opts ...Option) middleware.Middleware {
-	log.NewHelper(logger).Infof("jwtKey:%s, isOpenJwt:%t", jwtKey, isOpen)
+func Server(logger log.Logger, jwtKey string, isClose bool, opts ...Option) middleware.Middleware {
+	log.NewHelper(logger).Infof("jwtKey:%s, isCloseJwt:%t", jwtKey, isClose)
 	if jwtKey == "" {
 		panic(ErrMissingKey)
 	}
 	keyFunc = KeyProvider(jwtKey)
-	isOpenJwt = isOpen
+	isCloseJwt = isClose
 	o := &options{
 		signingMethod: jwt.SigningMethodHS256,
 	}
@@ -166,7 +166,7 @@ func IsValidity(logger log.Logger, header transport.Transporter) (*IdentityClaim
 	}
 	jwtToken := header.RequestHeader().Get(authorizationKey)
 	log.NewHelper(logger).Infof("jwtToken:%s; operation:%s", jwtToken, header.Operation())
-	if !isOpenJwt && jwtToken == "" {
+	if isCloseJwt && jwtToken == "" {
 		return nil, nil
 	}
 	if jwtToken == "" {

@@ -10,7 +10,6 @@ server:
     jwt:
       key: admin@cloudminds.com
       expire: 87600
-      is_open: false
 
 data:
   database:

@@ -4,7 +4,7 @@ MODEL_Dir=`pwd`
 MODULE_DIR=/devepu/jenkins1/workspace/CmTts
 sourceDir=$MODULE_DIR/TTS_SDK_*
 cd $MODULE_DIR
-VERSION=`ls | grep TTS_SDK_ | awk -F_ '{print $3}'`
+VERSION=`ls | grep TTS_SDK_ | grep -v zip| awk -F_ '{print $3}'`
 echo 'version is' $VERSION
 MODEL_PATH="speech-tts-model-out"
 cd $MODEL_Dir

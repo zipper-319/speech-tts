@@ -26,8 +26,7 @@ message Server {
     string path = 1;
     message Jwt{
       string key = 1;
-      int32  expire = 2;
-      bool   is_close = 3;
+      bool   is_close = 4;
     }
     Jwt jwt =2;
   }

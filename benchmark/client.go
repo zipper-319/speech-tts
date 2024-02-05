@@ -137,13 +137,16 @@ func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker,
 	}
 	req := &v2.TtsReq{
 		Text:                 text,
+		Speed:                "3",
+		Volume:               "3",
+		Pitch:                "medium",
 		ParameterSpeakerName: speaker,
+		ParameterFlag:        flagSet,
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,
-		ParameterFlag:        flagSet,
-		Version:              v2.ClientVersion_Version,
 		Language:             "zh",
 		Userspace:            user,
+		Version:              v2.ClientVersion_Version,
 	}
 
 	log.Printf("----------------------TestTTSV2-----------(%d:%s)\n", num, text)

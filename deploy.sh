@@ -9,7 +9,6 @@ CI_COMMIT_TAG=`git log --pretty=format:"%h" -1`
 DOCKER_REGISTRY_HOST="harbor.cloudminds.com"
 VERSION="v4.3.6"
 
-
 #expect <<EOF
 #set timeout 30
 #spawn ssh 172.16.31.72 -p 10022 -l root

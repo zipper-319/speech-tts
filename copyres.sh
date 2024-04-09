@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source=~/project/tts_test/CmTts/jni/NATIVE/tts/TTS_SDK_*
+source=~/project/CmTts1/TTS_SDK_v2.1.2.d19d53e
 dstLibs=`pwd`/internal/cgo/libs
 includePath=`pwd`/internal/cgo/include
 

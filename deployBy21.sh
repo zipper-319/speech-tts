@@ -7,13 +7,13 @@ user="tts"
 password="Q9dMZp_pGX"
 CI_COMMIT_TAG=`git log --pretty=format:"%h" -1`
 DOCKER_REGISTRY_HOST="harbor.cloudminds.com"
-VERSION="v4.4.3"
+VERSION="v4.3.6"
 
 
 expect -c '
-  spawn scp -P  10022 root@172.16.33.21:/devepu/jenkins1/workspace/speech-tts/bin/speech-tts ./bin
+  spawn scp  data@172.16.33.21:~/project/speech-tts/bin/speech-tts ./bin
   expect "*password"
-  send "123456\r"
+  send "hankewei\r"
   interact
 '
 

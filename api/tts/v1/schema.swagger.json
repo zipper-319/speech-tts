@@ -199,6 +199,9 @@
         },
         "language": {
           "type": "string"
+        },
+        "speaking_type": {
+          "type": "string"
         }
       }
     },

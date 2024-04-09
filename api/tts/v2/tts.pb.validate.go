@@ -82,6 +82,8 @@ func (m *TtsReq) validate(all bool) error {
 
 	// no validation rules for AudioEncoding
 
+	// no validation rules for SpeakingStyle
+
 	// no validation rules for Version
 
 	if len(errors) > 0 {
@@ -2959,6 +2961,40 @@ func (m *RespGetTtsConfig) validate(all bool) error {
 
 	}
 
+	for idx, item := range m.GetSpeakingStyle() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RespGetTtsConfigValidationError{
+						field:  fmt.Sprintf("SpeakingStyle[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RespGetTtsConfigValidationError{
+						field:  fmt.Sprintf("SpeakingStyle[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RespGetTtsConfigValidationError{
+					field:  fmt.Sprintf("SpeakingStyle[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return RespGetTtsConfigMultiError(errors)
 	}
@@ -3804,6 +3840,112 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MessageExpressionValidationError{}
+
+// Validate checks the field values on MessageSpeakingStyle with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MessageSpeakingStyle) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MessageSpeakingStyle with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MessageSpeakingStyleMultiError, or nil if none found.
+func (m *MessageSpeakingStyle) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MessageSpeakingStyle) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for ChineseName
+
+	if len(errors) > 0 {
+		return MessageSpeakingStyleMultiError(errors)
+	}
+
+	return nil
+}
+
+// MessageSpeakingStyleMultiError is an error wrapping multiple validation
+// errors returned by MessageSpeakingStyle.ValidateAll() if the designated
+// constraints aren't met.
+type MessageSpeakingStyleMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MessageSpeakingStyleMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MessageSpeakingStyleMultiError) AllErrors() []error { return m }
+
+// MessageSpeakingStyleValidationError is the validation error returned by
+// MessageSpeakingStyle.Validate if the designated constraints aren't met.
+type MessageSpeakingStyleValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MessageSpeakingStyleValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MessageSpeakingStyleValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MessageSpeakingStyleValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MessageSpeakingStyleValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MessageSpeakingStyleValidationError) ErrorName() string {
+	return "MessageSpeakingStyleValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MessageSpeakingStyleValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMessageSpeakingStyle.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MessageSpeakingStyleValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MessageSpeakingStyleValidationError{}
 
 // Validate checks the field values on RegisterReq with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

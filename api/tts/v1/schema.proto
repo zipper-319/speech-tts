@@ -116,6 +116,7 @@ message TtsReq {
 	string traceId = 13;
 	string rootTraceId = 14;
 	string language = 15;
+	string speaking_type = 16;
 }
 
 message TtsRes {

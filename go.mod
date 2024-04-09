@@ -3,12 +3,12 @@ module speech-tts
 go 1.19
 
 require (
-	github.com/envoyproxy/protoc-gen-validate v0.10.0
+	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20230504091536-aed172b8ddd3
 	github.com/go-kratos/kratos/contrib/registry/nacos/v2 v2.0.0-20230530065457-69d73225a921
 	github.com/go-kratos/kratos/v2 v2.6.2
 	github.com/golang-jwt/jwt/v4 v4.4.1
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
 	github.com/nacos-group/nacos-sdk-go v1.1.4
@@ -17,9 +17,9 @@ require (
 	go.opentelemetry.io/otel v1.16.0
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.23.0
-	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4
-	google.golang.org/grpc v1.55.0
-	google.golang.org/protobuf v1.30.0
+	google.golang.org/genproto v0.0.0-20240227224415-6ceb2ff114de
+	google.golang.org/grpc v1.63.2
+	google.golang.org/protobuf v1.33.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
@@ -45,7 +45,7 @@ require (
 	github.com/go-playground/validator/v10 v10.14.0 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/subcommands v1.0.1 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
@@ -69,7 +69,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/smarty/assertions v1.15.0 // indirect
 	github.com/smartystreets/goconvey v1.8.1 // indirect
-	github.com/spf13/afero v1.9.3 // indirect
+	github.com/spf13/afero v1.10.0 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
@@ -90,13 +90,14 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/mod v0.9.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.9.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
-	golang.org/x/tools v0.7.0 // indirect
+	golang.org/x/crypto v0.19.0 // indirect
+	golang.org/x/mod v0.12.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
+	golang.org/x/sync v0.6.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/tools v0.13.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240227224415-6ceb2ff114de // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

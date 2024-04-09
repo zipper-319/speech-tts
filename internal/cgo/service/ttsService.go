@@ -264,8 +264,8 @@ func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData int32, traceI
 	defer C.free(unsafe.Pointer(sdkSettings.volume))
 	sdkSettings.pitch = C.CString(req.Pitch)
 	defer C.free(unsafe.Pointer(sdkSettings.pitch))
-	sdkSettings.speakingStyle = C.CString(req.Emotions)
-	defer C.free(unsafe.Pointer(sdkSettings.speakingStyle))
+	sdkSettings.emotion = C.CString(req.Emotions)
+	defer C.free(unsafe.Pointer(sdkSettings.emotion))
 	sdkSettings.featureSet = C.uint(paramFormatter(req.ParameterFlag))
 	sdkSettings.expressionDescriptor = C.CString(req.Expression)
 	defer C.free(unsafe.Pointer(sdkSettings.expressionDescriptor))
@@ -279,6 +279,8 @@ func (t *TTSService) CallTTSServiceV2(req *data.Speaker, pUserData int32, traceI
 	defer C.free(unsafe.Pointer(sdkSettings.languageTip))
 	sdkSettings.userSpace = C.CString(req.Userspace)
 	defer C.free(unsafe.Pointer(sdkSettings.userSpace))
+	sdkSettings.speakingStyle = C.CString(req.SpeakingStyle)
+	defer C.free(unsafe.Pointer(sdkSettings.speakingStyle))
 	sdkSettings.audioEncoding = C.uint(req.AudioEncoding)
 	idC := C.ActionSynthesizer_SynthesizeAction(
 		text,
@@ -312,9 +314,11 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData int32) (int, err
 	defer C.free(unsafe.Pointer(setting.volume))
 	setting.pitch = C.CString(req.Pitch)
 	defer C.free(unsafe.Pointer(setting.pitch))
-	setting.speakingStyle = C.CString(req.Emotions)
-	defer C.free(unsafe.Pointer(setting.languageTip))
+	setting.emotion = C.CString(req.Emotions)
+	defer C.free(unsafe.Pointer(setting.emotion))
 	setting.languageTip = C.CString(req.Language)
+	defer C.free(unsafe.Pointer(setting.languageTip))
+	setting.speakingStyle = C.CString(req.SpeakingType)
 	defer C.free(unsafe.Pointer(setting.speakingStyle))
 	setting.featureSet = C.uint(3)
 

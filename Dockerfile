@@ -12,7 +12,7 @@ ENV LOGPATH=/opt/speech/tts/runtime/logs \
 
 RUN echo ${TZ} > /etc/timezone
 
-RUN apt update && apt install -y   libcurl4
+RUN apt update && apt install -y  -d libcurl3 libssl1.0.0
 
 EXPOSE 4012
 EXPOSE 3012
@@ -20,4 +20,5 @@ EXPOSE 3012
 WORKDIR /opt/speech/tts
 
 COPY bin/* ./bin/
+COPY libs/libCmTts.so  ./lib_interface/
 COPY run_speech_tts_srv.sh /etc/services.d/speech-tts/run

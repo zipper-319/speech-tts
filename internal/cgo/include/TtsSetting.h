@@ -54,6 +54,10 @@ enum {
 enum {
     LEFT_SHIFT_support_mixed_voice = 4,
     LEFT_SHIFT_support_emotion = 5,
+    LEFT_SHIFT_add_pause = 6,
+    LEFT_SHIFT_use_aptg = 7,
+    LEFT_SHIFT_use_random_duration = 8,
+    LEFT_SHIFT_support_speaking_style = 9,
 };
 
 /**
@@ -62,12 +66,19 @@ enum {
 enum {
     SUPPORT_MIXED_VOICE = SUPPORT<<LEFT_SHIFT_support_mixed_voice,
     SUPPORT_EMOTION = SUPPORT<<LEFT_SHIFT_support_emotion,
+    SUPPORT_SPEAKING_STYLE = SUPPORT<<LEFT_SHIFT_support_speaking_style,
+    ADD_PAUSE = SUPPORT<<LEFT_SHIFT_add_pause,
+    USE_APTG = SUPPORT<<LEFT_SHIFT_use_aptg,
+    USE_RANDOM_DURATION = SUPPORT<<LEFT_SHIFT_use_random_duration,
     NORMALIZE_CUT_MASK = 0x0000000F,
 };
 
 /*
 typedef struct {
-    unsigned placeholder: 26;
+    unsigned placeholder: 23;
+    unsinged use_random_duration: 1;
+    unsinged use_aptg: 1;
+    unsigned add_pause: 1;
     unsigned support_emotion: 1;
     unsigned support_mixed_voice: 1;
     unsigned normalize_cut_type: 4;
@@ -101,7 +112,7 @@ typedef struct{
 
     /**
     * 发音人特性
-    * 从高位到低位（31~0）|26bit(undefined)|1bit(support_emotion)|1bit(support_mixed_voice)|4bit(normalize_cut_type)|
+    * 从高位到低位（31~0）|23bit(undefined)|1bit(use_random_duration)|1bit(use_aptg)|1bit(add_pause)|1bit(support_emotion)|1bit(support_mixed_voice)|4bit(normalize_cut_type)|
     */
     unsigned int flags;
 
@@ -143,13 +154,13 @@ enum {
     */
     PARAMETER_OUTPUT_MODE = 3,
     /**
-    * 合成模式
+    * @deprecated 合成模式
     */
     PARAMETER_SYNTHESIS_MODE = 4,
     /**
-    * 说话风格
+    * 说话情感
     */
-    PARAMETER_SPEAKING_STYLE = 5,
+    PARAMETER_EMOTION = 5,
     /**
     * 动作描述
     */
@@ -158,6 +169,10 @@ enum {
     * 表情描述
     */
     PARAMETER_EXPRESSION_DESCRIPTOR = 7,
+    /**
+    * 发音风格
+    */
+    PARAMETER_SPEAKING_STYLE = 8,
 //以下仅供内部debug
     /**
     * @deprecated tuning
@@ -227,9 +242,9 @@ typedef struct{
     */
     const char* pitch;
     /**
-    * 说话风格
+    * 发音情感
     */
-    const char* speakingStyle;
+    const char* emotion;
     /**
     * 功能集设置
     */
@@ -254,6 +269,14 @@ typedef struct{
     * 指定音频编码格式，参考enum AudioEncoding，默认为PCM_LINEAR16
     */
     unsigned int audioEncoding;
+    /**
+    * 发音人bin文件
+    */
+    // const char* speaker_bin;
+    /**
+    * 说话风格
+    */
+    const char* speakingStyle;
 }TtsSetting;
 
 

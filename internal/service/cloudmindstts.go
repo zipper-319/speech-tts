@@ -119,6 +119,7 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		Language:             req.Language,
 		Userspace:            req.Userspace,
 		AudioEncoding:        req.AudioEncoding,
+		SpeakingStyle:        req.SpeakingStyle,
 	}, pUserData, fmt.Sprintf("%s_%s", req.RootTraceId, req.TraceId))
 	logger.Infof("CallTTSServiceV2;pUserData:%v;id:%d", pUserData, id)
 	if err != nil {

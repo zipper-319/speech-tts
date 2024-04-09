@@ -67,6 +67,7 @@ message TtsReq {
     string language = 11;                       //  语种提示
     string userspace = 12;                      //  指定租户  默认cloudminds
     int32  audio_encoding = 13;                 //  LINEAR16 = 0, OPUS = 1,
+    string speaking_style = 14;                  //  发音风格，取值范围请用 GetTtsConfig SpeakingStyleList.Name
     ClientVersion version = 100;                //  标识客户端版本号
 }
 
@@ -205,6 +206,7 @@ message RespGetTtsConfig {
     repeated MessageDigitalPerson digital_person_list = 6 [deprecated = true];  // MessageDigitalPerson 废弃不用
     repeated MessageMovement  movement_list  = 7;            // SupportedMovement  动作
     repeated MessageExpression  expression_list  = 8;        // SupportedExpression 表情
+    repeated MessageSpeakingStyle speaking_style = 9;        // SupportedSpeakingStyle;
 }
 
 message SpeakerList {
@@ -244,6 +246,11 @@ message MessageMovement{
 }
 
 message MessageExpression{
+    string name = 1;                                    // 用于传参
+    string chinese_name = 2;                            // 对应中文
+}
+
+message MessageSpeakingStyle{
     string name = 1;                                    // 用于传参
     string chinese_name = 2;                            // 对应中文
 }

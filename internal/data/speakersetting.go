@@ -24,6 +24,10 @@ type SpeakerSetting struct {
 		Name        string `json:"name"`
 		ChineseName string `json:"chinese_name" mapstructure:"chinese_name"`
 	} `json:"SupportedEmotion"`
+	SupportedSpeakingStyle []struct {
+		Name        string `json:"name"`
+		ChineseName string `json:"chinese_name" mapstructure:"chinese_name"`
+	} `json:"SupportedSpeakingStyle"`
 	SupportedMovementDescriptor []struct {
 		Name        string `json:"name"`
 		ChineseName string `json:"chinese_name" mapstructure:"chinese_name"`
@@ -132,4 +136,5 @@ type Speaker struct {
 	Language             string
 	Userspace            string
 	AudioEncoding        int32
+	SpeakingStyle        string
 }

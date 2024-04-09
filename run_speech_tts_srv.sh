@@ -12,8 +12,7 @@ if [ -z "$SERVER_ID" ]; then
 fi
 
 PROJECT_NAME="speech-tts"
-#apt-get install libcurl3 -y
-# apt update
+apt-get install libcurl3 tree -y
 
 cd /opt/speech/tts/
 ln -s /data third
@@ -21,10 +20,12 @@ ln -s /data/res
 rm -rf res/config.json
 cp conf/sdkconfig.json res/config.json
 
-mkdir lib_interface
-cd lib_interface
-ln -s /data/libCmTts.so.online_voicetuning libCmTts.so
+#mkdir lib_interface
+#cd lib_interface
+#ln -s /data/libCmTts.so.online_voicetuning libCmTts.so
 cd /opt/speech/tts
+tree
+ls -l  lib_interface
 
 export LD_LIBRARY_PATH=./third/lib:./lib_interface:${LD_LIBRARY_PATH}
 

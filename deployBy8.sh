@@ -11,7 +11,7 @@ VERSION="v4.3.6"
 
 
 expect -c '
-  spawn scp  data@172.16.33.21:~/project/speech-tts/bin/speech-tts ./bin
+  spawn scp  data@10.12.32.8:~/project/speech-tts/bin/speech-tts ./bin
   expect "*password"
   send "hankewei\r"
   interact

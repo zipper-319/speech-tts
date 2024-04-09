@@ -20,9 +20,9 @@ ln -s /data/res
 rm -rf res/config.json
 cp conf/sdkconfig.json res/config.json
 
-#mkdir lib_interface
-#cd lib_interface
-#ln -s /data/libCmTts.so.online_voicetuning libCmTts.so
+mkdir lib_interface
+cd lib_interface
+ln -s /data/libCmTts.so.online_voicetuning libCmTts.so
 cd /opt/speech/tts
 tree
 ls -l  lib_interface

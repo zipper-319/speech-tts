@@ -20,5 +20,5 @@ EXPOSE 3012
 WORKDIR /opt/speech/tts
 
 COPY bin/* ./bin/
-COPY libs/libCmTts.so  ./lib_interface/
+#COPY libs/libCmTts.so  ./lib_interface/
 COPY run_speech_tts_srv.sh /etc/services.d/speech-tts/run

@@ -584,7 +584,7 @@
           },
           "title": "SupportedExpression 表情"
         },
-        "speaking_style": {
+        "speaking_style_list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ttsschemaMessageSpeakingStyle"

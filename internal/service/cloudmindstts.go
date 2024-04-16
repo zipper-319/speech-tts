@@ -174,12 +174,13 @@ func (s *CloudMindsTTSService) GetTtsConfig(ctx context.Context, req *pb.VerReq)
 		SpeakerList: &pb.SpeakerList{
 			List: speakerList,
 		},
-		SpeedList:      s.uc.SupportedSpeed,
-		VolumeList:     s.uc.SupportedVolume,
-		PitchList:      s.uc.GetSupportedPitch(),
-		EmotionList:    s.uc.GetSupportedEmotion(),
-		MovementList:   s.uc.GetSupportedMovement(),
-		ExpressionList: s.uc.GetSupportedExpression(),
+		SpeedList:         s.uc.SupportedSpeed,
+		VolumeList:        s.uc.SupportedVolume,
+		PitchList:         s.uc.GetSupportedPitch(),
+		EmotionList:       s.uc.GetSupportedEmotion(),
+		MovementList:      s.uc.GetSupportedMovement(),
+		ExpressionList:    s.uc.GetSupportedExpression(),
+		SpeakingStyleList: s.uc.GetSupportedSpeakingStyle(),
 	}, nil
 }
 
@@ -229,11 +230,12 @@ func (s *CloudMindsTTSService) GetTtsConfigByUser(ctx context.Context, req *pb.G
 		SpeakerList: &pb.SpeakerList{
 			List: speakerList,
 		},
-		SpeedList:      s.uc.SupportedSpeed,
-		VolumeList:     s.uc.SupportedVolume,
-		PitchList:      s.uc.GetSupportedPitch(),
-		EmotionList:    s.uc.GetSupportedEmotion(),
-		MovementList:   s.uc.GetSupportedMovement(),
-		ExpressionList: s.uc.GetSupportedExpression(),
+		SpeedList:         s.uc.SupportedSpeed,
+		VolumeList:        s.uc.SupportedVolume,
+		PitchList:         s.uc.GetSupportedPitch(),
+		EmotionList:       s.uc.GetSupportedEmotion(),
+		MovementList:      s.uc.GetSupportedMovement(),
+		ExpressionList:    s.uc.GetSupportedExpression(),
+		SpeakingStyleList: s.uc.GetSupportedSpeakingStyle(),
 	}, nil
 }

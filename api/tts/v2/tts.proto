@@ -206,7 +206,7 @@ message RespGetTtsConfig {
     repeated MessageDigitalPerson digital_person_list = 6 [deprecated = true];  // MessageDigitalPerson 废弃不用
     repeated MessageMovement  movement_list  = 7;            // SupportedMovement  动作
     repeated MessageExpression  expression_list  = 8;        // SupportedExpression 表情
-    repeated MessageSpeakingStyle speaking_style = 9;        // SupportedSpeakingStyle;
+    repeated MessageSpeakingStyle speaking_style_list = 9;        // SupportedSpeakingStyle;
 }
 
 message SpeakerList {

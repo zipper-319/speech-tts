@@ -241,6 +241,17 @@ func (t *TTSService) GetSupportedExpression() []*v2.MessageExpression {
 	return ExpressionList
 }
 
+func (t *TTSService) GetSupportedSpeakingStyle() []*v2.MessageSpeakingStyle {
+	speakingStyleList := make([]*v2.MessageSpeakingStyle, 0, len(t.SpeakerSetting.SupportedSpeakingStyle))
+	for _, express := range t.SpeakerSetting.SupportedSpeakingStyle {
+		speakingStyleList = append(speakingStyleList, &v2.MessageSpeakingStyle{
+			Name:        express.Name,
+			ChineseName: express.ChineseName,
+		})
+	}
+	return speakingStyleList
+}
+
 //func (t *TTSService) GetSupportedDigitalPerson() []*v2.MessageDigitalPerson {
 //	digitalPersonList := make([]*v2.MessageDigitalPerson, 0, len(t.SpeakerSetting.SupportedDigitalPerson))
 //	for _, digitalPerson := range t.SpeakerSetting.SupportedDigitalPerson {

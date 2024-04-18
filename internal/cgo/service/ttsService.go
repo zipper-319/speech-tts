@@ -136,13 +136,15 @@ func NewTTSService(s *conf.Server, speakerSetting *data.SpeakerSetting, logger l
 		m := C.GetSpeakerDescriptor(userSpace, cname)
 		isEmotion := m.flags&C.SUPPORT_EMOTION != 0
 		isMixedVoice := m.flags&C.SUPPORT_MIXED_VOICE != 0
+		isSpeakingStyle := m.flags&C.SUPPORT_SPEAKING_STYLE != 0
 		log.NewHelper(logger).Infof("----ChineseName:%s------cname:%s------flags:%d, isEmotion:%t, isMixedVoice:%t, language:%s",
 			supportedSpeaker.ChineseName, supportedSpeaker.Name, int(m.flags), isEmotion, isMixedVoice, C.GoString(m.language))
 		speakers[i] = &data.SpeakerInfo{
-			SpeakerName:          supportedSpeaker.ChineseName,
-			ParameterSpeakerName: supportedSpeaker.Name,
-			IsSupportEmotion:     isEmotion,
-			IsSupportMixedVoice:  isMixedVoice,
+			SpeakerName:            supportedSpeaker.ChineseName,
+			ParameterSpeakerName:   supportedSpeaker.Name,
+			IsSupportEmotion:       isEmotion,
+			IsSupportMixedVoice:    isMixedVoice,
+			IsSupportSpeakingStyle: isSpeakingStyle,
 		}
 		C.free(unsafe.Pointer(cname))
 		C.free(unsafe.Pointer(userSpace))
@@ -243,10 +245,10 @@ func (t *TTSService) GetSupportedExpression() []*v2.MessageExpression {
 
 func (t *TTSService) GetSupportedSpeakingStyle() []*v2.MessageSpeakingStyle {
 	speakingStyleList := make([]*v2.MessageSpeakingStyle, 0, len(t.SpeakerSetting.SupportedSpeakingStyle))
-	for _, express := range t.SpeakerSetting.SupportedSpeakingStyle {
+	for _, speakingStyle := range t.SpeakerSetting.SupportedSpeakingStyle {
 		speakingStyleList = append(speakingStyleList, &v2.MessageSpeakingStyle{
-			Name:        express.Name,
-			ChineseName: express.ChineseName,
+			Name:        speakingStyle.Name,
+			ChineseName: speakingStyle.ChineseName,
 		})
 	}
 	return speakingStyleList
@@ -329,7 +331,8 @@ func (t *TTSService) CallTTSServiceV1(req *v1.TtsReq, pUserData int32) (int, err
 	defer C.free(unsafe.Pointer(setting.emotion))
 	setting.languageTip = C.CString(req.Language)
 	defer C.free(unsafe.Pointer(setting.languageTip))
-	setting.speakingStyle = C.CString(req.SpeakingType)
+	speakingStyle := req.ParameterFlag["speakingStylePara"]
+	setting.speakingStyle = C.CString(speakingStyle)
 	defer C.free(unsafe.Pointer(setting.speakingStyle))
 	setting.featureSet = C.uint(3)
 

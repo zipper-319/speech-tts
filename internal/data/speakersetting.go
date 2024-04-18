@@ -39,10 +39,11 @@ type SpeakerSetting struct {
 }
 
 type SpeakerInfo struct {
-	SpeakerName          string
-	ParameterSpeakerName string
-	IsSupportEmotion     bool
-	IsSupportMixedVoice  bool
+	SpeakerName            string
+	ParameterSpeakerName   string
+	IsSupportEmotion       bool
+	IsSupportMixedVoice    bool
+	IsSupportSpeakingStyle bool
 }
 
 type HandlerObject struct {

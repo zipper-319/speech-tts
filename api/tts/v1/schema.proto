@@ -116,7 +116,7 @@ message TtsReq {
 	string traceId = 13;
 	string rootTraceId = 14;
 	string language = 15;
-	string speaking_type = 16;
+	map<string, string> parameter_flag = 16;     // 额外信息参数，发音风格参数key:speakingStylePara,value的取值范围参考GetTtsConfig-MessageSpeakingStyle.name
 }
 
 message TtsRes {

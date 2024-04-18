@@ -23,6 +23,7 @@ var speaker string
 var testVersion string
 var movement string
 var expression string
+var speakingStyle string
 var isSaveFile bool
 var filePath string
 var outfile string
@@ -34,6 +35,7 @@ func init() {
 	flag.StringVar(&speaker, "s", "DaXiaoFang", "speaker name, eg: -s DaXiaoFang")
 	flag.StringVar(&testVersion, "v", "v2", "test Version, eg: -v v1")
 	flag.StringVar(&movement, "m", "Nvidia-a2g", "movement, eg: -m SweetGirl")
+	flag.StringVar(&speakingStyle, "style", "Sweet", "speakingStyle, eg: -style Sweet")
 	flag.StringVar(&expression, "e", "", "expression, eg: -e FaceGood")
 	flag.BoolVar(&isSaveFile, "i", false, "isSaveFile, eg: -i true")
 	flag.StringVar(&filePath, "f", "./testText.txt", "filePath, eg: -f ./testText.txt")
@@ -133,7 +135,7 @@ func main() {
 				} else {
 					user := utils.DefaultUser
 					if outResult, err := benchmark.TestTTSV2(ctx, out, user, addr, text, speaker, fmt.Sprintf("test_thread%d_%dnum", t, num), fmt.Sprintf("test_robot_thread%d_%dnum", t, num),
-						movement, expression, num, isSaveFile); err == nil {
+						movement, expression, speakingStyle, num, isSaveFile); err == nil {
 						resultList := outResultList.Load().([]*benchmark.OutResult)
 						out.WriteString(fmt.Sprintf("%s   %s   %dms   %dms   %s   %dms    %dms   %s\n", outResult.TraceId, clientNow.Format("2006-01-02 15:04:05.000"),
 							outResult.FirstClientCost, outResult.ClientCost, outResult.ServerTime, outResult.FirstServerCost, outResult.ServerCost, outResult.Text))

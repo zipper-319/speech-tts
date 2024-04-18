@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source=~/project/CmTts1/TTS_SDK_v2.1.2.d19d53e
+source=~/project/CmTts1/TTS_SDK_v2.1.2.03a37cf
 dstLibs=`pwd`/internal/cgo/libs
 includePath=`pwd`/internal/cgo/include
 

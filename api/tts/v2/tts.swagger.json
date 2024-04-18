@@ -632,6 +632,10 @@
         "is_belong_clone": {
           "type": "boolean",
           "title": "是否属于克隆的发音人"
+        },
+        "is_support_speaking_style": {
+          "type": "boolean",
+          "title": "是否支持发音人风格"
         }
       }
     },

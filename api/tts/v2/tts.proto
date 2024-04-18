@@ -61,13 +61,16 @@ message TtsReq {
     string emotions = 5;                        // 如果该发音人支持情感，取值范围请用 GetTtsConfig EmotionList.Name，如果不支持请传""，否则会报错
     string parameter_speaker_name = 6;          // 取值范围请用 GetTtsConfig函数的返回Speakerlist.parameterSpeakerName
     string parameter_digital_person = 7 [deprecated = true];        // **********数字人形象，  (废弃不用)  *******************
-    map<string, string> parameter_flag = 8;     // 额外信息参数，口型key:mouth,字符串"true"或者"false"；动作movement， 字符串"true"或者"false"； 表情expression、字符串"true"或者"false";动作具体参数key:movementPara,value的取值范围参考GetTtsConfig-MessageMovement.name; 表情具体参数key:expressionPara,value的取值范围参考GetTtsConfig-MessageExpression.name
+    map<string, string> parameter_flag = 8;     // 额外信息参数，口型key:mouth,字符串"true"或者"false"；动作movement， 字符串"true"或者"false"； 表情expression、字符串"true"或者"false";
+                                                // 动作具体参数key:movementPara,value的取值范围参考GetTtsConfig-MessageMovement.name;
+                                                // 表情具体参数key:expressionPara,value的取值范围参考GetTtsConfig-MessageExpression.name
+                                                // 发音风格参数key:speakingStylePara,value的取值范围参考GetTtsConfig-MessageSpeakingStyle.name
     string trace_id = 9;                        //  trace_id
     string root_trace_id = 10;                  //  机器人请求ID
     string language = 11;                       //  语种提示
     string userspace = 12;                      //  指定租户  默认cloudminds
     int32  audio_encoding = 13;                 //  LINEAR16 = 0, OPUS = 1,
-    string speaking_style = 14;                  //  发音风格，取值范围请用 GetTtsConfig SpeakingStyleList.Name
+
     ClientVersion version = 100;                //  标识客户端版本号
 }
 
@@ -220,6 +223,7 @@ message SpeakerParameter {
     bool is_support_emotion = 4;                            // 是否支持情感
     bool is_support_mixed_voice = 5;                        // 是否支持混合发音
     bool  is_belong_clone = 6;                              // 是否属于克隆的发音人
+    bool  is_support_speaking_style = 7;                    // 是否支持发音人风格
 }
 
 message MessagePitch {

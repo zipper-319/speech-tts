@@ -200,8 +200,12 @@
         "language": {
           "type": "string"
         },
-        "speaking_type": {
-          "type": "string"
+        "parameter_flag": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "额外信息参数，发音风格参数key:speakingStylePara,value的取值范围参考GetTtsConfig-MessageSpeakingStyle.name"
         }
       }
     },

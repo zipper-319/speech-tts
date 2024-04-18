@@ -82,8 +82,6 @@ func (m *TtsReq) validate(all bool) error {
 
 	// no validation rules for AudioEncoding
 
-	// no validation rules for SpeakingStyle
-
 	// no validation rules for Version
 
 	if len(errors) > 0 {
@@ -3239,6 +3237,8 @@ func (m *SpeakerParameter) validate(all bool) error {
 	// no validation rules for IsSupportMixedVoice
 
 	// no validation rules for IsBelongClone
+
+	// no validation rules for IsSupportSpeakingStyle
 
 	if len(errors) > 0 {
 		return SpeakerParameterMultiError(errors)

@@ -112,7 +112,7 @@ func TestTTSV1(ctx context.Context, addr, text, speaker, traceId, robotTraceId s
 	return nil
 }
 
-func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker, traceId, robotTraceId, movement, expression string, num int, isSaveFile bool) (*OutResult, error) {
+func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker, traceId, robotTraceId, movement, expression, speakingStyle string, num int, isSaveFile bool) (*OutResult, error) {
 
 	now := time.Now()
 	conn, err := GetGrpcConn(addr, ctx)
@@ -135,6 +135,7 @@ func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker,
 	} else {
 		flagSet["expression"] = "false"
 	}
+
 	req := &v2.TtsReq{
 		Text:                 text,
 		Speed:                "3",
@@ -144,6 +145,7 @@ func TestTTSV2(ctx context.Context, outfile *os.File, user, addr, text, speaker,
 		ParameterFlag:        flagSet,
 		TraceId:              traceId,
 		RootTraceId:          robotTraceId,
+		SpeakingStyle:        speakingStyle,
 		Language:             "zh",
 		Userspace:            user,
 		Version:              v2.ClientVersion_Version,

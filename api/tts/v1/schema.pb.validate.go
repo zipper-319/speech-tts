@@ -113,7 +113,7 @@ func (m *TtsReq) validate(all bool) error {
 
 	// no validation rules for Language
 
-	// no validation rules for SpeakingType
+	// no validation rules for ParameterFlag
 
 	if len(errors) > 0 {
 		return TtsReqMultiError(errors)

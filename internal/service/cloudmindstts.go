@@ -60,6 +60,7 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 
 	movement := req.ParameterFlag["movementPara"]
 	expression := req.ParameterFlag["expressionPara"]
+	speakingStyle := req.ParameterFlag["speakingStylePara"]
 
 	logger := log.NewHelper(log.With(s.log, "traceId", req.TraceId, "rootTraceId", req.RootTraceId))
 	logger.Infof("call TTSServiceV2;the req——————text:%s;speakerName:%s;Emotions:%s,DigitalPerson:%s,ParameterFlag:%v,Expression:%s,Movement:%s,clientVersion:%s, identifier:%s, userspace:%s, AudioEncoding:%d",
@@ -119,7 +120,7 @@ func (s *CloudMindsTTSService) Call(req *pb.TtsReq, conn pb.CloudMindsTTS_CallSe
 		Language:             req.Language,
 		Userspace:            req.Userspace,
 		AudioEncoding:        req.AudioEncoding,
-		SpeakingStyle:        req.SpeakingStyle,
+		SpeakingStyle:        speakingStyle,
 	}, pUserData, fmt.Sprintf("%s_%s", req.RootTraceId, req.TraceId))
 	logger.Infof("CallTTSServiceV2;pUserData:%v;id:%d", pUserData, id)
 	if err != nil {
@@ -163,10 +164,11 @@ func (s *CloudMindsTTSService) GetTtsConfig(ctx context.Context, req *pb.VerReq)
 
 	for i, speaker := range s.uc.Speakers {
 		speakerList[i] = &pb.SpeakerParameter{
-			SpeakerName:          speaker.SpeakerName,
-			ParameterSpeakerName: speaker.ParameterSpeakerName,
-			IsSupportEmotion:     speaker.IsSupportEmotion,
-			IsSupportMixedVoice:  speaker.IsSupportMixedVoice,
+			SpeakerName:            speaker.SpeakerName,
+			ParameterSpeakerName:   speaker.ParameterSpeakerName,
+			IsSupportEmotion:       speaker.IsSupportEmotion,
+			IsSupportMixedVoice:    speaker.IsSupportMixedVoice,
+			IsSupportSpeakingStyle: speaker.IsSupportSpeakingStyle,
 		}
 	}
 
